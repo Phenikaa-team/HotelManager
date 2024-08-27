@@ -1,31 +1,32 @@
 package group.phenikaa.hotelmanager.api.manager;
 
+import group.phenikaa.hotelmanager.api.utility.enums.RoomStatus;
 import group.phenikaa.hotelmanager.api.utility.interfaces.IRoom;
 
 public class Room implements IRoom {
-    private boolean isAvailable;
-    private int roomNum;
+    public RoomStatus isAvailable;
+    public String roomNum;
 
-    public Room(boolean isAvailable, int roomNum) {
+    public Room(RoomStatus isAvailable, String roomNum) {
         this.isAvailable = isAvailable;
         this.roomNum = roomNum;
     }
 
     @Override
-    public boolean isAvailable() {
-        return false;
+    public RoomStatus roomStatus() {
+        return isAvailable;
     }
 
     @Override
-    public int roomNum() {
-        return 0;
+    public String roomNum() {
+        return roomNum;
     }
 
-    public void setRoomNumber(int roomNumber) {
+    public void setRoomNumber(String roomNumber) {
         this.roomNum = roomNumber;
     }
 
-    public void setAvailable(boolean isAvailable) {
+    public void setAvailable(RoomStatus isAvailable) {
         this.isAvailable = isAvailable;
     }
 }

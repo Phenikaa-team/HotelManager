@@ -8,7 +8,9 @@ module group.phenikaa.hotelmanager {
     requires org.kordamp.ikonli.javafx;
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
+    requires com.google.gson;
 
+    opens group.phenikaa.hotelmanager.api.manager to com.google.gson;
     opens group.phenikaa.hotelmanager to javafx.fxml;
     exports group.phenikaa.hotelmanager;
 }

@@ -4,7 +4,7 @@ import group.phenikaa.hotelmanager.api.utility.enums.Gender;
 
 public interface ICustomer {
     String name();
-    int phoneNumber();
+    long phoneNumber();
     Gender gender();
-    int roomNum();
+    String roomNum();
 }

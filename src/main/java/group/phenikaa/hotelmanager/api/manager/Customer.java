@@ -5,11 +5,11 @@ import group.phenikaa.hotelmanager.api.utility.interfaces.ICustomer;
 
 public class Customer implements ICustomer {
     private String name;
-    private int phoneNum;
+    private long phoneNum;
     private Gender gender;
-    private int roomNum;
+    private String roomNum;
 
-    public Customer(String name, int phoneNumber, Gender gender, int roomNumber) {
+    public Customer(String name, long phoneNumber, Gender gender, String roomNumber) {
         this.name = name;
         this.phoneNum = phoneNumber;
         this.gender = gender;
@@ -22,7 +22,7 @@ public class Customer implements ICustomer {
     }
 
     @Override
-    public int phoneNumber() {
+    public long phoneNumber() {
         return phoneNum;
     }
 
@@ -32,7 +32,7 @@ public class Customer implements ICustomer {
     }
 
     @Override
-    public int roomNum() {
+    public String roomNum() {
         return roomNum;
     }
 
@@ -48,7 +48,7 @@ public class Customer implements ICustomer {
         this.gender = gender;
     }
 
-    public void setRoomNum(int roomNum) {
+    public void setRoomNum(String roomNum) {
         this.roomNum = roomNum;
     }
 }

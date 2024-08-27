@@ -8,15 +8,17 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class HotelApplication extends Application {
-
     @Override
-    public void start(Stage primaryStage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("RoomManager.fxml"));
-        primaryStage.setScene(new Scene(loader.load(), 320, 240));
-        primaryStage.setTitle("Quản lý phòng khách sạn");
-        primaryStage.show();
+    public void start(Stage stage) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(HotelApplication.class.getResource("RoomManager.fxml"));
+        Scene scene = new Scene(fxmlLoader.load(), 600, 400);
+        stage.setTitle("Hotel Manager");
+        stage.setScene(scene);
+        stage.show();
     }
+
     public static void main(String[] args) {
         launch();
     }
+
 }

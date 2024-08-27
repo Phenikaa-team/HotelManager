@@ -1,0 +1,26 @@
+[
+  {
+    "available": "FULL",
+    "roomNumber": "125",
+    "customerName": "TranBaMinhDuc",
+    "phoneNumber": 12346789,
+    "customerGender": "MALE",
+    "sync-roomNumber": "125"
+  },
+  {
+    "available": "FULL",
+    "roomNumber": "125",
+    "customerName": "TranBaMinhDuc",
+    "phoneNumber": 12346789,
+    "customerGender": "MALE",
+    "sync-roomNumber": "125"
+  },
+  {
+    "available": "FULL",
+    "roomNumber": "125",
+    "customerName": "TranBaMinhDuc",
+    "phoneNumber": 12346789,
+    "customerGender": "MALE",
+    "sync-roomNumber": "125"
+  }
+]
