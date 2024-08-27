@@ -3,9 +3,9 @@ package group.phenikaa.hotelmanager.impl.data;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-import group.phenikaa.hotelmanager.api.manager.Booking;
-import group.phenikaa.hotelmanager.api.manager.Customer;
-import group.phenikaa.hotelmanager.api.manager.Room;
+import group.phenikaa.hotelmanager.api.info.api.AbstractRentable;
+import group.phenikaa.hotelmanager.api.info.api.AbstractRenter;
+import group.phenikaa.hotelmanager.api.info.Booking;
 import group.phenikaa.hotelmanager.api.utility.enums.Gender;
 import group.phenikaa.hotelmanager.api.utility.enums.RoomStatus;
 
@@ -16,23 +16,23 @@ public class BookingAdapter extends TypeAdapter<Booking> {
     @Override
     public void write(JsonWriter out, Booking room) throws IOException {
         out.beginObject();
-        out.name("available").value(room.room().roomStatus().name());
-        out.name("roomNumber").value(room.room().roomNum());
+        out.name("available").value(room.abstractRentable().roomStatus().name());
+        out.name("roomNumber").value(room.abstractRentable().roomNumber());
         out.name("customerName").value(room.customer().name());
         out.name("phoneNumber").value(room.customer().phoneNumber());
         out.name("customerGender").value(room.customer().gender().name());
-        out.name("sync-roomNumber").value(room.customer().roomNum());
+        out.name("sync-roomNumber").value(room.customer().roomNumber());
         out.endObject();
     }
 
     @Override
     public Booking read(JsonReader in) throws IOException {
         in.beginObject();
-        var isAvailable = RoomStatus.EMPTY;
+        var isAvailable = RoomStatus.Empty;
         String roomNumber = null;
         var customerName = "None";
         var phoneNumber = 1234567890L;
-        var customerGender = Gender.UNDETERMINED;
+        var customerGender = Gender.Undetermined;
 
         while (in.hasNext()) {
             switch (in.nextName()) {
@@ -54,7 +54,7 @@ public class BookingAdapter extends TypeAdapter<Booking> {
             }
         }
         in.endObject();
-        return new Booking(new Room(isAvailable, roomNumber), new Customer(customerName, phoneNumber, customerGender, roomNumber));
+        return new Booking(new AbstractRentable(isAvailable, roomNumber), new AbstractRenter(customerName, phoneNumber, customerGender, roomNumber));
     }
 }
 

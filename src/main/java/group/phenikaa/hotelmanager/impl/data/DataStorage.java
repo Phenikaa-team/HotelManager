@@ -1,12 +1,13 @@
 package group.phenikaa.hotelmanager.impl.data;
 
-import group.phenikaa.hotelmanager.api.manager.Booking;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import group.phenikaa.hotelmanager.api.info.Booking;
+
 import java.io.*;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DataStorage {
@@ -24,13 +25,18 @@ public class DataStorage {
     }
 
     public static List<Booking> loadData(String filename) {
-        try (Reader reader = new FileReader(filename)) {
+        File file = new File(filename);
+        if (!file.exists()) {
+            System.out.println("File not found: " + filename);
+            return new ArrayList<>();
+        }
+
+        try (Reader reader = new FileReader(file)) {
             Type roomListType = new TypeToken<List<Booking>>(){}.getType();
             return gson.fromJson(reader, roomListType);
         } catch (IOException e) {
             e.printStackTrace();
-            return null;
+            return new ArrayList<>();
         }
     }
 }
-

@@ -2,7 +2,9 @@ package group.phenikaa.hotelmanager.api.utility.interfaces;
 
 import group.phenikaa.hotelmanager.api.utility.enums.RoomStatus;
 
-public interface IRoom {
+public interface IRentable {
     RoomStatus roomStatus();
-    String roomNum();
+    int roomNumber();
+    void setRoomNumber(int roomNumber);
+    void setAvailable(RoomStatus isAvailable);
 }
