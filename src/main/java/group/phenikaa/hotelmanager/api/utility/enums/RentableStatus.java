@@ -1,6 +1,6 @@
 package group.phenikaa.hotelmanager.api.utility.enums;
 
-public enum RoomStatus {
+public enum RentableStatus {
     Empty,
     Full,
     Placed

@@ -4,8 +4,7 @@ import group.phenikaa.hotelmanager.api.info.api.AbstractRentable;
 import group.phenikaa.hotelmanager.api.info.api.AbstractRenter;
 import group.phenikaa.hotelmanager.api.info.Booking;
 import group.phenikaa.hotelmanager.api.manager.BookingManager;
-import group.phenikaa.hotelmanager.api.utility.enums.Gender;
-import group.phenikaa.hotelmanager.api.utility.enums.RoomStatus;
+import group.phenikaa.hotelmanager.api.utility.enums.RentableStatus;
 import group.phenikaa.hotelmanager.impl.data.DataStorage;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -20,12 +19,10 @@ public class HotelController {
     // AbstractRentable
     private final ListView<Booking> roomListView;
     private final TextField roomNumberField;
-    private final ComboBox<RoomStatus> availableEnumBox;
+    private final ComboBox<RentableStatus> availableEnumBox;
 
     // AbstractRenter
     private final TextField customerNameField;
-    private final TextField customerPhoneNumberField;
-    private final ComboBox<Gender> categoryEnumBox;
 
     private ObservableList<Booking> roomList;
     private BookingManager bookingManager;
@@ -33,10 +30,8 @@ public class HotelController {
     public HotelController(GridPane gridPane) {
         roomListView = (ListView<Booking>) gridPane.lookup("#roomListView");
         roomNumberField = (TextField) gridPane.lookup("#roomNumberField");
-        availableEnumBox = (ComboBox<RoomStatus>) gridPane.lookup("#availableEnumBox");
+        availableEnumBox = (ComboBox<RentableStatus>) gridPane.lookup("#availableEnumBox");
         customerNameField = (TextField) gridPane.lookup("#customerNameField");
-        customerPhoneNumberField = (TextField) gridPane.lookup("#customerPhoneNumberField");
-        categoryEnumBox = (ComboBox<Gender>) gridPane.lookup("#categoryEnumBox");
 
         var addRoomButton = (Button) gridPane.lookup("#addRoomButton");
         var deleteRoomButton = (Button) gridPane.lookup("#deleteRoomButton");
@@ -60,24 +55,15 @@ public class HotelController {
         roomListView.setItems(roomList);
 
         // Set items cho ComboBoxes
-        categoryEnumBox.setItems(FXCollections.observableArrayList(Gender.values()));
-        availableEnumBox.setItems(FXCollections.observableArrayList(RoomStatus.values()));
-
-        customerPhoneNumberField.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue.matches("\\d*")) {
-                customerPhoneNumberField.setText(oldValue);
-            }
-        });
+        availableEnumBox.setItems(FXCollections.observableArrayList(RentableStatus.values()));
 
         availableEnumBox.valueProperty().addListener((observable, oldValue, newValue) -> {
-            enableCustomerFields(newValue == RoomStatus.Empty);
+            enableCustomerFields(newValue == RentableStatus.Empty);
         });
     }
 
     private void enableCustomerFields(boolean enable) {
         customerNameField.setDisable(!enable);
-        customerPhoneNumberField.setDisable(!enable);
-        categoryEnumBox.setDisable(!enable);
     }
 
     private void addRoom() {
@@ -88,8 +74,8 @@ public class HotelController {
             showAlert(Alert.AlertType.ERROR, "Error", "Please fill in all fields.");
             return;
         }
-        var newRoom = new Booking(new AbstractRentable(isAvailable, roomNumber), null);
-        roomList.add(newRoom);
+        //var newRoom = new Booking(new AbstractRentable(isAvailable), null);
+        //roomList.add(newRoom);
         saveRooms();
     }
 
@@ -107,26 +93,17 @@ public class HotelController {
     private void bookRoom() {
         var roomNumber = roomNumberField.getText();
         var customerName = customerNameField.getText();
-        var phoneNumber = customerPhoneNumberField.getText();
-        var gender = categoryEnumBox.getValue();
 
-        if (roomNumber.isEmpty() || customerName.isEmpty() || phoneNumber.isEmpty() || gender == null) {
+
+        if (roomNumber.isEmpty() || customerName.isEmpty()) {
             showAlert(Alert.AlertType.ERROR, "Error", "Please fill in all fields.");
             return;
         }
 
         var room = bookingManager.findRoomByNumber(roomNumber);
-        if (room == null || room.customer() != null) {
+        if (room == null || room.renter() != null) {
             showAlert(Alert.AlertType.ERROR, "Error", "AbstractRentable not found or already booked.");
             return;
-        }
-
-        try {
-            long phone = Long.parseLong(phoneNumber);
-            bookingManager.bookRoom(roomNumber, new AbstractRenter(customerName, phone, gender, roomNumber));
-            showAlert(Alert.AlertType.INFORMATION, "Success", "AbstractRentable booked successfully.");
-        } catch (NumberFormatException e) {
-            showAlert(Alert.AlertType.ERROR, "Error", "Invalid phone number.");
         }
     }
 
@@ -144,7 +121,7 @@ public class HotelController {
             return;
         }
 
-        if (room.customer() != null) {
+        if (room.renter() != null) {
             bookingManager.checkoutRoom(roomNumber);
             showAlert(Alert.AlertType.INFORMATION, "Success", "Checked out successfully.");
         } else {
@@ -154,16 +131,12 @@ public class HotelController {
 
     private void updateRoomDetails(Booking booking) {
         if (booking != null) {
-            roomNumberField.setText(booking.abstractRentable().roomNumber());
-            availableEnumBox.setValue(booking.abstractRentable().roomStatus());
-            if (booking.customer() != null) {
-                customerNameField.setText(booking.customer().name());
-                customerPhoneNumberField.setText(String.valueOf(booking.customer().phoneNumber()));
-                categoryEnumBox.setValue(booking.customer().gender());
+            roomNumberField.setText(booking.rentable().generateRentalCode().toString());
+            availableEnumBox.setValue(booking.rentable().rentableStatus());
+            if (booking.renter() != null) {
+                customerNameField.setText(booking.renter().name());
             } else {
                 customerNameField.clear();
-                customerPhoneNumberField.clear();
-                categoryEnumBox.setValue(null);
             }
         }
     }

@@ -4,11 +4,11 @@ import group.phenikaa.hotelmanager.api.utility.interfaces.IRenter;
 
 public abstract class AbstractRenter implements IRenter {
     protected String name;
-    protected int roomNumber;
+    protected long rentalCode;
 
-    protected AbstractRenter(String name, int roomNumber) {
+    protected AbstractRenter(String name) {
         this.name = name;
-        this.roomNumber = roomNumber;
+        this.rentalCode = 0;
     }
 
     @Override
@@ -16,18 +16,11 @@ public abstract class AbstractRenter implements IRenter {
         return name;
     }
 
-    @Override
-    public int roomNumber() {
-        return roomNumber;
+    public void setRentalCode(long rentalCode) {
+        this.rentalCode = rentalCode;
     }
 
-    @Override
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @Override
-    public void setRoomNumber(int roomNumber) {
-        this.roomNumber = roomNumber;
+    public long getRentalCode() {
+        return rentalCode;
     }
 }

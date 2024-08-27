@@ -1,34 +1,65 @@
 package group.phenikaa.hotelmanager.api.info.api;
 
-import group.phenikaa.hotelmanager.api.utility.enums.RoomStatus;
+import group.phenikaa.hotelmanager.api.utility.enums.RentableStatus;
 import group.phenikaa.hotelmanager.api.utility.interfaces.IRentable;
 
+import java.util.ArrayList;
+import java.util.Random;
+
 public abstract class AbstractRentable implements IRentable {
-    protected RoomStatus isAvailable;
-    protected int roomNumber;
+    protected String name;
+    protected RentableStatus rentableStatus;
+    protected long price;
+    protected ArrayList<AbstractRenter> renterList;
 
-    protected AbstractRentable(RoomStatus isAvailable, int roomNumber) {
-        this.isAvailable = isAvailable;
-        this.roomNumber = roomNumber;
+    protected AbstractRentable(String name, RentableStatus rentableStatus, long price) {
+        this.name = name;
+        this.rentableStatus = rentableStatus;
+        this.price = price;
+        this.renterList = new ArrayList<>();
     }
 
     @Override
-    public RoomStatus roomStatus() {
-        return isAvailable;
+    public ArrayList<AbstractRenter> generateRentalCode() {
+        ArrayList<AbstractRenter> customerList = renterList;
+
+        // generating 7 digit random rental code
+        Random randomCodeGenerator = new Random();
+
+        for (AbstractRenter customer: customerList) {
+            StringBuilder randomCode = new StringBuilder();
+            for (int i = 0; i < 7; i++) {
+
+                int randomDigit = randomCodeGenerator.nextInt(10);
+                randomCode.append(randomDigit);
+            }
+
+            // at the end of the for loop we get 7 digit random code
+            long rentalCode = Long.parseLong(randomCode.toString());
+
+            customer.setRentalCode(rentalCode);
+        }
+
+        return customerList;
     }
 
     @Override
-    public int roomNumber() {
-        return roomNumber;
+    public String name() {
+        return name;
     }
 
     @Override
-    public void setRoomNumber(int roomNumber) {
-        this.roomNumber = roomNumber;
+    public long rentablePrice() {
+        return price;
     }
 
     @Override
-    public void setAvailable(RoomStatus isAvailable) {
-        this.isAvailable = isAvailable;
+    public RentableStatus rentableStatus() {
+        return rentableStatus;
+    }
+
+    @Override
+    public void setStatus(RentableStatus isAvailable) {
+        this.rentableStatus = isAvailable;
     }
 }

@@ -6,8 +6,15 @@ import com.google.gson.stream.JsonWriter;
 import group.phenikaa.hotelmanager.api.info.api.AbstractRentable;
 import group.phenikaa.hotelmanager.api.info.api.AbstractRenter;
 import group.phenikaa.hotelmanager.api.info.Booking;
-import group.phenikaa.hotelmanager.api.utility.enums.Gender;
-import group.phenikaa.hotelmanager.api.utility.enums.RoomStatus;
+import group.phenikaa.hotelmanager.api.info.impl.rentable.Apartment;
+import group.phenikaa.hotelmanager.api.info.impl.rentable.Houses;
+import group.phenikaa.hotelmanager.api.info.impl.rentable.Rooms;
+import group.phenikaa.hotelmanager.api.info.impl.renter.Family;
+import group.phenikaa.hotelmanager.api.info.impl.renter.Individual;
+import group.phenikaa.hotelmanager.api.info.impl.renter.LegalEntities;
+import group.phenikaa.hotelmanager.api.utility.enums.RentableStatus;
+import group.phenikaa.hotelmanager.api.utility.enums.RentableType;
+import group.phenikaa.hotelmanager.api.utility.enums.RenterType;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -16,45 +23,57 @@ public class BookingAdapter extends TypeAdapter<Booking> {
     @Override
     public void write(JsonWriter out, Booking room) throws IOException {
         out.beginObject();
-        out.name("available").value(room.abstractRentable().roomStatus().name());
-        out.name("roomNumber").value(room.abstractRentable().roomNumber());
-        out.name("customerName").value(room.customer().name());
-        out.name("phoneNumber").value(room.customer().phoneNumber());
-        out.name("customerGender").value(room.customer().gender().name());
-        out.name("sync-roomNumber").value(room.customer().roomNumber());
+        out.name("Status").value(room.rentable().rentableStatus().name());
+        out.name("RentableType").value(room.rentable().rentableStatus().name());
+        out.name("RentableID").value(room.renter().getRentalCode());
+        out.name("RenterType").value(room.renter().name());
         out.endObject();
     }
 
     @Override
     public Booking read(JsonReader in) throws IOException {
         in.beginObject();
-        var isAvailable = RoomStatus.Empty;
-        String roomNumber = null;
-        var customerName = "None";
-        var phoneNumber = 1234567890L;
-        var customerGender = Gender.Undetermined;
+        var status = RentableStatus.Empty;
+        var rentableType = RentableType.ROOMS;
+        var rentType = RenterType.FAMILY;
+        var price = 0;
 
         while (in.hasNext()) {
             switch (in.nextName()) {
-                case "available":
-                    isAvailable = RoomStatus.valueOf(in.nextString().toUpperCase(Locale.ROOT));
+                case "Status":
+                    status = RentableStatus.valueOf(in.nextString().toUpperCase(Locale.ROOT));
                     break;
-                case "roomNumber", "sync-roomNumber":
-                    roomNumber = in.nextString();
+                case "RentableType":
+                    rentableType = RentableType.valueOf(in.nextString().toUpperCase());
                     break;
-                case "customerName":
-                    customerName = in.nextString();
+                case "RentableID":
                     break;
-                case "phoneNumber":
-                    phoneNumber = in.nextLong();
-                    break;
-                case "customerGender":
-                    customerGender = Gender.valueOf(in.nextString().toUpperCase(Locale.ROOT));
+                case "RenterType":
+                    rentType = RenterType.valueOf(in.nextString().toUpperCase());
                     break;
             }
         }
         in.endObject();
-        return new Booking(new AbstractRentable(isAvailable, roomNumber), new AbstractRenter(customerName, phoneNumber, customerGender, roomNumber));
+        return new Booking(getRentable(rentableType, status, price), getRenter(rentType));
     }
+
+    private AbstractRentable getRentable(RentableType type, RentableStatus status, long price) {
+        return switch (type.getDataString()) {
+            case "Rooms" -> new Rooms(status, price);
+            case "Houses" -> new Houses(status, price);
+            case "Apartment" -> new Apartment(status, price);
+            default -> throw new IllegalArgumentException("Unknown rentable type: " + type);
+        };
+    }
+
+    private AbstractRenter getRenter(RenterType type) {
+        return switch (type.getDataString()) {
+            case "Individual" -> new Individual();
+            case "Family" -> new Family();
+            case "LegalEntities" -> new LegalEntities();
+            default -> throw new IllegalArgumentException("Unknown renter type: " + type);
+        };
+    }
+
 }
 

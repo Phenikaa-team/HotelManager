@@ -1,10 +1,11 @@
 package group.phenikaa.hotelmanager.api.info.impl.rentable;
 
 import group.phenikaa.hotelmanager.api.info.api.AbstractRentable;
-import group.phenikaa.hotelmanager.api.utility.enums.RoomStatus;
+import group.phenikaa.hotelmanager.api.utility.enums.RentableStatus;
 
 public class Houses extends AbstractRentable {
-    protected Houses(RoomStatus isAvailable, int roomNumber) {
-        super(isAvailable, roomNumber);
+
+    public Houses(RentableStatus isAvailable, long price) {
+        super("Houses", isAvailable, price);
     }
 }

@@ -2,7 +2,7 @@ package group.phenikaa.hotelmanager.api.manager;
 
 import group.phenikaa.hotelmanager.api.info.Booking;
 import group.phenikaa.hotelmanager.api.info.api.AbstractRenter;
-import group.phenikaa.hotelmanager.api.utility.enums.RoomStatus;
+import group.phenikaa.hotelmanager.api.utility.enums.RentableStatus;
 
 import java.util.List;
 
@@ -13,9 +13,9 @@ public class BookingManager {
         this.rooms = rooms;
     }
 
-    public Booking findRoomByNumber(String roomNumber) {
+    public Booking findRoomByNumber(String rentalCode) {
         for (Booking room : rooms) {
-            if (room.abstractRentable().roomNumber().equals(roomNumber)) {
+            if (room.rentable().generateRentalCode().equals(rentalCode)) {
                 return room;
             }
         }
@@ -25,18 +25,18 @@ public class BookingManager {
     // Đặt phòng
     public void bookRoom(String roomNumber, AbstractRenter customer) {
         Booking room = findRoomByNumber(roomNumber);
-        if (room != null && room.abstractRentable().isAvailable == RoomStatus.Empty) {
-            room.abstractRentable().setAvailable(RoomStatus.Empty);
-            room.abstractRentable().setCustomer(customer);
+        if (room != null && room.rentable().rentableStatus() == RentableStatus.Empty) {
+            room.rentable().setStatus(RentableStatus.Empty);
+            //room.abstractRentable().setCustomer(customer);
         }
     }
 
     // Trả phòng
     public boolean checkoutRoom(String roomNumber) {
         Booking room = findRoomByNumber(roomNumber);
-        if (room != null && room.abstractRentable().isAvailable == RoomStatus.Full) {
-            room.abstractRentable().setAvailable(RoomStatus.Empty);
-            room.abstractRentable().setCustomer(null);
+        if (room != null && room.rentable().rentableStatus() == RentableStatus.Full) {
+            room.rentable().setStatus(RentableStatus.Empty);
+            //room.abstractRentable().setCustomer(null);
             return true;
         }
         return false;
