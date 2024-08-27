@@ -23,11 +23,11 @@ public class HotelApplication extends Application {
         TextField customerNameField = new TextField();
         customerNameField.setId("customerNameField");
 
-        Button addRoomButton = new Button("Add AbstractRentable");
+        Button addRoomButton = new Button("Add Rentable");
         addRoomButton.setId("addRoomButton");
-        Button deleteRoomButton = new Button("Delete AbstractRentable");
+        Button deleteRoomButton = new Button("Delete Rentable");
         deleteRoomButton.setId("deleteRoomButton");
-        Button bookRoomButton = new Button("Book AbstractRentable");
+        Button bookRoomButton = new Button("Book Rentable");
         bookRoomButton.setId("bookRoomButton");
         Button checkOutButton = new Button("Check Out");
         checkOutButton.setId("checkOutButton");
@@ -39,19 +39,19 @@ public class HotelApplication extends Application {
         gridPane.setHgap(15);
         gridPane.setVgap(15);
 
-        gridPane.add(new Label("AbstractRentable Number:"), 1, 0);
+        gridPane.add(new Label("Rentable Number:"), 1, 0);
         gridPane.add(roomNumberField, 2, 0);
 
         gridPane.add(new Label("Available:"), 1, 1);
         gridPane.add(availableEnumBox, 2, 1);
 
-        gridPane.add(new Label("AbstractRenter Name:"), 1, 2);
+        gridPane.add(new Label("Renter Name:"), 1, 2);
         gridPane.add(customerNameField, 2, 2);
 
         HBox buttonBox = new HBox(10, addRoomButton, deleteRoomButton, bookRoomButton, checkOutButton);
         gridPane.add(buttonBox, 1, 3, 2, 1);
 
-        gridPane.add(new Label("AbstractRentable List"), 0, 0);
+        gridPane.add(new Label("Rentable List"), 0, 0);
         gridPane.add(roomListView, 0, 1, 1, 3);
 
         HotelController controller = new HotelController(gridPane);
