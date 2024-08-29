@@ -9,9 +9,9 @@ import group.phenikaa.hotelmanager.api.info.api.AbstractRenter;
 import java.util.function.Supplier;
 
 public enum RenterType implements IDataClass {
-    FAMILY(Family::new),
-    INDIVIDUAL(Individual::new),
-    LEGALENTITIES(LegalEntities::new);
+    Family(Family::new),
+    Individual(Individual::new),
+    LegalEntities(LegalEntities::new);
 
     private final Supplier<? extends AbstractRenter> renterClass;
 

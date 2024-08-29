@@ -24,7 +24,7 @@ public class BookingAdapter extends TypeAdapter<Booking> {
     public void write(JsonWriter out, Booking booking) throws IOException {
         var rentableName = booking.rentable().getClass().getSimpleName();
         var rentableType = RentableType.valueOf(rentableName.replaceAll("s$", ""));
-        var renterType = RenterType.valueOf(booking.renter().label().toUpperCase()).name();
+        var renterType = RenterType.valueOf(booking.renter().label()).name();
         out.beginObject();
         out.name("RentableType").value(rentableType.name());
         out.name("Status").value(booking.rentable().rentableStatus().name());
@@ -39,20 +39,20 @@ public class BookingAdapter extends TypeAdapter<Booking> {
         in.beginObject();
         var status = RentableStatus.Empty;
         var rentableType = RentableType.Room;
-        var rentType = RenterType.FAMILY;
+        var rentType = RenterType.Family;
         var rentId = 0L;
         var price = 0;
 
         while (in.hasNext()) {
             switch (in.nextName()) {
                 case "RentableType":
-                    rentableType = RentableType.valueOf(in.nextName());
+                    rentableType = RentableType.valueOf(in.nextString());
                     break;
                 case "Status":
                     status = RentableStatus.valueOf(in.nextString());
                     break;
                 case "RenterType":
-                    rentType = RenterType.valueOf(in.nextString().toUpperCase());
+                    rentType = RenterType.valueOf(in.nextString());
                     break;
                 case "RenterName":
                     getRenter(rentType).setName(in.nextString());
@@ -84,9 +84,9 @@ public class BookingAdapter extends TypeAdapter<Booking> {
     // Mapping RenterType to AbstractRenter - I can't find anything can replace this ( ˘︹˘ )
     public static AbstractRenter getRenter(RenterType type) {
         return switch (type) {
-            case INDIVIDUAL -> new Individual();
-            case FAMILY -> new Family();
-            case LEGALENTITIES -> new LegalEntities();
+            case Individual -> new Individual();
+            case Family -> new Family();
+            case LegalEntities -> new LegalEntities();
             case null, default -> throw new IllegalArgumentException("Unknown renter type: " + type);
         };
     }

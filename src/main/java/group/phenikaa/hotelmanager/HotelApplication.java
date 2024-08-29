@@ -27,13 +27,16 @@ public class HotelApplication extends Application {
     public void start(Stage stage) {
         // Scene 1
         var label = new Label("Welcome to Hotel Manager application");
-        var button = new Button("Go to control center.");
-        button.setOnAction(event -> {
+        var enter = new Button("Go to control center");
+        var exit = new Button("Turn off application");
+        enter.setOnAction(event -> {
             stage.setScene(scene2);
         });
-
+        exit.setOnAction(event -> {
+            stage.close();
+        });
         var layout1 = new VBox(10);
-        layout1.getChildren().addAll(label, button);
+        layout1.getChildren().addAll(label, enter, exit);
         layout1.setAlignment(Pos.CENTER);
         layout1.setPadding(new Insets(10));
         var scene1 = new Scene(layout1, 300, 200);
@@ -82,13 +85,14 @@ public class HotelApplication extends Application {
         gridPane.add(new Label("Renter Name:"), 1, 3);
         gridPane.add(customerNameField, 2, 3);
 
-        HBox buttonBox = new HBox(10, addRoomButton, deleteRoomButton, bookRoomButton, checkOutButton);
+        var buttonBox = new HBox(10, addRoomButton, deleteRoomButton, bookRoomButton, checkOutButton);
         gridPane.add(buttonBox, 1, 4, 2, 1);
 
         gridPane.add(new Label("Rentable List"), 0, 0);
         gridPane.add(roomListView, 0, 1, 1, 4);
 
-        HotelController controller = new HotelController(gridPane);
+        var controller = new HotelController();
+        controller.initializeButton(gridPane);
         controller.initialize();
 
         scene2 = new Scene(gridPane, 800, 400);

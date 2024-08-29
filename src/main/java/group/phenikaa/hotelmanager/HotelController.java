@@ -1,8 +1,6 @@
 package group.phenikaa.hotelmanager;
 
-import group.phenikaa.hotelmanager.api.info.api.AbstractRentable;
 import group.phenikaa.hotelmanager.api.info.Booking;
-import group.phenikaa.hotelmanager.api.info.api.AbstractRenter;
 import group.phenikaa.hotelmanager.api.manager.BookingManager;
 import group.phenikaa.hotelmanager.api.utility.enums.RentableStatus;
 import group.phenikaa.hotelmanager.api.utility.enums.RentableType;
@@ -22,17 +20,33 @@ import static group.phenikaa.hotelmanager.impl.data.BookingAdapter.getRenter;
 public class HotelController {
 
     // Rentable
-    private final ComboBox<RentableType> rentableEnumBox;
-    private final ListView<Booking> bookingListView;
-    private final ComboBox<RentableStatus> statusEnumBox;
+    private ComboBox<RentableType> rentableEnumBox;
+    private ListView<Booking> bookingListView;
+    private ComboBox<RentableStatus> statusEnumBox;
 
     // Renter
-    private final ComboBox<RenterType> renterEnumBox;
-    private final TextField customerNameField;
+    private ComboBox<RenterType> renterEnumBox;
+    private TextField customerNameField;
     private ObservableList<Booking> bookingList;
     private BookingManager bookingManager;
 
-    public HotelController(GridPane gridPane) {
+    public HotelController() {
+        HotelApplication.EVENT_BUS.register(this);
+    }
+
+    public void initialize() {
+        List<Booking> list = loadRentable();
+        bookingManager = new BookingManager(list);
+        bookingList = FXCollections.observableArrayList(list);
+        bookingListView.setItems(bookingList);
+
+        // Set items cho ComboBoxes
+        statusEnumBox.setItems(FXCollections.observableArrayList(RentableStatus.values()));
+
+        statusEnumBox.valueProperty().addListener((observable, oldValue, newValue) -> enableCustomerFields(newValue == RentableStatus.Empty));
+    }
+
+    public void initializeButton(GridPane gridPane) {
         rentableEnumBox = (ComboBox<RentableType>) gridPane.lookup("#rentableEnumBox");
         bookingListView = (ListView<Booking>) gridPane.lookup("#roomListView");
         statusEnumBox = (ComboBox<RentableStatus>) gridPane.lookup("#statusEnumBox");
@@ -50,20 +64,6 @@ public class HotelController {
         checkOutButton.setOnAction(event -> runWithExceptionHandling(this::checkOut));
 
         bookingListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> updateRoomDetails(newValue));
-    }
-
-    public void initialize() {
-        List<Booking> list = loadRentable();
-        bookingManager = new BookingManager(list);
-        bookingList = FXCollections.observableArrayList(list);
-        bookingListView.setItems(bookingList);
-
-        // Set items cho ComboBoxes
-        statusEnumBox.setItems(FXCollections.observableArrayList(RentableStatus.values()));
-
-        statusEnumBox.valueProperty().addListener((observable, oldValue, newValue) -> {
-            enableCustomerFields(newValue == RentableStatus.Empty);
-        });
     }
 
     private void runWithExceptionHandling(RunnableWithException runnable) {

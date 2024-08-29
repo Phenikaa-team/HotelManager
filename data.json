@@ -1,0 +1,44 @@
+[
+  {
+    "RentableType": "House",
+    "Status": "Full",
+    "RenterType": "Family",
+    "RentableID": 1
+  },
+  {
+    "RentableType": "House",
+    "Status": "Full",
+    "RenterType": "Family",
+    "RentableID": 3
+  },
+  {
+    "RentableType": "House",
+    "Status": "Full",
+    "RenterType": "Family",
+    "RentableID": 5
+  },
+  {
+    "RentableType": "House",
+    "Status": "Full",
+    "RenterType": "Individual",
+    "RentableID": 7
+  },
+  {
+    "RentableType": "House",
+    "Status": "Full",
+    "RenterType": "Individual",
+    "RentableID": 9
+  },
+  {
+    "RentableType": "House",
+    "Status": "Full",
+    "RenterType": "Family",
+    "RentableID": 15
+  },
+  {
+    "RentableType": "House",
+    "Status": "Full",
+    "RenterType": "Family",
+    "RentableID": 22
+  }
+]
