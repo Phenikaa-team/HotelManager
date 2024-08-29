@@ -6,11 +6,10 @@ import group.phenikaa.hotelmanager.api.info.impl.rentable.Houses;
 import group.phenikaa.hotelmanager.api.info.impl.rentable.Rooms;
 import group.phenikaa.hotelmanager.api.utility.interfaces.IDataClass;
 
-
 public enum RentableType implements IDataClass {
-    HOUSES(Houses.class),
-    ROOMS(Rooms.class),
-    APARTMENT(Apartment.class);
+    House(Houses.class),
+    Room(Rooms.class),
+    Apartment(Apartment.class);
 
     private final Class<? extends AbstractRentable> rentable;
 

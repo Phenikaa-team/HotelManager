@@ -11,21 +11,25 @@ import java.util.function.Supplier;
 public enum RenterType implements IDataClass {
     FAMILY(Family::new),
     INDIVIDUAL(Individual::new),
-    LEGAL_ENTITIES(LegalEntities::new);
+    LEGALENTITIES(LegalEntities::new);
 
-    private final Supplier<? extends AbstractRenter> renter;
+    private final Supplier<? extends AbstractRenter> renterClass;
 
-    RenterType(Supplier<? extends AbstractRenter> renter) {
-        this.renter = renter;
+    RenterType(Supplier<? extends AbstractRenter> renterClass) {
+        this.renterClass = renterClass;
+    }
+
+    public long getRenterId() {
+        return renterClass.get().getUniqueID();
     }
 
     @Override
     public Class<?> getDataClass() {
-        return renter.get().getClass();
+        return renterClass.getClass();
     }
 
     @Override
     public String getDataString() {
-        return renter.get().name();
+        return renterClass.getClass().getName();
     }
 }

@@ -2,6 +2,7 @@ package group.phenikaa.hotelmanager.impl.data;
 
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 import group.phenikaa.hotelmanager.api.info.api.AbstractRentable;
 import group.phenikaa.hotelmanager.api.info.api.AbstractRenter;
@@ -17,16 +18,19 @@ import group.phenikaa.hotelmanager.api.utility.enums.RentableType;
 import group.phenikaa.hotelmanager.api.utility.enums.RenterType;
 
 import java.io.IOException;
-import java.util.Locale;
 
 public class BookingAdapter extends TypeAdapter<Booking> {
     @Override
-    public void write(JsonWriter out, Booking room) throws IOException {
+    public void write(JsonWriter out, Booking booking) throws IOException {
+        var rentableName = booking.rentable().getClass().getSimpleName();
+        var rentableType = RentableType.valueOf(rentableName.replaceAll("s$", ""));
+        var renterType = RenterType.valueOf(booking.renter().label().toUpperCase()).name();
         out.beginObject();
-        out.name("Status").value(room.rentable().rentableStatus().name());
-        out.name("RentableType").value(room.rentable().rentableStatus().name());
-        out.name("RentableID").value(room.renter().getRentalCode());
-        out.name("RenterType").value(room.renter().name());
+        out.name("RentableType").value(rentableType.name());
+        out.name("Status").value(booking.rentable().rentableStatus().name());
+        out.name("RenterType").value(renterType);
+        out.name("RenterName").value(booking.renter().name());
+        out.name("RentableID").value(booking.renter().getUniqueID());
         out.endObject();
     }
 
@@ -34,46 +38,57 @@ public class BookingAdapter extends TypeAdapter<Booking> {
     public Booking read(JsonReader in) throws IOException {
         in.beginObject();
         var status = RentableStatus.Empty;
-        var rentableType = RentableType.ROOMS;
+        var rentableType = RentableType.Room;
         var rentType = RenterType.FAMILY;
+        var rentId = 0L;
         var price = 0;
 
         while (in.hasNext()) {
             switch (in.nextName()) {
-                case "Status":
-                    status = RentableStatus.valueOf(in.nextString().toUpperCase(Locale.ROOT));
-                    break;
                 case "RentableType":
-                    rentableType = RentableType.valueOf(in.nextString().toUpperCase());
+                    rentableType = RentableType.valueOf(in.nextName());
                     break;
-                case "RentableID":
+                case "Status":
+                    status = RentableStatus.valueOf(in.nextString());
                     break;
                 case "RenterType":
                     rentType = RenterType.valueOf(in.nextString().toUpperCase());
                     break;
+                case "RenterName":
+                    getRenter(rentType).setName(in.nextString());
+                    break;
+                case "RentableID":
+                    if (in.peek() == JsonToken.NUMBER) {
+                        rentId = in.nextLong();
+                    } else {
+                        rentId = Long.parseLong(in.nextString());
+                    }
+                    break;
             }
         }
         in.endObject();
-        return new Booking(getRentable(rentableType, status, price), getRenter(rentType));
+        return new Booking(getRentable(rentableType, status, price), getRenter(rentType), rentId);
+
     }
 
-    private AbstractRentable getRentable(RentableType type, RentableStatus status, long price) {
-        return switch (type.getDataString()) {
-            case "Rooms" -> new Rooms(status, price);
-            case "Houses" -> new Houses(status, price);
-            case "Apartment" -> new Apartment(status, price);
-            default -> throw new IllegalArgumentException("Unknown rentable type: " + type);
+    // Mapping RentableType to AbstractRentable - I can't find anything can replace this ( ˘︹˘ )
+    public static AbstractRentable getRentable(RentableType type, RentableStatus status, long price) {
+        return switch (type) {
+            case Room -> new Rooms(status, price);
+            case House -> new Houses(status, price);
+            case Apartment -> new Apartment(status, price);
+            case null, default -> throw new IllegalArgumentException("Unknown rentable type: " + type);
         };
     }
 
-    private AbstractRenter getRenter(RenterType type) {
-        return switch (type.getDataString()) {
-            case "Individual" -> new Individual();
-            case "Family" -> new Family();
-            case "LegalEntities" -> new LegalEntities();
-            default -> throw new IllegalArgumentException("Unknown renter type: " + type);
+    // Mapping RenterType to AbstractRenter - I can't find anything can replace this ( ˘︹˘ )
+    public static AbstractRenter getRenter(RenterType type) {
+        return switch (type) {
+            case INDIVIDUAL -> new Individual();
+            case FAMILY -> new Family();
+            case LEGALENTITIES -> new LegalEntities();
+            case null, default -> throw new IllegalArgumentException("Unknown renter type: " + type);
         };
     }
-
 }
 

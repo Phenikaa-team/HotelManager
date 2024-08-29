@@ -1,7 +1,6 @@
 package group.phenikaa.hotelmanager.api.manager;
 
 import group.phenikaa.hotelmanager.api.info.Booking;
-import group.phenikaa.hotelmanager.api.info.api.AbstractRenter;
 import group.phenikaa.hotelmanager.api.utility.enums.RentableStatus;
 
 import java.util.List;
@@ -13,9 +12,9 @@ public class BookingManager {
         this.rooms = rooms;
     }
 
-    public Booking findRoomByNumber(String rentalCode) {
+    public Booking findRoomByNumber(long rentalCode) {
         for (Booking room : rooms) {
-            if (room.rentable().generateRentalCode().equals(rentalCode)) {
+            if (room.rentable().getUniqueID() == rentalCode) {
                 return room;
             }
         }
@@ -23,7 +22,7 @@ public class BookingManager {
     }
 
     // Đặt phòng
-    public void bookRoom(String roomNumber, AbstractRenter customer) {
+    public void bookRoom(long roomNumber) {
         Booking room = findRoomByNumber(roomNumber);
         if (room != null && room.rentable().rentableStatus() == RentableStatus.Empty) {
             room.rentable().setStatus(RentableStatus.Empty);
@@ -32,7 +31,7 @@ public class BookingManager {
     }
 
     // Trả phòng
-    public boolean checkoutRoom(String roomNumber) {
+    public boolean checkoutRoom(long roomNumber) {
         Booking room = findRoomByNumber(roomNumber);
         if (room != null && room.rentable().rentableStatus() == RentableStatus.Full) {
             room.rentable().setStatus(RentableStatus.Empty);

@@ -15,6 +15,7 @@ repositories {
 
 ext {
     junitVersion = '5.10.0'
+    guavaVersion = '32.1.2-jre'
 }
 
 sourceCompatibility = '21'
@@ -44,6 +45,10 @@ dependencies {
     implementation('eu.hansolo:tilesfx:11.48') {
         exclude(group: 'org.openjfx')
     }
+    implementation("com.google.guava:guava:${guavaVersion}") {
+        exclude(group: 'com.google')
+    }
+
     implementation('com.google.code.gson:gson:2.10.1')
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
