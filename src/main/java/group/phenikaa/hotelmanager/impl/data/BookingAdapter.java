@@ -67,11 +67,9 @@ public class BookingAdapter extends TypeAdapter<Booking> {
                     break;
                 case "RenterName":
                     if (renter != null) {
-                        if (Objects.equals(name, "Null")) {
-                            name = in.nextString();
-                            renter.setName(name);
-                            System.out.println("RenterName: " + name);
-                        }
+                        name = in.nextString();
+                        renter.setName(name);
+                        System.out.println("RenterName: " + name);
                     }
                     break;
                 case "RentableID":
