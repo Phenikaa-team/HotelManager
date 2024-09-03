@@ -3,10 +3,10 @@ package group.phenikaa.hotelmanager.api.utility.interfaces;
 import group.phenikaa.hotelmanager.api.utility.enums.RentableStatus;
 
 public interface IRentable {
-    String name();
+    String getName();
 
-    RentableStatus rentableStatus();
+    RentableStatus getStatus();
 
-    long rentablePrice();
+    long getPrice();
     void setStatus(RentableStatus isAvailable);
 }

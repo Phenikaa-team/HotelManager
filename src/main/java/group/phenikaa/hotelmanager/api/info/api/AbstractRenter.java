@@ -8,17 +8,18 @@ public abstract class AbstractRenter implements IRenter, IUniqueIDProvider {
     protected String label, name;
     private final int uniqueID = UniqueIndexer.getInstance().generateID();
 
-    protected AbstractRenter(String label) {
+    protected AbstractRenter(String label, String name) {
         this.label = label;
+        this.name = name;
     }
 
     @Override
-    public String label() {
+    public String getLabel() {
         return label;
     }
 
     @Override
-    public String name() {
+    public String getName() {
         return name;
     }
 

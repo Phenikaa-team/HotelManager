@@ -6,8 +6,8 @@ plugins {
     id 'org.beryx.jlink' version '2.25.0'
 }
 
-group 'group.team.group19'
-version '1.0-SNAPSHOT'
+group 'group.phenikaa.hotelmanager'
+version '1.0'
 
 repositories {
     mavenCentral()
@@ -27,13 +27,20 @@ tasks.withType(JavaCompile) {
 
 application {
     mainModule = 'group.phenikaa.hotelmanager'
-    mainClass = 'group.phenikaa.hotelmanager.HelloApplication'
+    mainClass = 'group.phenikaa.hotelmanager.HotelApplication'
 }
 
 javafx {
     version = '21'
     modules = ['javafx.controls', 'javafx.fxml', 'javafx.web', 'javafx.swing']
 }
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
 
 dependencies {
     implementation('org.controlsfx:controlsfx:11.1.2')

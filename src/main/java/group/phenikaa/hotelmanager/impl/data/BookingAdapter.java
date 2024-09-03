@@ -18,19 +18,25 @@ import group.phenikaa.hotelmanager.api.utility.enums.RentableType;
 import group.phenikaa.hotelmanager.api.utility.enums.RenterType;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class BookingAdapter extends TypeAdapter<Booking> {
+
     @Override
     public void write(JsonWriter out, Booking booking) throws IOException {
         var rentableName = booking.rentable().getClass().getSimpleName();
         var rentableType = RentableType.valueOf(rentableName.replaceAll("s$", ""));
-        var renterType = RenterType.valueOf(booking.renter().label()).name();
+        var rentableStatus = booking.rentable().getStatus().name();
+        var renterType = RenterType.valueOf(booking.renter().getLabel().toUpperCase());
+        var renterName = renterType.getInstance().getName();
+        var rentableID = booking.rentable().getUniqueID();
+
         out.beginObject();
         out.name("RentableType").value(rentableType.name());
-        out.name("Status").value(booking.rentable().rentableStatus().name());
-        out.name("RenterType").value(renterType);
-        out.name("RenterName").value(booking.renter().name());
-        out.name("RentableID").value(booking.renter().getUniqueID());
+        out.name("RentableStatus").value(rentableStatus);
+        out.name("RenterType").value(renterType.name());
+        out.name("RenterName").value(renterName == null ? "Null" : renterName);
+        out.name("RentableID").value(rentableID);
         out.endObject();
     }
 
@@ -39,23 +45,34 @@ public class BookingAdapter extends TypeAdapter<Booking> {
         in.beginObject();
         var status = RentableStatus.Empty;
         var rentableType = RentableType.Room;
-        var rentType = RenterType.Family;
+        var rentType = RenterType.FAMILY;
         var rentId = 0L;
         var price = 0;
+        var name = "";
+        AbstractRenter renter = null;
 
         while (in.hasNext()) {
             switch (in.nextName()) {
                 case "RentableType":
                     rentableType = RentableType.valueOf(in.nextString());
+                    System.out.println("RentableType: " + rentableType);
                     break;
-                case "Status":
+                case "RentableStatus":
                     status = RentableStatus.valueOf(in.nextString());
                     break;
                 case "RenterType":
-                    rentType = RenterType.valueOf(in.nextString());
+                    rentType = RenterType.valueOf(in.nextString().toUpperCase());
+                    renter = getRenter(rentType, name);
+                    System.out.println("RenterType: " + rentType);
                     break;
                 case "RenterName":
-                    getRenter(rentType).setName(in.nextString());
+                    if (renter != null) {
+                        if (Objects.equals(name, "Null")) {
+                            name = in.nextString();
+                            renter.setName(name);
+                            System.out.println("RenterName: " + name);
+                        }
+                    }
                     break;
                 case "RentableID":
                     if (in.peek() == JsonToken.NUMBER) {
@@ -67,7 +84,7 @@ public class BookingAdapter extends TypeAdapter<Booking> {
             }
         }
         in.endObject();
-        return new Booking(getRentable(rentableType, status, price), getRenter(rentType), rentId);
+        return new Booking(getRentable(rentableType, status, price), renter, rentId);
 
     }
 
@@ -82,11 +99,11 @@ public class BookingAdapter extends TypeAdapter<Booking> {
     }
 
     // Mapping RenterType to AbstractRenter - I can't find anything can replace this ( ˘︹˘ )
-    public static AbstractRenter getRenter(RenterType type) {
+    public static AbstractRenter getRenter(RenterType type, String name) {
         return switch (type) {
-            case Individual -> new Individual();
-            case Family -> new Family();
-            case LegalEntities -> new LegalEntities();
+            case INDIVIDUAL -> new Individual(name);
+            case FAMILY -> new Family(name);
+            case LEGALENTITIES -> new LegalEntities(name);
             case null, default -> throw new IllegalArgumentException("Unknown renter type: " + type);
         };
     }

@@ -1,44 +1,51 @@
 [
   {
-    "RentableType": "House",
-    "Status": "Full",
-    "RenterType": "Family",
+    "RentableType": "Room",
+    "RentableStatus": "Full",
+    "RenterType": "FAMILY",
+    "RenterName": "Null",
     "RentableID": 1
   },
   {
-    "RentableType": "House",
-    "Status": "Full",
-    "RenterType": "Family",
+    "RentableType": "Room",
+    "RentableStatus": "Full",
+    "RenterType": "FAMILY",
+    "RenterName": "Null",
     "RentableID": 3
   },
   {
-    "RentableType": "House",
-    "Status": "Full",
-    "RenterType": "Family",
+    "RentableType": "Room",
+    "RentableStatus": "Full",
+    "RenterType": "FAMILY",
+    "RenterName": "Null",
     "RentableID": 5
   },
   {
-    "RentableType": "House",
-    "Status": "Full",
-    "RenterType": "Individual",
+    "RentableType": "Room",
+    "RentableStatus": "Full",
+    "RenterType": "FAMILY",
+    "RenterName": "Null",
     "RentableID": 7
   },
   {
     "RentableType": "House",
-    "Status": "Full",
-    "RenterType": "Individual",
-    "RentableID": 9
+    "RentableStatus": "Empty",
+    "RenterType": "INDIVIDUAL",
+    "RenterName": "Null",
+    "RentableID": 10
   },
   {
     "RentableType": "House",
-    "Status": "Full",
-    "RenterType": "Family",
-    "RentableID": 15
+    "RentableStatus": "Empty",
+    "RenterType": "INDIVIDUAL",
+    "RenterName": "Null",
+    "RentableID": 12
   },
   {
     "RentableType": "House",
-    "Status": "Full",
-    "RenterType": "Family",
-    "RentableID": 22
+    "RentableStatus": "Empty",
+    "RenterType": "INDIVIDUAL",
+    "RenterName": "Null",
+    "RentableID": 14
   }
 ]

@@ -23,17 +23,17 @@ public abstract class AbstractRentable implements IRentable, IUniqueIDProvider {
     }
 
     @Override
-    public String name() {
+    public String getName() {
         return name;
     }
 
     @Override
-    public long rentablePrice() {
+    public long getPrice() {
         return price;
     }
 
     @Override
-    public RentableStatus rentableStatus() {
+    public RentableStatus getStatus() {
         return rentableStatus;
     }
 

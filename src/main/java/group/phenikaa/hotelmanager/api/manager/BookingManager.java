@@ -24,7 +24,7 @@ public class BookingManager {
     // Đặt phòng
     public void bookRoom(long roomNumber) {
         Booking room = findRoomByNumber(roomNumber);
-        if (room != null && room.rentable().rentableStatus() == RentableStatus.Empty) {
+        if (room != null && room.rentable().getStatus() == RentableStatus.Empty) {
             room.rentable().setStatus(RentableStatus.Empty);
             //room.abstractRentable().setCustomer(customer);
         }
@@ -33,7 +33,7 @@ public class BookingManager {
     // Trả phòng
     public boolean checkoutRoom(long roomNumber) {
         Booking room = findRoomByNumber(roomNumber);
-        if (room != null && room.rentable().rentableStatus() == RentableStatus.Full) {
+        if (room != null && room.rentable().getStatus() == RentableStatus.Full) {
             room.rentable().setStatus(RentableStatus.Empty);
             //room.abstractRentable().setCustomer(null);
             return true;

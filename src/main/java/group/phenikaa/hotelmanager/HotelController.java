@@ -88,7 +88,7 @@ public class HotelController {
         }
 
         var rentable = getRentable(rentableEnumBox.getSelectionModel().getSelectedItem(), statusEnumBox.getSelectionModel().getSelectedItem(), 100);
-        var renter = getRenter(renterEnumBox.getSelectionModel().getSelectedItem());
+        var renter = getRenter(renterEnumBox.getSelectionModel().getSelectedItem(), customerNameField.getText());
         var newRoom = new Booking(rentable, renter, renterId);
         bookingList.add(newRoom);
         saveRentable();
@@ -139,9 +139,9 @@ public class HotelController {
 
     private void updateRoomDetails(Booking booking) {
         if (booking != null) {
-            statusEnumBox.setValue(booking.rentable().rentableStatus());
+            statusEnumBox.setValue(booking.rentable().getStatus());
             if (booking.renter() != null) {
-                customerNameField.setText(booking.renter().label());
+                customerNameField.setText(booking.renter().getName());
             } else {
                 customerNameField.clear();
             }
@@ -157,7 +157,7 @@ public class HotelController {
     }
 
     private void saveRentable() {
-        DataStorage.saveData(new ArrayList<>(bookingList), "data.json");
+        DataStorage.saveData(bookingList, "data.json");
     }
 
     private void showAlert(Alert.AlertType type, String title, String message) {
