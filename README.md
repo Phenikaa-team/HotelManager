@@ -5,7 +5,8 @@
 
 <p align="center">
     <a href="https://github.com/KuroHere">
-        <img src="https://i.imgur.com/dTlNrfl.png">
+        <img src="https://i.imgur.com/ipWhXie.png">
+        <img src="https://i.imgur.com/83sQnk5.png">
     </a>
 <p align="center">
 
