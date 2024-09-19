@@ -3,9 +3,9 @@ package group.phenikaa.hotelmanager.api.info.impl.rentable;
 import group.phenikaa.hotelmanager.api.info.api.AbstractRentable;
 import group.phenikaa.hotelmanager.api.utility.enums.RentableStatus;
 
-public class Houses extends AbstractRentable {
+public class Family extends AbstractRentable {
 
-    public Houses(RentableStatus isAvailable, long price) {
-        super("Houses", isAvailable, price);
+    public Family(RentableStatus isAvailable, long price, String id) {
+        super("Family", isAvailable, price, id);
     }
 }

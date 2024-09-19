@@ -1,7 +1,7 @@
 package group.phenikaa.hotelmanager.api.utility.interfaces;
 
 public interface IRenter {
-    String getLabel(); // Name of type
-    String getName(); // Renter name
+    String getLabel();
+    String getName();
     void setName(String name);
 }

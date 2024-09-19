@@ -1,151 +1,136 @@
 package group.phenikaa.hotelmanager;
 
 import group.phenikaa.hotelmanager.api.info.Booking;
-import group.phenikaa.hotelmanager.api.manager.BookingManager;
 import group.phenikaa.hotelmanager.api.utility.enums.RentableStatus;
 import group.phenikaa.hotelmanager.api.utility.enums.RentableType;
-import group.phenikaa.hotelmanager.api.utility.enums.RenterType;
 import group.phenikaa.hotelmanager.impl.data.DataStorage;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.ResourceBundle;
 
-import static group.phenikaa.hotelmanager.impl.data.BookingAdapter.getRentable;
-import static group.phenikaa.hotelmanager.impl.data.BookingAdapter.getRenter;
+public class HotelController implements Initializable {
 
-public class HotelController {
+    // ListView for bookings
+    @FXML private ListView<Booking> bookingListView;
 
-    // Rentable
-    private ComboBox<RentableType> rentableEnumBox;
-    private ListView<Booking> bookingListView;
-    private ComboBox<RentableStatus> statusEnumBox;
+    // Buttons
+    @FXML private Button info_btn;
+    @FXML private Button dashboard_btn;
+    @FXML private Button room_details_btn;
+    @FXML private Button rooms_btn;
 
-    // Renter
-    private ComboBox<RenterType> renterEnumBox;
-    private TextField customerNameField;
+    // Panels
+    private List<AnchorPane> panels;
+
+    @FXML private AnchorPane basic_info_panel;
+    @FXML private AnchorPane dash_board_panel;
+    @FXML private AnchorPane room_panel;
+
+    //Basic
+    @FXML private TextField hotel_name_field;
+    @FXML private ComboBox<RentableType> hotel_category;
+    @FXML private ComboBox<RentableStatus> hotel_status;
+    @FXML private TextField room_number_field;
+    @FXML private Button add_btn;
+    @FXML private Button find_btn;
+
+    // Window control buttons
+    @FXML private Button exit_btn;
+    @FXML private Button minimize_btn;
+
+    // ObservableList for bookings
     private ObservableList<Booking> bookingList;
-    private BookingManager bookingManager;
 
     public HotelController() {
         HotelApplication.EVENT_BUS.register(this);
     }
 
-    public void initialize() {
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        panels = Arrays.asList(basic_info_panel, dash_board_panel, room_panel);
+
         List<Booking> list = loadRentable();
-        bookingManager = new BookingManager(list);
         bookingList = FXCollections.observableArrayList(list);
-        bookingListView.setItems(bookingList);
-
-        // Set items cho ComboBoxes
-        statusEnumBox.setItems(FXCollections.observableArrayList(RentableStatus.values()));
-
-        statusEnumBox.valueProperty().addListener((observable, oldValue, newValue) -> enableCustomerFields(newValue == RentableStatus.Empty));
-    }
-
-    public void initializeButton(GridPane gridPane) {
-        rentableEnumBox = (ComboBox<RentableType>) gridPane.lookup("#rentableEnumBox");
-        bookingListView = (ListView<Booking>) gridPane.lookup("#roomListView");
-        statusEnumBox = (ComboBox<RentableStatus>) gridPane.lookup("#statusEnumBox");
-        renterEnumBox = (ComboBox<RenterType>) gridPane.lookup("#renterEnumBox");
-        customerNameField = (TextField) gridPane.lookup("#customerNameField");
-
-        var addRoomButton = (Button) gridPane.lookup("#addRoomButton");
-        var deleteRoomButton = (Button) gridPane.lookup("#deleteRoomButton");
-        var bookRoomButton = (Button) gridPane.lookup("#bookRoomButton");
-        var checkOutButton = (Button) gridPane.lookup("#checkOutButton");
-
-        addRoomButton.setOnAction(event -> runWithExceptionHandling(this::addRentable));
-        deleteRoomButton.setOnAction(event -> runWithExceptionHandling(this::deleteRoom));
-        bookRoomButton.setOnAction(event -> runWithExceptionHandling(this::bookRentable));
-        checkOutButton.setOnAction(event -> runWithExceptionHandling(this::checkOut));
-
-        bookingListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> updateRoomDetails(newValue));
-    }
-
-    private void runWithExceptionHandling(RunnableWithException runnable) {
-        try {
-            runnable.run();
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private void enableCustomerFields(boolean enable) {
-        customerNameField.setDisable(!enable);
-    }
-
-    private void addRentable() {
-        var renterId = renterEnumBox.getSelectionModel().getSelectedItem().getRenterId();
-        var rentableType = rentableEnumBox.getSelectionModel().getSelectedItem();
-
-        if (rentableType == null) {
-            showAlert(Alert.AlertType.ERROR, "Error", "Please fill in all fields.");
-            return;
+        if (bookingListView != null) {
+            bookingListView.setItems(bookingList);
         }
 
-        var rentable = getRentable(rentableEnumBox.getSelectionModel().getSelectedItem(), statusEnumBox.getSelectionModel().getSelectedItem(), 100);
-        var renter = getRenter(renterEnumBox.getSelectionModel().getSelectedItem(), customerNameField.getText());
-        var newRoom = new Booking(rentable, renter, renterId);
-        bookingList.add(newRoom);
+        hotel_category.setItems(FXCollections.observableArrayList(RentableType.values()));
+        hotel_status.setItems(FXCollections.observableArrayList(RentableStatus.values()));
+    }
+
+    @FXML
+    void onExit() {
         saveRentable();
+        System.exit(0);
     }
 
-    private void deleteRoom() {
-        var selectedRentable = bookingListView.getSelectionModel().getSelectedItem();
-        if (selectedRentable != null) {
-            bookingList.remove(selectedRentable);
-            saveRentable();
-            bookingListView.refresh();
-        } else {
-            showAlert(Alert.AlertType.WARNING, "Warning", "No Rentable selected.");
-        }
+    @FXML
+    void onMinimize() {
+        Stage stage = (Stage) minimize_btn.getScene().getWindow();
+        stage.setIconified(true);
     }
 
-    private void bookRentable() {
-        var renterId = renterEnumBox.getSelectionModel().getSelectedItem().getRenterId();
-        var customerName = customerNameField.getText();
-
-        if (customerName.isEmpty()) {
-            showAlert(Alert.AlertType.ERROR, "Error", "Please fill in all fields.");
-            return;
-        }
-
-        var room = bookingManager.findRoomByNumber(renterId);
-        if (room == null || room.renter() != null) {
-            showAlert(Alert.AlertType.ERROR, "Error", "Rentable not found or already booked.");
-        }
+    @FXML
+    void onBasic() {
+        showOnlyPanel(basic_info_panel);
     }
 
-    private void checkOut() {
-        var renterId = renterEnumBox.getSelectionModel().getSelectedItem().getRenterId();
+    @FXML
+    void onDashBoard() {
+        showOnlyPanel(dash_board_panel);
+    }
 
-        var room = bookingManager.findRoomByNumber(renterId);
-        if (room == null) {
-            showAlert(Alert.AlertType.ERROR, "Error", "Rentable not found.");
-            return;
-        }
+    @FXML
+    void onRoom() {
+        showOnlyPanel(room_panel);
+    }
 
-        if (room.renter() != null) {
-            bookingManager.checkoutRoom(renterId);
-            showAlert(Alert.AlertType.INFORMATION, "Success", "Checked out successfully.");
-        } else {
-            showAlert(Alert.AlertType.ERROR, "Error", "No customer information for this Rentable.");
+    private void showOnlyPanel(AnchorPane visiblePanel) {
+        for (AnchorPane panel : panels) {
+            panel.setVisible(panel == visiblePanel);
         }
     }
 
-    private void updateRoomDetails(Booking booking) {
+    @FXML
+    private void checkIn() {
+        Booking booking = findBookingByRoom();
         if (booking != null) {
-            statusEnumBox.setValue(booking.rentable().getStatus());
-            if (booking.renter() != null) {
-                customerNameField.setText(booking.renter().getName());
-            } else {
-                customerNameField.clear();
+            showAlert(Alert.AlertType.ERROR, "Room Occupied", "This room is already occupied.");
+        } else {
+            bookingList.add(new Booking(null, null));
+            showAlert(Alert.AlertType.INFORMATION, "Check-in Successful", "Guest has been checked in.");
+        }
+    }
+
+    @FXML
+    private void checkOut() {
+        Booking booking = findBookingByRoom();
+        if (booking != null) {
+            bookingList.remove(booking);
+            showAlert(Alert.AlertType.INFORMATION, "Check-out Successful", "Guest has been checked out.");
+        } else {
+            showAlert(Alert.AlertType.ERROR, "Room Vacant", "This room is already vacant.");
+        }
+    }
+
+    private Booking findBookingByRoom() {
+        for (Booking booking : bookingList) {
+            if (booking.rentable().getID().equals(room_number_field.getText())) {
+                return booking;
             }
         }
+        return null;
     }
 
     private List<Booking> loadRentable() {
@@ -166,10 +151,5 @@ public class HotelController {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
-    }
-
-    @FunctionalInterface
-    private interface RunnableWithException {
-        void run() throws InstantiationException, IllegalAccessException;
     }
 }

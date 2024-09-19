@@ -7,18 +7,16 @@ import com.google.gson.stream.JsonWriter;
 import group.phenikaa.hotelmanager.api.info.api.AbstractRentable;
 import group.phenikaa.hotelmanager.api.info.api.AbstractRenter;
 import group.phenikaa.hotelmanager.api.info.Booking;
-import group.phenikaa.hotelmanager.api.info.impl.rentable.Apartment;
-import group.phenikaa.hotelmanager.api.info.impl.rentable.Houses;
-import group.phenikaa.hotelmanager.api.info.impl.rentable.Rooms;
-import group.phenikaa.hotelmanager.api.info.impl.renter.Family;
+import group.phenikaa.hotelmanager.api.info.impl.rentable.*;
+import group.phenikaa.hotelmanager.api.info.impl.rentable.Double;
+import group.phenikaa.hotelmanager.api.info.impl.renter.Household;
 import group.phenikaa.hotelmanager.api.info.impl.renter.Individual;
-import group.phenikaa.hotelmanager.api.info.impl.renter.LegalEntities;
+import group.phenikaa.hotelmanager.api.info.impl.renter.CorporateClient;
 import group.phenikaa.hotelmanager.api.utility.enums.RentableStatus;
 import group.phenikaa.hotelmanager.api.utility.enums.RentableType;
 import group.phenikaa.hotelmanager.api.utility.enums.RenterType;
 
 import java.io.IOException;
-import java.util.Objects;
 
 public class BookingAdapter extends TypeAdapter<Booking> {
 
@@ -28,24 +26,24 @@ public class BookingAdapter extends TypeAdapter<Booking> {
         var rentableType = RentableType.valueOf(rentableName.replaceAll("s$", ""));
         var rentableStatus = booking.rentable().getStatus().name();
         var renterType = RenterType.valueOf(booking.renter().getLabel().toUpperCase());
-        var renterName = renterType.getInstance().getName();
-        var rentableID = booking.rentable().getUniqueID();
+        var renterName = renterType.name();
+       // var rentableID = booking.rentable().getUniqueID();
 
         out.beginObject();
         out.name("RentableType").value(rentableType.name());
         out.name("RentableStatus").value(rentableStatus);
         out.name("RenterType").value(renterType.name());
-        out.name("RenterName").value(renterName == null ? "Null" : renterName);
-        out.name("RentableID").value(rentableID);
+        out.name("RenterName").value(renterName);
+        //out.name("RentableID").value(rentableID);
         out.endObject();
     }
 
     @Override
     public Booking read(JsonReader in) throws IOException {
         in.beginObject();
-        var status = RentableStatus.Empty;
-        var rentableType = RentableType.Room;
-        var rentType = RenterType.FAMILY;
+        var status = RentableStatus.Available;
+        var rentableType = RentableType.Single;
+        var rentType = RenterType.Household;
         var rentId = 0L;
         var price = 0;
         var name = "";
@@ -82,26 +80,26 @@ public class BookingAdapter extends TypeAdapter<Booking> {
             }
         }
         in.endObject();
-        return new Booking(getRentable(rentableType, status, price), renter, rentId);
-
+        return new Booking(getRentable(rentableType, status, price, String.valueOf(rentId)), renter);
     }
 
-    // Mapping RentableType to AbstractRentable - I can't find anything can replace this ( ˘︹˘ )
-    public static AbstractRentable getRentable(RentableType type, RentableStatus status, long price) {
+    public static AbstractRentable getRentable(RentableType type, RentableStatus status, long price, String id) {
         return switch (type) {
-            case Room -> new Rooms(status, price);
-            case House -> new Houses(status, price);
-            case Apartment -> new Apartment(status, price);
+            case Double -> new Double(status, price, id);
+            case Suite -> new Suite(status, price, id);
+            case Single -> new Single(status, price, id);
+            case Deluxe -> new Deluxe(status, price, id);
+            case Family -> new Family(status, price, id);
+            case PresidentialSuite -> new PresidentialSuite(status, price, id);
             case null, default -> throw new IllegalArgumentException("Unknown rentable type: " + type);
         };
     }
 
-    // Mapping RenterType to AbstractRenter - I can't find anything can replace this ( ˘︹˘ )
     public static AbstractRenter getRenter(RenterType type, String name) {
         return switch (type) {
-            case INDIVIDUAL -> new Individual(name);
-            case FAMILY -> new Family(name);
-            case LEGALENTITIES -> new LegalEntities(name);
+            case Individual -> new Individual(name);
+            case Household -> new Household(name);
+            case CorporateClient -> new CorporateClient(name);
             case null, default -> throw new IllegalArgumentException("Unknown renter type: " + type);
         };
     }

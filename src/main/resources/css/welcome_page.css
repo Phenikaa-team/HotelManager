@@ -1,0 +1,50 @@
+#root {
+    -fx-background-color: #f7f8fa;
+    -fx-background-radius: 15px;
+}
+
+#enter_btn {
+    -fx-background-color: rgba(45, 182, 255, 0.75);
+    -fx-background-radius: 5px;
+    -fx-text-fill: white;
+    -fx-font-size: 16;
+    -fx-font-weight: bold;
+}
+
+#top_panel {
+    -fx-background-color: white;
+    -fx-background-radius: 15px 15px 0px 0px;
+    -fx-border-color: rgba(222, 222, 222, 0.75);
+    -fx-border-width: 0px 0px 1px 0px;
+    -fx-border-radius: 15px 15px 0px 0px;
+}
+
+#exit_btn {
+    -fx-background-color: #ff5f57;
+    -fx-background-radius: 50%;
+    -fx-min-width: 15px;
+    -fx-min-height: 15px;
+    -fx-max-width: 15px;
+    -fx-max-height: 15px;
+    -fx-cursor: hand;
+}
+
+#exit_btn:hover {
+    -fx-background-color: #ff8b87;
+    -fx-effect: dropshadow(gaussian, rgba(255, 0, 0, 0.7), 3, 0.3, 0, 0);
+}
+
+#minimize_btn {
+    -fx-background-color: #ffbd2e;
+    -fx-background-radius: 50%;
+    -fx-min-width: 15px;
+    -fx-min-height: 15px;
+    -fx-max-width: 15px;
+    -fx-max-height: 15px;
+    -fx-cursor: hand;
+}
+
+#minimize_btn:hover {
+    -fx-background-color: #ffda7b;
+    -fx-effect: dropshadow(gaussian, rgba(255, 200, 0, 0.7), 3, 0.3, 0, 0);
+}

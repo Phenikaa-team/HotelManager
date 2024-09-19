@@ -2,9 +2,10 @@ package group.phenikaa.hotelmanager.api.info.impl.renter;
 
 import group.phenikaa.hotelmanager.api.info.api.AbstractRenter;
 
-public class Individual extends AbstractRenter {
+public class Household extends AbstractRenter {
 
-    public Individual(String name) {
-        super("Individual", name);
+    public Household(String name) {
+        super("Household", name);
     }
+
 }

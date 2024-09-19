@@ -1,104 +1,65 @@
 package group.phenikaa.hotelmanager;
 
 import com.google.common.eventbus.EventBus;
-import group.phenikaa.hotelmanager.api.info.Booking;
-import group.phenikaa.hotelmanager.api.utility.enums.RentableStatus;
-import group.phenikaa.hotelmanager.api.utility.enums.RentableType;
-import group.phenikaa.hotelmanager.api.utility.enums.RenterType;
 import javafx.application.Application;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+
+import java.io.IOException;
+import java.util.Objects;
 
 public class HotelApplication extends Application {
     public static EventBus EVENT_BUS = new EventBus();
-    private Scene scene2;
-
-    public void register(Control control, String name) {
-        control.setId(name);
-    }
+    private static Stage primaryStage;
+    private static double xOffset = 0;
+    private static double yOffset = 0;
 
     @Override
-    public void start(Stage stage) {
-        // Scene 1
-        var label = new Label("Welcome to Hotel Manager application");
-        var enter = new Button("Go to control center");
-        var exit = new Button("Turn off application");
-        enter.setOnAction(event -> {
-            stage.setScene(scene2);
-        });
-        exit.setOnAction(event -> {
-            stage.close();
-        });
-        var layout1 = new VBox(10);
-        layout1.getChildren().addAll(label, enter, exit);
-        layout1.setAlignment(Pos.CENTER);
-        layout1.setPadding(new Insets(10));
-        var scene1 = new Scene(layout1, 300, 200);
+    public void start(Stage stage) throws IOException {
+        primaryStage = stage;
+        primaryStage.getIcons().add(new Image(Objects.requireNonNull(HotelApplication.class.getResourceAsStream("/assets/textures/logo.png"))));
 
-        // Scene 2
-        ListView<Booking> roomListView = new ListView<>();
-        register(roomListView, "roomListView");
+        var scene1 = loadScene("start-view.fxml", 335, 215);
+        var scene2 = loadScene("menu-view.fxml", 800, 450);
 
-        ComboBox<RentableType> rentableEnumBox = new ComboBox<>();
-        register(rentableEnumBox, "rentableEnumBox");
+        dragScene(scene1);
+        dragScene(scene2);
 
-        ComboBox<RentableStatus> statusEnumBox = new ComboBox<>();
-        register(statusEnumBox, "statusEnumBox");
-
-        ComboBox<RenterType> renterEnumBox = new ComboBox<>();
-        register(renterEnumBox, "renterEnumBox");
-
-        TextField customerNameField = new TextField();
-        register(customerNameField, "customerNameField");
-
-        var addRoomButton = new Button("Add Rentable");
-        register(addRoomButton, "addRoomButton");
-        var deleteRoomButton = new Button("Delete Rentable");
-        register(deleteRoomButton, "deleteRoomButton");
-        var bookRoomButton = new Button("Book Rentable");
-        register(bookRoomButton, "bookRoomButton");
-        var checkOutButton = new Button("Check Out");
-        register(checkOutButton, "checkOutButton");
-
-        rentableEnumBox.getItems().addAll(RentableType.values());
-        statusEnumBox.getItems().addAll(RentableStatus.values());
-        renterEnumBox.getItems().addAll(RenterType.values());
-
-        var gridPane = new GridPane(15, 15);
-        gridPane.setPadding(new Insets(20));
-
-        gridPane.add(new Label("Rentable Type:"), 1, 0);
-        gridPane.add(rentableEnumBox, 2, 0);
-
-        gridPane.add(new Label("Rentable Status:"), 1, 1);
-        gridPane.add(statusEnumBox, 2, 1);
-
-        gridPane.add(new Label("Renter Type:"), 1, 2);
-        gridPane.add(renterEnumBox, 2, 2);
-
-        gridPane.add(new Label("Renter Name:"), 1, 3);
-        gridPane.add(customerNameField, 2, 3);
-
-        var buttonBox = new HBox(10, addRoomButton, deleteRoomButton, bookRoomButton, checkOutButton);
-        gridPane.add(buttonBox, 1, 4, 2, 1);
-
-        gridPane.add(new Label("Rentable List"), 0, 0);
-        gridPane.add(roomListView, 0, 1, 1, 4);
-
-        var controller = new HotelController();
-        controller.initializeButton(gridPane);
-        controller.initialize();
-
-        scene2 = new Scene(gridPane, 800, 400);
+        stage.initStyle(StageStyle.TRANSPARENT);
         stage.setTitle("Hotel Manager");
         stage.setScene(scene1);
         stage.show();
+    }
+
+    private Scene loadScene(String fxmlPath, int width, int height) throws IOException {
+        var fxmlLoader = new FXMLLoader(HotelApplication.class.getResource(fxmlPath));
+        var scene = new Scene(fxmlLoader.load(), width, height);
+        scene.setFill(Color.TRANSPARENT);
+        return scene;
+    }
+
+    private static void dragScene(Scene scene) {
+        scene.setOnMousePressed(event -> {
+            xOffset = event.getScreenX() - primaryStage.getX();
+            yOffset = event.getScreenY() - primaryStage.getY();
+        });
+
+        scene.setOnMouseDragged(event -> {
+            primaryStage.setX(event.getScreenX() - xOffset);
+            primaryStage.setY(event.getScreenY() - yOffset);
+        });
+    }
+
+    public static void switchToMenuScene() throws IOException {
+        var fxmlLoader = new FXMLLoader(HotelApplication.class.getResource("menu-view.fxml"));
+        var scene = new Scene(fxmlLoader.load(), 800, 450);
+        dragScene(scene);
+        scene.setFill(Color.TRANSPARENT);
+        primaryStage.setScene(scene);
     }
 
     public static void main(String[] args) {

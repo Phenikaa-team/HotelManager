@@ -1,12 +1,9 @@
 package group.phenikaa.hotelmanager.api.info.api;
 
 import group.phenikaa.hotelmanager.api.utility.interfaces.IRenter;
-import group.phenikaa.hotelmanager.api.utility.interfaces.IUniqueIDProvider;
-import group.phenikaa.hotelmanager.impl.UniqueIndexer;
 
-public abstract class AbstractRenter implements IRenter, IUniqueIDProvider {
+public abstract class AbstractRenter implements IRenter {
     protected String label, name;
-    private final int uniqueID = UniqueIndexer.getInstance().generateID();
 
     protected AbstractRenter(String label, String name) {
         this.label = label;
@@ -28,9 +25,5 @@ public abstract class AbstractRenter implements IRenter, IUniqueIDProvider {
         this.name = name;
     }
 
-    @Override
-    public int getUniqueID() {
-        return uniqueID;
-    }
 }
 

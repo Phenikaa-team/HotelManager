@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.paint.LinearGradient?>
+<?import javafx.scene.paint.Stop?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+
+<AnchorPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="215.0" prefWidth="335.0" stylesheets="@../../../css/welcome_page.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="group.phenikaa.hotelmanager.StartController">
+   <children>
+      <Text layoutX="30.0" layoutY="78.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Welcome to Hotel Manager">
+         <font>
+            <Font name="Roboto Bold" size="23.0" />
+         </font>
+         <fill>
+            <LinearGradient endX="1.0" endY="1.0">
+               <stops>
+                  <Stop>
+                     <color>
+                        <Color red="0.24074074625968933" green="0.6583333611488342" blue="1.0" />
+                     </color>
+                  </Stop>
+                  <Stop offset="1.0">
+                     <color>
+                        <Color red="0.08730000257492065" green="0.3583829998970032" blue="0.9700000286102295" />
+                     </color>
+                  </Stop>
+               </stops>
+            </LinearGradient>
+         </fill>
+      </Text>
+      <Button fx:id="enter_btn" layoutX="59.0" layoutY="134.0" mnemonicParsing="false" onAction="#getEnterScene" prefHeight="27.0" prefWidth="222.0" stylesheets="@../../../css/welcome_page.css" text="Go to control center">
+         <graphic>
+            <ImageView fitHeight="26.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../assets/textures/enter-icon.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
+      <HBox fx:id="top_panel" alignment="CENTER_RIGHT" prefHeight="27.0" prefWidth="335.0" stylesheets="@../../../css/welcome_page.css">
+         <children>
+            <Button fx:id="minimize_btn" alignment="TOP_CENTER" layoutX="89.0" layoutY="20.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onMinimize" prefHeight="14.0" prefWidth="15.0" stylesheets="@../../../css/welcome_page.css" translateX="-10.0">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <Button fx:id="exit_btn" alignment="TOP_CENTER" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onExit" prefHeight="14.0" prefWidth="15.0" stylesheets="@../../../css/welcome_page.css" translateX="-3.0">
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+         </children>
+      </HBox>
+      <ImageView fitHeight="22.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" translateX="5.0" translateY="2.0">
+         <image>
+            <Image url="@../../../assets/textures/logo.png" />
+         </image>
+      </ImageView>
+      <Text layoutX="30.0" layoutY="21.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Hotel Manager" translateY="-3.0" wrappingWidth="97.33673095703125" />
+   </children>
+</AnchorPane>

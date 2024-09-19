@@ -1,0 +1,117 @@
+#root {
+    -fx-background-color: #edeeef;
+    -fx-background-radius: 12px;
+}
+
+#sidebar {
+    -fx-background-color: #fdfdfd;
+    -fx-background-radius: 12px 0px 0px 12px;
+    -fx-border-width: 0px 1px 0px 0px;
+    -fx-border-color: #f0f1f2;
+}
+
+#top_panel {
+    -fx-background-color: white;
+    -fx-background-radius: 0px 12px 0px 0px;
+}
+
+#general_panel {
+    -fx-background-color: #fdfdfd;
+    -fx-background-radius: 12px;
+}
+
+#hotel_name_field, #hotel_category, #hotel_status, #room_number_field {
+    -fx-background-color: #fdfdfd;
+    -fx-border-radius: 8px;
+    -fx-border-color: rgba(222, 222, 222, 0.75);
+    -fx-wrap-text: rgba(222, 222, 222, 0.75);
+}
+
+#find_btn,
+#add_btn {
+    -fx-background-color: #fdfdfd;
+    -fx-background-radius: 8px;
+    -fx-border-color: rgba(222, 222, 222, 0.75);
+    -fx-border-radius: 8px;
+    -fx-font-size: 16;
+    -fx-font-weight: semibold;
+}
+
+#find_btn:hover,
+#add_btn:hover {
+    -fx-background-color: rgb(246, 246, 246);
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}
+
+#info_btn,
+#dashboard_btn,
+#rooms_btn,
+#room_details_btn {
+    -fx-background-color: transparent;
+    -fx-border-radius: 15px;
+    -fx-border-color: transparent;
+    -fx-border-width: 2px;
+}
+
+#info_btn:hover,
+#dashboard_btn:hover,
+#rooms_btn:hover,
+#room_details_btn:hover {
+    -fx-background-color: rgba(119, 230, 255, 0.18);
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+
+#info_btn:focused,
+#dashboard_btn:focused,
+#rooms_btn:focused,
+#room_details_btn:focused {
+    -fx-background-color: rgba(119, 230, 255, 0.75);
+}
+
+#exit_btn {
+    -fx-background-color: #ff5f57;
+    -fx-background-radius: 50%;
+    -fx-min-width: 15px;
+    -fx-min-height: 15px;
+    -fx-max-width: 15px;
+    -fx-max-height: 15px;
+    -fx-cursor: hand;
+}
+
+#exit_btn:hover {
+    -fx-background-color: #ff8b87;
+    -fx-effect: dropshadow(gaussian, rgba(255, 0, 0, 0.7), 3, 0.3, 0, 0);
+}
+
+#minimize_btn {
+    -fx-background-color: #ffbd2e;
+    -fx-background-radius: 50%;
+    -fx-min-width: 15px;
+    -fx-min-height: 15px;
+    -fx-max-width: 15px;
+    -fx-max-height: 15px;
+    -fx-cursor: hand;
+}
+
+#minimize_btn:hover {
+    -fx-background-color: #ffda7b;
+    -fx-effect: dropshadow(gaussian, rgba(255, 200, 0, 0.7), 3, 0.3, 0, 0);
+}
+
+/*#maximize_btn {
+    -fx-background-color: #28c940;
+    -fx-background-radius: 50%;
+    -fx-min-width: 15px;
+    -fx-min-height: 15px;
+    -fx-max-width: 15px;
+    -fx-max-height: 15px;
+    -fx-cursor: hand;
+}
+
+#maximize_btn:hover {
+    -fx-background-color: #5cf067;
+    -fx-effect: dropshadow(gaussian, rgba(0, 255, 0, 0.7), 8, 0.3, 0, 0);
+}*/
+

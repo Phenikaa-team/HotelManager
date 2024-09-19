@@ -1,29 +1,26 @@
 package group.phenikaa.hotelmanager.api.utility.enums;
 
-import group.phenikaa.hotelmanager.api.info.api.AbstractRentable;
-import group.phenikaa.hotelmanager.api.info.impl.rentable.Apartment;
-import group.phenikaa.hotelmanager.api.info.impl.rentable.Houses;
-import group.phenikaa.hotelmanager.api.info.impl.rentable.Rooms;
-import group.phenikaa.hotelmanager.api.utility.interfaces.IDataClass;
+public enum RentableType {
+    Single("Single Room, suitable for 1 person"),
+    Double("Double Room, suitable for 2 persons"),
+    Suite("Suite Room, luxury with separate living space"),
+    Deluxe("Deluxe Room, high-end amenities"),
+    Family("Family Room, suitable for families"),
+    PresidentialSuite("Presidential Suite, the most luxurious room");
 
-public enum RentableType implements IDataClass {
-    House(Houses.class),
-    Room(Rooms.class),
-    Apartment(Apartment.class);
+    private final String description;
 
-    private final Class<? extends AbstractRentable> rentable;
+    RentableType(String description) {
+        this.description = description;
+    }
 
-    RentableType(Class<? extends AbstractRentable> rentable) {
-        this.rentable = rentable;
+    public String getDescription() {
+        return description;
     }
 
     @Override
-    public Class<?> getDataClass() {
-        return rentable;
-    }
-
-    @Override
-    public String getDataString() {
-        return rentable.getName();
+    public String toString() {
+        return name() + " - " + description;
     }
 }
+
