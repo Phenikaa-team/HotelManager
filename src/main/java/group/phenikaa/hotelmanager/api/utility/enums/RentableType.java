@@ -1,6 +1,8 @@
 package group.phenikaa.hotelmanager.api.utility.enums;
 
-public enum RentableType {
+import group.phenikaa.hotelmanager.api.utility.interfaces.IStringProvider;
+
+public enum RentableType implements IStringProvider {
     Single("Single Room, suitable for 1 person"),
     Double("Double Room, suitable for 2 persons"),
     Suite("Suite Room, luxury with separate living space"),
@@ -14,7 +16,8 @@ public enum RentableType {
         this.description = description;
     }
 
-    public String getDescription() {
+    @Override
+    public String url() {
         return description;
     }
 

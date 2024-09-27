@@ -25,5 +25,24 @@ public abstract class AbstractRenter implements IRenter {
         this.name = name;
     }
 
+    @Override
+    public long submittedMoney() {
+        return 0;
+    }
+
+    @Override
+    public void setSubmittedMoney(long submittedMoney) {
+
+    }
+
+    @Override
+    public int totalNight(){
+        return 0;
+    }
+
+    @Override
+    public void setTotalNight(int totalNight) {
+
+    }
 }
 

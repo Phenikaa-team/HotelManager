@@ -25,16 +25,25 @@ public class BookingAdapter extends TypeAdapter<Booking> {
         var rentableName = booking.rentable().getClass().getSimpleName();
         var rentableType = RentableType.valueOf(rentableName.replaceAll("s$", ""));
         var rentableStatus = booking.rentable().getStatus().name();
-        var renterType = RenterType.valueOf(booking.renter().getLabel().toUpperCase());
-        var renterName = renterType.name();
-       // var rentableID = booking.rentable().getUniqueID();
+        var rentableID = booking.rentable().getID();
+        var rentablePrice = booking.rentable().getPrice();
+
+        String renterTypeName = "NONE";
+        String renterName = "N/A";
+
+        if (booking.renter() != null) {
+            var renterType = RenterType.valueOf(booking.renter().getLabel().toUpperCase());
+            renterTypeName = renterType.name();
+            renterName = booking.renter().getName();
+        }
 
         out.beginObject();
         out.name("RentableType").value(rentableType.name());
         out.name("RentableStatus").value(rentableStatus);
-        out.name("RenterType").value(renterType.name());
+        out.name("RentableID").value(rentableID);
+        out.name("RentablePrice").value(rentablePrice);
+        out.name("RenterType").value(renterTypeName);
         out.name("RenterName").value(renterName);
-        //out.name("RentableID").value(rentableID);
         out.endObject();
     }
 
@@ -44,43 +53,46 @@ public class BookingAdapter extends TypeAdapter<Booking> {
         var status = RentableStatus.Available;
         var rentableType = RentableType.Single;
         var rentType = RenterType.Household;
-        var rentId = 0L;
-        var price = 0;
+        var rentId = "00x0";
+        var price = 0L;
         var name = "";
         AbstractRenter renter = null;
 
         while (in.hasNext()) {
-            switch (in.nextName()) {
+            String fieldName = in.nextName();
+            switch (fieldName) {
                 case "RentableType":
                     rentableType = RentableType.valueOf(in.nextString());
-                    System.out.println("RentableType: " + rentableType);
                     break;
                 case "RentableStatus":
                     status = RentableStatus.valueOf(in.nextString());
                     break;
                 case "RenterType":
-                    rentType = RenterType.valueOf(in.nextString().toUpperCase());
-                    renter = getRenter(rentType, name);
-                    System.out.println("RenterType: " + rentType);
+                    String renterTypeStr = in.nextString();
+                    if (!"NONE".equals(renterTypeStr)) {
+                        rentType = RenterType.valueOf(renterTypeStr.toUpperCase());
+                        renter = getRenter(rentType, name);
+                    }
                     break;
                 case "RenterName":
-                    if (renter != null) {
+                    if (renter != null && in.peek() != JsonToken.NULL) {
                         name = in.nextString();
                         renter.setName(name);
-                        System.out.println("RenterName: " + name);
+                    } else {
+                        in.skipValue();
                     }
                     break;
                 case "RentableID":
-                    if (in.peek() == JsonToken.NUMBER) {
-                        rentId = in.nextLong();
-                    } else {
-                        rentId = Long.parseLong(in.nextString());
-                    }
+                    rentId = in.nextString();
+                    break;
+                case "RentablePrice":
+                    price = in.nextLong();
                     break;
             }
         }
         in.endObject();
-        return new Booking(getRentable(rentableType, status, price, String.valueOf(rentId)), renter);
+
+        return new Booking(getRentable(rentableType, status, price, rentId), renter);
     }
 
     public static AbstractRentable getRentable(RentableType type, RentableStatus status, long price, String id) {

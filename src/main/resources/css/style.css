@@ -20,23 +20,45 @@
     -fx-background-radius: 12px;
 }
 
-#hotel_name_field, #hotel_category, #hotel_status, #room_number_field {
+#first_name_field,
+#id_field,
+#last_name_field,
+#submitted_money,
+#citizen_box,
+#id_box,
+#tenants_box,
+#total_night_box,
+#price_text_field,
+#hotel_category,
+#hotel_status,
+#room_number_field,
+#bookingListView {
     -fx-background-color: #fdfdfd;
+    -fx-background-radius: 8px;
     -fx-border-radius: 8px;
     -fx-border-color: rgba(222, 222, 222, 0.75);
+    -fx-prompt-text-fill: rgba(222, 222, 222, 0.75);
     -fx-wrap-text: rgba(222, 222, 222, 0.75);
 }
 
+#checkout_btn,
+#book_btn,
 #find_btn,
 #add_btn {
     -fx-background-color: #fdfdfd;
     -fx-background-radius: 8px;
     -fx-border-color: rgba(222, 222, 222, 0.75);
     -fx-border-radius: 8px;
+}
+
+#find_btn,
+#add_btn {
     -fx-font-size: 16;
     -fx-font-weight: semibold;
 }
 
+#checkout_btn:hover,
+#book_btn:hover,
 #find_btn:hover,
 #add_btn:hover {
     -fx-background-color: rgb(246, 246, 246);
@@ -44,7 +66,6 @@
     -fx-scale-y: 1.02;
 }
 
-#info_btn,
 #dashboard_btn,
 #rooms_btn,
 #room_details_btn {

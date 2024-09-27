@@ -4,4 +4,8 @@ public interface IRenter {
     String getLabel();
     String getName();
     void setName(String name);
+    long submittedMoney();
+    void setSubmittedMoney(long submittedMoney);
+    int totalNight();
+    void setTotalNight(int totalNight);
 }

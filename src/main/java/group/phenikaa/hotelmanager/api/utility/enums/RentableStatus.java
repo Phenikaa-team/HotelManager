@@ -1,6 +1,8 @@
 package group.phenikaa.hotelmanager.api.utility.enums;
 
-public enum RentableStatus {
+import group.phenikaa.hotelmanager.api.utility.interfaces.IStringProvider;
+
+public enum RentableStatus implements IStringProvider {
     Available("Room is available for booking."),
     Occupied("Room is currently occupied."),
     Reserved("Room is reserved but no guest checked in yet."),
@@ -12,7 +14,8 @@ public enum RentableStatus {
         this.description = description;
     }
 
-    public String getDescription() {
+    @Override
+    public String url() {
         return description;
     }
 
