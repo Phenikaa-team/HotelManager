@@ -17,10 +17,12 @@
  >- **Trần Bá Minh Đức:** Comprehensive software development.
  >- **Trần Mạnh Hoàng:** UML construction.
 
+---
+
 ## Application interface
 |                    LOGIN                    |                     GUI                     |
 |:-------------------------------------------:|:-------------------------------------------:|
-| <img src="https://i.imgur.com/ipWhXie.png"> | <img src="https://i.imgur.com/83sQnk5.png"> |
+| <img src="https://i.imgur.com/dSoPTVt.png"> | <img src="https://i.imgur.com/83sQnk5.png"> |
 
 ---
 ## How to use
