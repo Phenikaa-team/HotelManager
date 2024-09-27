@@ -240,7 +240,7 @@ public class HotelController implements Initializable {
         DataStorage.saveData(bookingList, "data.json");
     }
 
-    private void showAlert(Alert.AlertType type, String title, String message) {
+    public static void showAlert(Alert.AlertType type, String title, String message) {
         var alert = new Alert(type);
         alert.setTitle(title);
         alert.setHeaderText(null);
