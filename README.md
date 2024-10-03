@@ -1,10 +1,12 @@
 ### Group_19_OOP_NO1
 <h1 align="center">Hotel Manager Aplication</h1>
 
+
 <p align="center">
-  <img src="https://img.shields.io/badge/Java-0055A4?style=for-the-badge&logo=openjdk&logoColor=white">
-  <img src="https://img.shields.io/badge/CSS3-4B4B4B?style=for-the-badge&logo=css3&logoColor=white">
-  <img src="https://img.shields.io/badge/Intellij%20Idea-003366?logo=intellij-idea&style=for-the-badge&logoColor=white">
+<img src="https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white">
+<img src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white">
+<img src="https://img.shields.io/badge/IntelliJIDEA-000000.svg?style=for-the-badge&logo=intellij-idea&logoColor=white">
+<img src="https://img.shields.io/badge/Gradle-02303A.svg?style=for-the-badge&logo=Gradle&logoColor=white">
 </p>
 
 ## Information
@@ -20,11 +22,31 @@
 ---
 
 ## Application interface
-|                    LOGIN                    |                     GUI                     |
-|:-------------------------------------------:|:-------------------------------------------:|
-| <img src="https://i.imgur.com/dSoPTVt.png"> | <img src="https://i.imgur.com/83sQnk5.png"> |
+
+| **LOGIN** |   <img src="https://i.imgur.com/dSoPTVt.png">    |     
+|-----------| :----------------------------------------------: |
+|  **UI**   |  <img src="https://i.imgur.com/83sQnk5.png">     |   
 
 ---
+
+## Project's UML
+
+<details>
+<summary>1.1 UML Component Diagram</summary>
+![image]()
+</details>
+<details>
+<summary>1.2 UML Sequence Diagram</summary>
+![image]()
+</details>
+<details>
+<summary>1.3 UML ...</summary>
+![image]()
+</details>
+
+
+---
+
 ## How to use
  > Use Hotel Manager is easy, you just need to install a `Java21 JDK.`  
  > To run source, clone HotelManager’s repository and run the following command:

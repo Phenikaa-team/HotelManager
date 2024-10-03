@@ -15,12 +15,17 @@
     -fx-background-radius: 0px 12px 0px 0px;
 }
 
+#logout_btn {
+    -fx-background-color: rgba(255, 255, 255, 0);
+    -fx-background-radius: 4px;
+}
+
 #general_panel {
     -fx-background-color: #fdfdfd;
     -fx-background-radius: 12px;
 }
 
-#first_name_field,
+#name_field,
 #id_field,
 #last_name_field,
 #submitted_money,

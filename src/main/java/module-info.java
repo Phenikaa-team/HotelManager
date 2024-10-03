@@ -16,4 +16,5 @@ module group.phenikaa.hotelmanager {
     exports group.phenikaa.hotelmanager;
     opens group.phenikaa.hotelmanager.api.info.api to com.google.gson;
     opens group.phenikaa.hotelmanager.api.info to com.google.gson;
+    opens group.phenikaa.hotelmanager.api.info.impl.customer to com.google.gson;
 }

@@ -1,6 +1,5 @@
 package group.phenikaa.hotelmanager;
 
-import com.google.common.eventbus.EventBus;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -13,10 +12,11 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class HotelApplication extends Application {
-    public static EventBus EVENT_BUS = new EventBus();
     private static Stage primaryStage;
     private static double xOffset = 0;
     private static double yOffset = 0;
+    public static String DATA = "data.json";
+    public static String USER = "user.json";
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -34,6 +34,13 @@ public class HotelApplication extends Application {
 
     public static void switchToMenuScene() throws IOException {
         var scene = loadScene("menu-view.fxml", 890, 510);
+        dragScene(scene);
+        scene.setFill(Color.TRANSPARENT);
+        primaryStage.setScene(scene);
+    }
+
+    public static void switchToLoginScene() throws IOException {
+        var scene = loadScene("start-view.fxml", 400, 285);
         dragScene(scene);
         scene.setFill(Color.TRANSPARENT);
         primaryStage.setScene(scene);

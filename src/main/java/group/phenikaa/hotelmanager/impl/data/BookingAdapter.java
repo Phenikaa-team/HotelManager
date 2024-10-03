@@ -2,19 +2,16 @@ package group.phenikaa.hotelmanager.impl.data;
 
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 import group.phenikaa.hotelmanager.api.info.api.AbstractRentable;
-import group.phenikaa.hotelmanager.api.info.api.AbstractRenter;
+import group.phenikaa.hotelmanager.api.info.impl.customer.Customer;
 import group.phenikaa.hotelmanager.api.info.Booking;
 import group.phenikaa.hotelmanager.api.info.impl.rentable.*;
 import group.phenikaa.hotelmanager.api.info.impl.rentable.Double;
-import group.phenikaa.hotelmanager.api.info.impl.renter.Household;
-import group.phenikaa.hotelmanager.api.info.impl.renter.Individual;
-import group.phenikaa.hotelmanager.api.info.impl.renter.CorporateClient;
+import group.phenikaa.hotelmanager.api.utility.enums.Country;
+import group.phenikaa.hotelmanager.api.utility.enums.IDProof;
 import group.phenikaa.hotelmanager.api.utility.enums.RentableStatus;
 import group.phenikaa.hotelmanager.api.utility.enums.RentableType;
-import group.phenikaa.hotelmanager.api.utility.enums.RenterType;
 
 import java.io.IOException;
 
@@ -22,77 +19,74 @@ public class BookingAdapter extends TypeAdapter<Booking> {
 
     @Override
     public void write(JsonWriter out, Booking booking) throws IOException {
-        var rentableName = booking.rentable().getClass().getSimpleName();
-        var rentableType = RentableType.valueOf(rentableName.replaceAll("s$", ""));
-        var rentableStatus = booking.rentable().getStatus().name();
-        var rentableID = booking.rentable().getID();
-        var rentablePrice = booking.rentable().getPrice();
-
-        String renterTypeName = "NONE";
-        String renterName = "N/A";
-
-        if (booking.renter() != null) {
-            var renterType = RenterType.valueOf(booking.renter().getLabel().toUpperCase());
-            renterTypeName = renterType.name();
-            renterName = booking.renter().getName();
-        }
+        var rentable = booking.rentable();
+        var rentableType = RentableType.valueOf(rentable.getClass().getSimpleName().replaceAll("s$", ""));
+        var rentableStatus = rentable.getStatus().name();
+        var rentableID = rentable.getID();
+        var rentablePrice = rentable.getPrice();
+        Customer customer = booking.customer();
 
         out.beginObject();
         out.name("RentableType").value(rentableType.name());
         out.name("RentableStatus").value(rentableStatus);
         out.name("RentableID").value(rentableID);
         out.name("RentablePrice").value(rentablePrice);
-        out.name("RenterType").value(renterTypeName);
-        out.name("RenterName").value(renterName);
+
+        if (customer != null) {
+            out.name("CustomerName").value(customer.getName());
+            out.name("CustomerID").value(customer.getIdNumber());
+            out.name("CustomerCountry").value(customer.getCountry().name());
+            out.name("CustomerIDProof").value(customer.getIdProof().name());
+            out.name("CustomerTenants").value(customer.getQuantity());
+            out.name("CustomerKid").value(customer.getKid());
+            out.name("CustomerNights").value(customer.getNight());
+            out.name("SubmittedMoney").value(customer.getMoney());
+        }
         out.endObject();
     }
 
     @Override
     public Booking read(JsonReader in) throws IOException {
         in.beginObject();
-        var status = RentableStatus.Available;
-        var rentableType = RentableType.Single;
-        var rentType = RenterType.Household;
-        var rentId = "00x0";
-        var price = 0L;
-        var name = "";
-        AbstractRenter renter = null;
+        RentableStatus status = RentableStatus.Available;
+        RentableType rentableType = RentableType.Single;
+        String rentId = "00x0";
+        long price = 0L;
+        Customer renter = null;
+
+        String name = null;
+        int idNumber = 0, tenants = 0, nights = 0;
+        boolean kid = false;
+        Country country = null;
+        IDProof idProof = null;
+        long submittedMoney = 0;
 
         while (in.hasNext()) {
             String fieldName = in.nextName();
             switch (fieldName) {
-                case "RentableType":
-                    rentableType = RentableType.valueOf(in.nextString());
-                    break;
-                case "RentableStatus":
-                    status = RentableStatus.valueOf(in.nextString());
-                    break;
-                case "RenterType":
-                    String renterTypeStr = in.nextString();
-                    if (!"NONE".equals(renterTypeStr)) {
-                        rentType = RenterType.valueOf(renterTypeStr.toUpperCase());
-                        renter = getRenter(rentType, name);
-                    }
-                    break;
-                case "RenterName":
-                    if (renter != null && in.peek() != JsonToken.NULL) {
-                        name = in.nextString();
-                        renter.setName(name);
-                    } else {
-                        in.skipValue();
-                    }
-                    break;
-                case "RentableID":
-                    rentId = in.nextString();
-                    break;
-                case "RentablePrice":
-                    price = in.nextLong();
-                    break;
+                case "RentableType" -> rentableType = RentableType.valueOf(in.nextString());
+                case "RentableStatus" -> status = RentableStatus.valueOf(in.nextString());
+                case "RentableID" -> rentId = in.nextString();
+                case "RentablePrice" -> price = in.nextLong();
+                case "CustomerName" -> name = in.nextString();
+                case "CustomerID" -> idNumber = in.nextInt();
+                case "CustomerCountry" -> country = Country.valueOf(in.nextString());
+                case "CustomerIDProof" -> idProof = IDProof.valueOf(in.nextString());
+                case "CustomerTenants" -> tenants = in.nextInt();
+                case "CustomerKid" -> kid = in.nextBoolean();
+                case "CustomerNights" -> nights = in.nextInt();
+                case "SubmittedMoney" -> submittedMoney = in.nextLong();
+                default -> in.skipValue();
             }
         }
         in.endObject();
 
-        return new Booking(getRentable(rentableType, status, price, rentId), renter);
+        AbstractRentable rentable = getRentable(rentableType, status, price, rentId);
+        if (name != null) {
+            renter = new Customer(name, idProof, idNumber, tenants, nights, country, submittedMoney, kid);
+        }
+
+        return new Booking(rentable, renter);
     }
 
     public static AbstractRentable getRentable(RentableType type, RentableStatus status, long price, String id) {
@@ -103,17 +97,7 @@ public class BookingAdapter extends TypeAdapter<Booking> {
             case Deluxe -> new Deluxe(status, price, id);
             case Family -> new Family(status, price, id);
             case PresidentialSuite -> new PresidentialSuite(status, price, id);
-            case null, default -> throw new IllegalArgumentException("Unknown rentable type: " + type);
-        };
-    }
-
-    public static AbstractRenter getRenter(RenterType type, String name) {
-        return switch (type) {
-            case Individual -> new Individual(name);
-            case Household -> new Household(name);
-            case CorporateClient -> new CorporateClient(name);
-            case null, default -> throw new IllegalArgumentException("Unknown renter type: " + type);
+            default -> throw new IllegalArgumentException("Unknown rentable type: " + type);
         };
     }
 }
-

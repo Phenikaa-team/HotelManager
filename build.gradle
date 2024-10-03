@@ -41,7 +41,6 @@ java {
     }
 }
 
-
 dependencies {
     implementation('org.controlsfx:controlsfx:11.1.2')
     implementation('net.synedra:validatorfx:0.4.0') {

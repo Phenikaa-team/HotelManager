@@ -11,6 +11,15 @@
     -fx-font-weight: bold;
 }
 
+#register_btn {
+    -fx-background-color: none;
+    -fx-text-fill: grey;
+}
+
+#register_btn:hover {
+    -fx-text-fill: #60d3ff;
+}
+
 #username,
 #password {
     -fx-background-color: #fdfdfd;
