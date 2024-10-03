@@ -187,8 +187,8 @@
          <children>
             <AnchorPane fx:id="general_panel12" layoutX="7.0" layoutY="27.0" prefHeight="327.0" prefWidth="553.0" stylesheets="@../../../css/welcome_page.css">
                <children>
-                  <ListView fx:id="bookingListView" layoutY="6.0" prefHeight="398.0" prefWidth="246.0" />
-                  <HBox layoutX="246.0" layoutY="2.0" prefHeight="398.0" prefWidth="417.0" spacing="40.0">
+                  <ListView fx:id="bookingListView" layoutY="6.0" prefHeight="398.0" prefWidth="258.0" />
+                  <HBox layoutX="260.0" layoutY="2.0" prefHeight="398.0" prefWidth="417.0" spacing="50.0">
                      <children>
                         <VBox prefHeight="302.0" prefWidth="171.0">
                            <children>
@@ -250,6 +250,9 @@
                            </children>
                         </VBox>
                      </children>
+                     <padding>
+                        <Insets top="2.0" />
+                     </padding>
                   </HBox>
                </children>
             </AnchorPane>

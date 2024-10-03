@@ -1,1 +1,20 @@
-[]
+[
+  {
+    "RentableType": "Single",
+    "RentableStatus": "Available",
+    "RentableID": "12415",
+    "RentablePrice": 150000
+  },
+  {
+    "RentableType": "Suite",
+    "RentableStatus": "Available",
+    "RentableID": "12153",
+    "RentablePrice": 600000
+  },
+  {
+    "RentableType": "Deluxe",
+    "RentableStatus": "Available",
+    "RentableID": "1215312",
+    "RentablePrice": 650000
+  }
+]

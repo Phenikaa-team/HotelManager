@@ -98,11 +98,7 @@ public class HotelController implements Initializable {
         hotel_category.setItems(FXCollections.observableArrayList(RentableType.values()));
         hotel_status.setItems(FXCollections.observableArrayList(RentableStatus.values()));
 
-        total_rooms.setText(String.valueOf(bookingList.size()));
-        int availableRooms = (int) bookingList.stream()
-                .filter(booking -> booking.rentable().getStatus() == RentableStatus.Available)
-                .count();
-        valid_rooms.setText(String.valueOf(availableRooms));
+        updateRoomCounts();
     }
 
     private void setupListView() {
@@ -192,6 +188,7 @@ public class HotelController implements Initializable {
 
         var newRoom = BookingAdapter.getRentable(roomType, roomStatus, price, roomNumber);
         bookingList.add(new Booking(newRoom, null));
+        updateRoomCounts();
 
         showAlert(Alert.AlertType.INFORMATION, "Thành công", "Phòng mới đã được thêm.");
     }
@@ -219,6 +216,7 @@ public class HotelController implements Initializable {
             Customer renter = new Customer(name, id_box.getValue(), idNumber, tenants_box.getValue().intValue(), total_night_box.getValue().intValue(), citizen_box.getValue(), money, kid_btn.isSelected());
             AbstractRentable rentable = BookingAdapter.getRentable(hotel_category.getValue(), hotel_status.getValue(), renter.calculateTotalCost(), roomNumber);
             bookingList.add(new Booking(rentable, renter));
+            updateRoomCounts();
 
             showAlert(Alert.AlertType.INFORMATION, "Thành công", "Khách hàng đã được đặt phòng.");
         } catch (NumberFormatException e) {
@@ -235,11 +233,22 @@ public class HotelController implements Initializable {
     private void checkOut() {
         Booking booking = findBookingByRoom();
         if (booking != null) {
-            bookingList.remove(booking);
+            //bookingList.remove(booking);
+            booking.rentable().setStatus(RentableStatus.Available);
+            bookingListView.refresh();
+            updateRoomCounts();
             showAlert(Alert.AlertType.INFORMATION, "Thành công", "Phòng đã được trả.");
         } else {
             showAlert(Alert.AlertType.ERROR, "Phòng trống", "Phòng này hiện đang trống.");
         }
+    }
+
+    private void updateRoomCounts() {
+        total_rooms.setText(String.valueOf(bookingList.size()));
+        int availableRooms = (int) bookingList.stream()
+                .filter(booking -> booking.rentable().getStatus() == RentableStatus.Available)
+                .count();
+        valid_rooms.setText(String.valueOf(availableRooms));
     }
 
     private Booking findBookingByRoom() {

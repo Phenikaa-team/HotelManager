@@ -11,6 +11,22 @@
     -fx-font-weight: bold;
 }
 
+.combo-box {
+    -fx-background-color: #fdfdfd;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-border-color: rgba(222, 222, 222, 0.75);
+    -fx-prompt-text-fill: rgba(222, 222, 222, 0.75);
+    -fx-text-fill: rgba(222, 222, 222, 0.75);
+    -fx-wrap-text: rgba(222, 222, 222, 0.75);
+}
+
+.list-cell {
+    -fx-padding: 10px;
+    -fx-background-radius: 8px;
+    -fx-text-fill: rgba(35, 35, 35, 0.75);
+}
+
 #register_btn {
     -fx-background-color: none;
     -fx-text-fill: grey;
