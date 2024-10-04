@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import group.phenikaa.hotelmanager.api.info.Booking;
 import group.phenikaa.hotelmanager.api.utility.interfaces.IDataStorage;
+import group.phenikaa.hotelmanager.impl.data.adapter.BookingAdapter;
 
 import java.io.*;
 import java.lang.reflect.Type;

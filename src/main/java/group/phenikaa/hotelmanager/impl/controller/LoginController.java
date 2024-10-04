@@ -15,13 +15,13 @@ import group.phenikaa.hotelmanager.impl.data.LoginData;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import static group.phenikaa.hotelmanager.HotelApplication.USER;
 import static group.phenikaa.hotelmanager.api.utility.Utility.showAlert;
 
-public class StartController implements Initializable {
+public class LoginController implements Initializable {
 
     @FXML private Button minimize_btn;
     @FXML private Button enter_btn;
@@ -57,9 +57,9 @@ public class StartController implements Initializable {
     @FXML
     void getEnterScene() {
         try {
-            List<User> user = loginData.load(USER);
+            List<User> users = loginData.load();
 
-            for (User info : user) {
+            for (User info : users) {
                 if (info.getUsername().equals(username.getText()) && info.getPassword().equals(password.getText())) {
                     User loggedInUser = new User(username.getText(), password.getText());
                     Session.setCurrentUser(loggedInUser);
@@ -69,8 +69,8 @@ public class StartController implements Initializable {
             }
 
             throw new Exception("Invalid username or password.");
-        } catch (IOException e) {
-            showAlert(Alert.AlertType.ERROR, "Login Error", "An error occurred while loading user data.");
+        } catch (SQLException e) {
+            showAlert(Alert.AlertType.ERROR, "Login Error", "An error occurred while accessing the database.");
         } catch (Exception e) {
             showAlert(Alert.AlertType.ERROR, "Login Failed", e.getMessage());
         }
@@ -79,21 +79,20 @@ public class StartController implements Initializable {
     @FXML
     void registerAccount() {
         try {
-            List<User> user = loginData.load(USER);
+            List<User> users = loginData.load();
 
-            for (User info : user) {
+            for (User info : users) {
                 if (info.getUsername().equals(username.getText())) {
                     throw new Exception("Username already taken.");
                 }
             }
 
             User newCustomer = new User(username.getText(), password.getText());
-            user.add(newCustomer);
-            loginData.save(user, USER);
+            loginData.save(newCustomer);
 
             showAlert(Alert.AlertType.INFORMATION, "Registration Successful", "Account created successfully.");
-        } catch (IOException e) {
-            showAlert(Alert.AlertType.ERROR, "Registration Error", "An error occurred while saving user data.");
+        } catch (SQLException e) {
+            showAlert(Alert.AlertType.ERROR, "Registration Error", "An error occurred while saving to the database.");
         } catch (Exception e) {
             showAlert(Alert.AlertType.ERROR, "Registration Failed", e.getMessage());
         }

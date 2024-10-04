@@ -7,7 +7,7 @@ import group.phenikaa.hotelmanager.api.info.impl.customer.Customer;
 import group.phenikaa.hotelmanager.api.info.impl.customer.Session;
 import group.phenikaa.hotelmanager.api.info.impl.customer.User;
 import group.phenikaa.hotelmanager.api.utility.enums.*;
-import group.phenikaa.hotelmanager.impl.data.BookingAdapter;
+import group.phenikaa.hotelmanager.impl.data.adapter.BookingAdapter;
 import group.phenikaa.hotelmanager.impl.data.BookingData;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -29,7 +29,7 @@ import java.util.ResourceBundle;
 import static group.phenikaa.hotelmanager.HotelApplication.DATA;
 import static group.phenikaa.hotelmanager.api.utility.Utility.*;
 
-public class HotelController implements Initializable {
+public class MainController implements Initializable {
     private final BookingData data = new BookingData();
     private Booking selectedBooking = null;
 
