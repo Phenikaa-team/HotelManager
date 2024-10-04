@@ -240,12 +240,24 @@ public class HotelController implements Initializable {
                 } else {
                     showAlert(Alert.AlertType.ERROR, "Invalid Details", "Please provide valid room details.");
                 }
-                enableRoomFields(false);
+                //enableRoomFields(false);
                 edit_btn.setText("Edit");
             }
         }
         catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void removeRoom() {
+        Booking booking = findBookingByRoom();
+        if (booking != null) {
+            bookingList.remove(booking);
+            updateRoomCounts();
+            showAlert(Alert.AlertType.INFORMATION, "Thành công", "Phòng đã bị xóa.");
+        } else {
+            showAlert(Alert.AlertType.ERROR, "Lỗi", "Thao tác không thành công.");
         }
     }
 
@@ -300,7 +312,6 @@ public class HotelController implements Initializable {
         try {
             Booking booking = findBookingByRoom();
             if (booking != null) {
-                //bookingList.remove(booking);
                 booking.rentable().setStatus(RentableStatus.Available);
                 bookingListView.refresh();
                 updateRoomCounts();

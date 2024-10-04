@@ -272,8 +272,13 @@
          <children>
             <AnchorPane fx:id="general_panel" layoutX="7.0" layoutY="29.0" prefHeight="410.0" prefWidth="678.0" stylesheets="@../../../css/welcome_page.css">
                <children>
-                  <HBox alignment="CENTER" layoutX="443.0" layoutY="346.0" prefHeight="52.0" prefWidth="218.0" spacing="15.0">
+                  <HBox alignment="CENTER" layoutX="332.0" layoutY="346.0" prefHeight="52.0" prefWidth="329.0" spacing="15.0">
                      <children>
+                        <Button fx:id="remove_btn" mnemonicParsing="false" onAction="#removeRoom" prefHeight="37.0" prefWidth="92.0" text="Remove">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </Button>
                         <Button fx:id="edit_btn" mnemonicParsing="false" onAction="#editRoom" prefHeight="37.0" prefWidth="92.0" text="Edit">
                            <cursor>
                               <Cursor fx:constant="HAND" />
@@ -321,7 +326,7 @@
                   </HBox>
                   <VBox alignment="CENTER" prefHeight="200.0" prefWidth="678.0">
                      <children>
-                        <HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="34.0" prefWidth="659.0" spacing="140.0">
+                        <HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="34.0" prefWidth="648.0" spacing="140.0">
                            <Text style="-fx-font-weight: bold;" text="Room Number" translateX="5.0" />
                            <Text style="-fx-font-weight: bold;" text="Type" translateX="-100.0" />
                            <Text style="-fx-font-weight: bold;" text="Status" translateX="-80.0" />
@@ -333,7 +338,7 @@
                               <Insets />
                            </VBox.margin>
                         </HBox>
-                        <ListView fx:id="bookingListView" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="160.0" prefWidth="656.0">
+                        <ListView fx:id="bookingListView" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="160.0" prefWidth="643.0">
                            <VBox.margin>
                               <Insets />
                            </VBox.margin></ListView>

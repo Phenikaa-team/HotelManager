@@ -49,6 +49,7 @@
 #checkout_btn,
 #book_btn,
 #edit_btn,
+#remove_btn,
 #add_btn {
     -fx-background-color: #fdfdfd;
     -fx-background-radius: 8px;
@@ -56,6 +57,7 @@
     -fx-border-radius: 8px;
 }
 
+#remove_btn,
 #edit_btn,
 #add_btn {
     -fx-font-size: 14;

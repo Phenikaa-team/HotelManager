@@ -1,50 +1,44 @@
 [
   {
+    "RentableType": "Double",
+    "RentableStatus": "Occupied",
+    "RentableID": "1256",
+    "RentablePrice": 200000
+  },
+  {
     "RentableType": "Single",
     "RentableStatus": "Occupied",
-    "RentableID": "124155",
+    "RentableID": "1257",
     "RentablePrice": 150000
   },
   {
-    "RentableType": "Suite",
+    "RentableType": "Single",
     "RentableStatus": "Available",
-    "RentableID": "12153",
-    "RentablePrice": 600000
+    "RentableID": "1258",
+    "RentablePrice": 150000
   },
   {
     "RentableType": "Deluxe",
     "RentableStatus": "Available",
-    "RentableID": "1215312",
+    "RentableID": "1259",
     "RentablePrice": 650000
+  },
+  {
+    "RentableType": "Suite",
+    "RentableStatus": "Available",
+    "RentableID": "1260",
+    "RentablePrice": 600000
   },
   {
     "RentableType": "Family",
     "RentableStatus": "Available",
-    "RentableID": "1111",
+    "RentableID": "1261",
     "RentablePrice": 250000
   },
   {
-    "RentableType": "Double",
+    "RentableType": "Deluxe",
     "RentableStatus": "UnderMaintenance",
-    "RentableID": "1112",
-    "RentablePrice": 200000
-  },
-  {
-    "RentableType": "Double",
-    "RentableStatus": "Available",
-    "RentableID": "22222",
-    "RentablePrice": 200000
-  },
-  {
-    "RentableType": "Suite",
-    "RentableStatus": "Available",
-    "RentableID": "888888",
-    "RentablePrice": 600000
-  },
-  {
-    "RentableType": "Suite",
-    "RentableStatus": "Reserved",
-    "RentableID": "124155",
-    "RentablePrice": 600000
+    "RentableID": "1262",
+    "RentablePrice": 650000
   }
 ]
