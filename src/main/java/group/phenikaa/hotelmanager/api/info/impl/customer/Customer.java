@@ -2,6 +2,9 @@ package group.phenikaa.hotelmanager.api.info.impl.customer;
 
 import group.phenikaa.hotelmanager.api.utility.enums.Country;
 import group.phenikaa.hotelmanager.api.utility.enums.IDProof;
+import group.phenikaa.hotelmanager.api.utility.enums.RentableType;
+
+import static group.phenikaa.hotelmanager.api.utility.Utility.price;
 
 // TODO: the amount of setter getter is crazy
 public class Customer {
@@ -90,8 +93,8 @@ public class Customer {
     }
 
     // Total cost based on the number of nights, 15% increment for each subsequent rental and 5% when u have a kid
-    public long calculateTotalCost() {
-        double totalCost = money * night;
+    public long calculateTotalCost(RentableType type) {
+        double totalCost = price(type) * night;
 
         for (int i = 1; i < quantity; i++) {
             totalCost *= 1.15; // Increase by 15% for each rental

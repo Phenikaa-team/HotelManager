@@ -1,15 +1,16 @@
 package group.phenikaa.hotelmanager.api.info.api;
 
 import group.phenikaa.hotelmanager.api.utility.enums.RentableStatus;
+import group.phenikaa.hotelmanager.api.utility.enums.RentableType;
 import group.phenikaa.hotelmanager.api.utility.interfaces.IRentable;
 
 public abstract class AbstractRentable implements IRentable {
-    protected String name;
+    protected RentableType name;
     protected RentableStatus rentableStatus;
     protected long price;
     protected String id;
 
-    protected AbstractRentable(String name, RentableStatus rentableStatus, long price, String id) {
+    protected AbstractRentable(RentableType name, RentableStatus rentableStatus, long price, String id) {
         this.name = name;
         this.rentableStatus = rentableStatus;
         this.price = price;
@@ -17,7 +18,7 @@ public abstract class AbstractRentable implements IRentable {
     }
 
     @Override
-    public String getName() {
+    public RentableType getName() {
         return name;
     }
 
@@ -34,6 +35,11 @@ public abstract class AbstractRentable implements IRentable {
     @Override
     public String getID() {
         return id;
+    }
+
+    @Override
+    public void setName(RentableType name) {
+        this.name = name;
     }
 
     @Override

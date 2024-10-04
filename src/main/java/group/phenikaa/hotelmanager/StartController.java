@@ -54,37 +54,48 @@ public class StartController implements Initializable {
     }
 
     @FXML
-    void getEnterScene() throws IOException {
-        List<User> user = loginData.load(USER);
+    void getEnterScene() {
+        try {
+            List<User> user = loginData.load(USER);
 
-        for (User info : user) {
-            if (info.getUsername().equals(username.getText()) && info.getPassword().equals(password.getText())) {
-                User loggedInUser = new User(username.getText(), password.getText());
-                Session.setCurrentUser(loggedInUser);
-                HotelApplication.switchToMenuScene();
-                return;
+            for (User info : user) {
+                if (info.getUsername().equals(username.getText()) && info.getPassword().equals(password.getText())) {
+                    User loggedInUser = new User(username.getText(), password.getText());
+                    Session.setCurrentUser(loggedInUser);
+                    HotelApplication.switchToMenuScene();
+                    return;
+                }
             }
-        }
 
-        showAlert(Alert.AlertType.ERROR, "Login Failed", "Invalid username or password.");
+            throw new Exception("Invalid username or password.");
+        } catch (IOException e) {
+            showAlert(Alert.AlertType.ERROR, "Login Error", "An error occurred while loading user data.");
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Login Failed", e.getMessage());
+        }
     }
 
     @FXML
     void registerAccount() {
-        List<User> user = loginData.load(USER);
+        try {
+            List<User> user = loginData.load(USER);
 
-        for (User info : user) {
-            if (info.getUsername().equals(username.getText())) {
-                showAlert(Alert.AlertType.ERROR, "Registration Failed", "Username already taken.");
-                return;
+            for (User info : user) {
+                if (info.getUsername().equals(username.getText())) {
+                    throw new Exception("Username already taken.");
+                }
             }
+
+            User newCustomer = new User(username.getText(), password.getText());
+            user.add(newCustomer);
+            loginData.save(user, USER);
+
+            showAlert(Alert.AlertType.INFORMATION, "Registration Successful", "Account created successfully.");
+        } catch (IOException e) {
+            showAlert(Alert.AlertType.ERROR, "Registration Error", "An error occurred while saving user data.");
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Registration Failed", e.getMessage());
         }
-
-        User newCustomer = new User(username.getText(), password.getText());
-        user.add(newCustomer);
-        loginData.save(user, USER);
-
-        showAlert(Alert.AlertType.INFORMATION, "Registration Successful", "Account created successfully.");
     }
 
     @FXML

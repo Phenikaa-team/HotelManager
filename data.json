@@ -1,8 +1,8 @@
 [
   {
     "RentableType": "Single",
-    "RentableStatus": "Available",
-    "RentableID": "12415",
+    "RentableStatus": "Occupied",
+    "RentableID": "124155",
     "RentablePrice": 150000
   },
   {
@@ -16,5 +16,35 @@
     "RentableStatus": "Available",
     "RentableID": "1215312",
     "RentablePrice": 650000
+  },
+  {
+    "RentableType": "Family",
+    "RentableStatus": "Available",
+    "RentableID": "1111",
+    "RentablePrice": 250000
+  },
+  {
+    "RentableType": "Double",
+    "RentableStatus": "UnderMaintenance",
+    "RentableID": "1112",
+    "RentablePrice": 200000
+  },
+  {
+    "RentableType": "Double",
+    "RentableStatus": "Available",
+    "RentableID": "22222",
+    "RentablePrice": 200000
+  },
+  {
+    "RentableType": "Suite",
+    "RentableStatus": "Available",
+    "RentableID": "888888",
+    "RentablePrice": 600000
+  },
+  {
+    "RentableType": "Suite",
+    "RentableStatus": "Reserved",
+    "RentableID": "124155",
+    "RentablePrice": 600000
   }
 ]

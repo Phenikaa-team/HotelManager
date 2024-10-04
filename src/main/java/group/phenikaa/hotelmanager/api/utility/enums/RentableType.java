@@ -7,8 +7,7 @@ public enum RentableType implements IStringProvider {
     Double("Double Room, suitable for 2 persons"),
     Suite("Suite Room, luxury with separate living space"),
     Deluxe("Deluxe Room, high-end amenities"),
-    Family("Family Room, suitable for families"),
-    PresidentialSuite("Presidential Suite, the most luxurious room");
+    Family("Family Room, suitable for families");
 
     private final String description;
 

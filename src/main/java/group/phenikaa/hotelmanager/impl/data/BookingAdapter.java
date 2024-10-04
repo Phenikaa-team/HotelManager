@@ -96,7 +96,6 @@ public class BookingAdapter extends TypeAdapter<Booking> {
             case Single -> new Single(status, price, id);
             case Deluxe -> new Deluxe(status, price, id);
             case Family -> new Family(status, price, id);
-            case PresidentialSuite -> new PresidentialSuite(status, price, id);
             default -> throw new IllegalArgumentException("Unknown rentable type: " + type);
         };
     }

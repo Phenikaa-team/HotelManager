@@ -129,19 +129,19 @@
       </HBox>
       <AnchorPane fx:id="dash_board_panel" layoutX="190.0" layoutY="55.0" prefHeight="445.0" prefWidth="690.0" visible="false">
          <children>
-            <AnchorPane fx:id="general_panel1" layoutX="7.0" layoutY="32.0" prefHeight="327.0" prefWidth="553.0" stylesheets="@../../../css/welcome_page.css">
+            <AnchorPane fx:id="general_panel1" layoutX="7.0" layoutY="30.0" prefHeight="335.0" prefWidth="660.0" stylesheets="@../../../css/welcome_page.css">
                <children>
-                  <HBox layoutX="6.0" prefHeight="183.0" prefWidth="534.0" spacing="15.0">
+                  <HBox layoutX="6.0" prefHeight="210.0" prefWidth="654.0" spacing="15.0">
                      <children>
                         <AnchorPane prefHeight="183.0" prefWidth="140.0">
                            <children>
-                              <Rectangle arcHeight="20.0" arcWidth="5.0" fill="WHITE" height="153.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="140.0" />
-                              <Text fx:id="total_rooms" fill="#de8989" layoutX="55.0" layoutY="76.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0">
+                              <Rectangle arcHeight="20.0" arcWidth="5.0" fill="WHITE" height="170.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="170.0" />
+                              <Text fx:id="total_rooms" fill="#de8989" layoutX="70.0" layoutY="76.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0">
                                  <font>
                                     <Font size="57.0" />
                                  </font>
                               </Text>
-                              <Text fill="#535353" layoutX="15.0" layoutY="137.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Total Rooms">
+                              <Text fill="#535353" layoutX="30.0" layoutY="139.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Total Rooms">
                                  <font>
                                     <Font size="20.0" />
                                  </font>
@@ -150,13 +150,13 @@
                         </AnchorPane>
                         <AnchorPane prefHeight="183.0" prefWidth="140.0">
                            <children>
-                              <Rectangle arcHeight="20.0" arcWidth="5.0" fill="WHITE" height="153.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="140.0" />
-                              <Text fx:id="valid_rooms" fill="#848edb" layoutX="55.0" layoutY="76.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0">
+                              <Rectangle arcHeight="20.0" arcWidth="5.0" fill="WHITE" height="170.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="170.0" />
+                              <Text fx:id="valid_rooms" fill="#848edb" layoutX="70.0" layoutY="76.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0">
                                  <font>
                                     <Font size="57.0" />
                                  </font>
                               </Text>
-                              <Text fill="#535353" layoutX="15.0" layoutY="137.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Valid Rooms">
+                              <Text fill="#535353" layoutX="30.0" layoutY="140.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Valid Rooms">
                                  <font>
                                     <Font size="20.0" />
                                  </font>
@@ -166,10 +166,10 @@
                               <Insets />
                            </HBox.margin>
                         </AnchorPane>
-                        <VBox prefHeight="174.0" prefWidth="218.0" spacing="12.0">
+                        <VBox prefHeight="210.0" prefWidth="274.0" spacing="12.0">
                            <children>
-                              <Button mnemonicParsing="false" prefHeight="70.0" prefWidth="218.0" style="-fx-background-color: white; -fx-background-radius: 5;" textFill="TRANSPARENT" />
-                              <Button mnemonicParsing="false" prefHeight="70.0" prefWidth="218.0" style="-fx-background-color: white; -fx-background-radius: 5;" textFill="TRANSPARENT" />
+                              <Button mnemonicParsing="false" prefHeight="78.0" prefWidth="245.0" style="-fx-background-color: white; -fx-background-radius: 5;" textFill="TRANSPARENT" />
+                              <Button mnemonicParsing="false" prefHeight="78.0" prefWidth="245.0" style="-fx-background-color: white; -fx-background-radius: 5;" textFill="TRANSPARENT" />
                            </children>
                         </VBox>
                      </children>
@@ -183,11 +183,10 @@
             </Text>
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="room_panel" layoutX="190.0" layoutY="55.0" prefHeight="445.0" prefWidth="690.0">
+      <AnchorPane fx:id="room_panel" layoutX="190.0" layoutY="55.0" prefHeight="445.0" prefWidth="690.0" visible="false">
          <children>
             <AnchorPane fx:id="general_panel12" layoutX="7.0" layoutY="27.0" prefHeight="327.0" prefWidth="553.0" stylesheets="@../../../css/welcome_page.css">
                <children>
-                  <ListView fx:id="bookingListView" layoutY="6.0" prefHeight="398.0" prefWidth="258.0" />
                   <HBox layoutX="260.0" layoutY="2.0" prefHeight="398.0" prefWidth="417.0" spacing="50.0">
                      <children>
                         <VBox prefHeight="302.0" prefWidth="171.0">
@@ -269,13 +268,13 @@
             </HBox>
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="room_details_panel" layoutX="190.0" layoutY="55.0" prefHeight="445.0" prefWidth="690.0" visible="false">
+      <AnchorPane fx:id="room_details_panel" layoutX="190.0" layoutY="55.0" prefHeight="445.0" prefWidth="690.0">
          <children>
-            <AnchorPane fx:id="general_panel" layoutX="7.0" layoutY="32.0" prefHeight="398.0" prefWidth="649.0" stylesheets="@../../../css/welcome_page.css">
+            <AnchorPane fx:id="general_panel" layoutX="7.0" layoutY="29.0" prefHeight="410.0" prefWidth="678.0" stylesheets="@../../../css/welcome_page.css">
                <children>
-                  <HBox alignment="CENTER" layoutX="413.0" layoutY="310.0" prefHeight="52.0" prefWidth="218.0" spacing="15.0">
+                  <HBox alignment="CENTER" layoutX="443.0" layoutY="346.0" prefHeight="52.0" prefWidth="218.0" spacing="15.0">
                      <children>
-                        <Button fx:id="find_btn" mnemonicParsing="false" onAction="#checkOut" prefHeight="37.0" prefWidth="92.0" text="Find">
+                        <Button fx:id="edit_btn" mnemonicParsing="false" onAction="#editRoom" prefHeight="37.0" prefWidth="92.0" text="Edit">
                            <cursor>
                               <Cursor fx:constant="HAND" />
                            </cursor>
@@ -287,15 +286,10 @@
                         </Button>
                      </children>
                   </HBox>
-                  <HBox layoutX="12.0" layoutY="10.0" prefHeight="277.0" prefWidth="615.0">
+                  <HBox layoutX="27.0" layoutY="170.0" prefHeight="170.0" prefWidth="631.0">
                      <children>
-                        <VBox prefHeight="252.0" prefWidth="263.0">
+                        <VBox prefHeight="266.0" prefWidth="262.0">
                            <children>
-                              <Text fill="#4cc6ff" strokeType="OUTSIDE" strokeWidth="0.0" text="General" wrappingWidth="67.19998779296861">
-                                 <font>
-                                    <Font size="18.0" />
-                                 </font>
-                              </Text>
                               <VBox prefHeight="71.0" prefWidth="263.0" spacing="5.0">
                                  <children>
                                     <Text fill="#bfbfbf" strokeType="OUTSIDE" strokeWidth="0.0" text="Room Category*" translateX="5.0" translateY="5.0" wrappingWidth="90.39999999999986" />
@@ -305,14 +299,17 @@
                               <VBox prefHeight="71.0" prefWidth="263.0" spacing="5.0">
                                  <children>
                                     <Text fill="#bfbfbf" strokeType="OUTSIDE" strokeWidth="0.0" text="Room Status*" translateX="5.0" translateY="5.0" wrappingWidth="90.39999999999986" />
-                                    <ComboBox fx:id="hotel_status" prefHeight="35.0" prefWidth="245.0" stylesheets="@../../../css/style.css" translateX="7.0" translateY="3.0" />
+                                    <ComboBox fx:id="hotel_status" prefHeight="35.0" prefWidth="245.0" promptText="Available" stylesheets="@../../../css/style.css" translateX="7.0" translateY="3.0" />
                                  </children>
                               </VBox>
                            </children>
+                           <padding>
+                              <Insets top="23.0" />
+                           </padding>
                         </VBox>
                         <VBox prefHeight="140.0" prefWidth="263.0">
                            <children>
-                              <VBox prefHeight="74.0" prefWidth="308.0" spacing="5.0" translateY="21.0">
+                              <VBox prefHeight="74.0" prefWidth="308.0" spacing="5.0" translateY="26.0">
                                  <children>
                                     <Text fill="#bfbfbf" strokeType="OUTSIDE" strokeWidth="0.0" text="Room No*" translateX="5.0" translateY="5.0" wrappingWidth="95.99997558593736" />
                                     <TextField fx:id="room_number_field" focusTraversable="false" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="35.0" prefWidth="245.0" promptText="\@123Abc" stylesheets="@../../../css/style.css" translateX="7.0" translateY="3.0" />
@@ -322,6 +319,26 @@
                         </VBox>
                      </children>
                   </HBox>
+                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="678.0">
+                     <children>
+                        <HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="34.0" prefWidth="659.0" spacing="140.0">
+                           <Text style="-fx-font-weight: bold;" text="Room Number" translateX="5.0" />
+                           <Text style="-fx-font-weight: bold;" text="Type" translateX="-100.0" />
+                           <Text style="-fx-font-weight: bold;" text="Status" translateX="-80.0" />
+                           <Text style="-fx-font-weight: bold;" text="Price" translateX="-80.0" />
+                           <padding>
+                              <Insets top="10.0" />
+                           </padding>
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
+                        </HBox>
+                        <ListView fx:id="bookingListView" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="160.0" prefWidth="656.0">
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin></ListView>
+                     </children>
+                  </VBox>
                </children>
             </AnchorPane>
             <Text fill="#383838" layoutX="7.0" layoutY="21.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Rooms Details" wrappingWidth="150.39999999999986">

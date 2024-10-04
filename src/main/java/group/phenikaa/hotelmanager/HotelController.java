@@ -27,11 +27,11 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import static group.phenikaa.hotelmanager.HotelApplication.DATA;
-import static group.phenikaa.hotelmanager.api.utility.Utility.rangeList;
-import static group.phenikaa.hotelmanager.api.utility.Utility.showAlert;
+import static group.phenikaa.hotelmanager.api.utility.Utility.*;
 
 public class HotelController implements Initializable {
     private final BookingData data = new BookingData();
+    private Booking selectedBooking = null;
 
     // ListView for bookings
     @FXML private ListView<Booking> bookingListView;
@@ -59,7 +59,7 @@ public class HotelController implements Initializable {
     @FXML private ComboBox<RentableStatus> hotel_status;
     @FXML private TextField room_number_field;
     @FXML private Button add_btn;
-    @FXML private Button find_btn;
+    @FXML private Button edit_btn;
 
     //Room(booking)
     @FXML private TextField name_field;
@@ -80,25 +80,43 @@ public class HotelController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        User user = Session.getCurrentUser();
-        if (user != null) {
-            user_name.setText(user.getUsername());
-        }
-        panels = Arrays.asList(room_details_panel, dash_board_panel, room_panel);
+        try {
+            User user = Session.getCurrentUser();
+            if (user != null) {
+                user_name.setText(user.getUsername());
+            }
+            panels = Arrays.asList(room_details_panel, dash_board_panel, room_panel);
 
-        List<Booking> list = loadRentable();
-        bookingList = FXCollections.observableArrayList(list);
-        if (bookingListView != null) {
-            setupListView();
-        }
-        citizen_box.setItems(FXCollections.observableArrayList(Country.values()));
-        id_box.setItems(FXCollections.observableArrayList(IDProof.values()));
-        tenants_box.setItems(FXCollections.observableArrayList(rangeList(1, 12)));
-        total_night_box.setItems(FXCollections.observableArrayList(rangeList(1, 62)));
-        hotel_category.setItems(FXCollections.observableArrayList(RentableType.values()));
-        hotel_status.setItems(FXCollections.observableArrayList(RentableStatus.values()));
+            List<Booking> list = loadRentable();
+            bookingList = FXCollections.observableArrayList(list);
+            if (bookingListView != null) {
+                setupListView();
+            }
+            bookingListView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+                if (newSelection != null) {
+                    populateRoomDetails(newSelection);
+                    edit_btn.setText("Edit");
+                }
+            });
+            citizen_box.setItems(FXCollections.observableArrayList(Country.values()));
+            id_box.setItems(FXCollections.observableArrayList(IDProof.values()));
+            tenants_box.setItems(FXCollections.observableArrayList(rangeList(1, 12)));
+            total_night_box.setItems(FXCollections.observableArrayList(rangeList(1, 62)));
+            hotel_category.setItems(FXCollections.observableArrayList(RentableType.values()));
+            hotel_status.setItems(FXCollections.observableArrayList(RentableStatus.values()));
 
-        updateRoomCounts();
+            updateRoomCounts();
+            edit_btn.setText("Edit");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void populateRoomDetails(Booking booking) {
+        selectedBooking = booking;
+        room_number_field.setText(booking.rentable().getID());
+        hotel_category.setValue(booking.rentable().getName());
+        hotel_status.setValue(booking.rentable().getStatus());
     }
 
     private void setupListView() {
@@ -111,17 +129,26 @@ public class HotelController implements Initializable {
                     setText(null);
                     setGraphic(null);
                 } else {
-                    int index = getIndex() + 1;
-                    var hbox = new HBox(10);
-                    var vbox = new VBox(5);
-                    var indexLabel = new Label(index + ".");
-                    indexLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
-                    var roomInfoLabel = new Label("Room ID: " + booking.rentable().getID());
-                    var typeLabel = new Label("Type: " + booking.rentable().getName());
-                    var statusLabel = new Label("Status: " + booking.rentable().getStatus());
-                    var priceLabel = new Label("Price: " + booking.rentable().getPrice() + " VND");
-                    vbox.getChildren().addAll(roomInfoLabel, typeLabel, statusLabel, priceLabel);
-                    hbox.getChildren().addAll(indexLabel, vbox);
+                    var hbox = new HBox(20);
+
+                    // Room Number
+                    var roomNumberLabel = new Label(booking.rentable().getID());
+                    roomNumberLabel.setPrefWidth(85);
+
+                    // Type
+                    var typeLabel = new Label(booking.rentable().getName().name());
+                    typeLabel.setPrefWidth(80);
+
+                    // Status
+                    var statusLabel = new Label(booking.rentable().getStatus().toString());
+                    statusLabel.setPrefWidth(230);
+
+                    // Price
+                    var priceLabel = new Label(booking.rentable().getPrice() + " VND");
+                    priceLabel.setPrefWidth(100);
+
+                    hbox.getChildren().addAll(roomNumberLabel, typeLabel, statusLabel, priceLabel);
+
                     setGraphic(hbox);
                 }
             }
@@ -163,41 +190,80 @@ public class HotelController implements Initializable {
 
     @FXML
     private void addRoom() {
-        var roomNumber = room_number_field.getText();
-        var roomType = hotel_category.getValue();
-        var roomStatus = hotel_status.getValue();
+        try {
+            var roomNumber = room_number_field.getText();
+            var roomType = hotel_category.getValue();
+            var roomStatus = hotel_status.getValue();
 
-        if (roomNumber.isEmpty() || roomStatus == null || roomType == null) {
-            showAlert(Alert.AlertType.ERROR, "Thiếu thông tin", "Vui lòng điền đầy đủ thông tin phòng.");
-            return;
+            if (roomNumber.isEmpty() || roomStatus == null || roomType == null) {
+                showAlert(Alert.AlertType.ERROR, "Thiếu thông tin", "Vui lòng điền đầy đủ thông tin phòng.");
+                return;
+            }
+
+            if (findBookingByRoom() != null) {
+                showAlert(Alert.AlertType.ERROR, "Phòng đã tồn tại", "Phòng với số này đã tồn tại.");
+                return;
+            }
+
+            var newRoom = BookingAdapter.getRentable(roomType, roomStatus, price(roomType), roomNumber);
+            bookingList.add(new Booking(newRoom, null));
+            updateRoomCounts();
+
+            showAlert(Alert.AlertType.INFORMATION, "Thành công", "Phòng mới đã được thêm.");
         }
-
-        if (findBookingByRoom() != null) {
-            showAlert(Alert.AlertType.ERROR, "Phòng đã tồn tại", "Phòng với số này đã tồn tại.");
-            return;
+        catch (Exception e) {
+            e.printStackTrace();
         }
+    }
 
-        long price = switch(roomType) {
-            case Single -> 150000;
-            case Double -> 200000;
-            case Family -> 250000;
-            case Suite -> 600000;
-            case Deluxe -> 650000;
-            case PresidentialSuite -> 700000;
-        };
+    @FXML
+    private void editRoom() {
+        try {
+            if (selectedBooking == null) {
+                showAlert(Alert.AlertType.ERROR, "No Room Selected", "Please select a room to edit.");
+                return;
+            }
 
-        var newRoom = BookingAdapter.getRentable(roomType, roomStatus, price, roomNumber);
-        bookingList.add(new Booking(newRoom, null));
-        updateRoomCounts();
+            if (edit_btn.getText().equals("Edit")) {
+                enableRoomFields(true);
+                edit_btn.setText("Done");
+            } else {
+                if (validateRoomDetails()) {
+                    selectedBooking.rentable().setID(room_number_field.getText());
+                    selectedBooking.rentable().setName(hotel_category.getValue());
+                    selectedBooking.rentable().setStatus(hotel_status.getValue());
 
-        showAlert(Alert.AlertType.INFORMATION, "Thành công", "Phòng mới đã được thêm.");
+                    bookingListView.refresh();
+                    updateRoomCounts();
+
+                    showAlert(Alert.AlertType.INFORMATION, "Success", "Room details updated successfully.");
+                } else {
+                    showAlert(Alert.AlertType.ERROR, "Invalid Details", "Please provide valid room details.");
+                }
+                enableRoomFields(false);
+                edit_btn.setText("Edit");
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void enableRoomFields(boolean enable) {
+        room_number_field.setDisable(!enable);
+        hotel_category.setDisable(!enable);
+        hotel_status.setDisable(!enable);
+    }
+
+    private boolean validateRoomDetails() {
+        return !room_number_field.getText().isEmpty() && hotel_category.getValue() != null && hotel_status.getValue() != null;
     }
 
     @FXML
     private void checkIn() {
         var roomNumber = room_number_field.getText();
         var booking = findBookingByRoom();
-
+        var type = hotel_category.getValue();
         if (booking != null) {
             showAlert(Alert.AlertType.ERROR, "Phòng đang có người", "Phòng này đã được đặt.");
             return;
@@ -214,7 +280,7 @@ public class HotelController implements Initializable {
             long money = Long.parseLong(submitted_money.getText());
 
             Customer renter = new Customer(name, id_box.getValue(), idNumber, tenants_box.getValue().intValue(), total_night_box.getValue().intValue(), citizen_box.getValue(), money, kid_btn.isSelected());
-            AbstractRentable rentable = BookingAdapter.getRentable(hotel_category.getValue(), hotel_status.getValue(), renter.calculateTotalCost(), roomNumber);
+            AbstractRentable rentable = BookingAdapter.getRentable(hotel_category.getValue(), hotel_status.getValue(), renter.calculateTotalCost(type), roomNumber);
             bookingList.add(new Booking(rentable, renter));
             updateRoomCounts();
 
@@ -231,15 +297,20 @@ public class HotelController implements Initializable {
 
     @FXML
     private void checkOut() {
-        Booking booking = findBookingByRoom();
-        if (booking != null) {
-            //bookingList.remove(booking);
-            booking.rentable().setStatus(RentableStatus.Available);
-            bookingListView.refresh();
-            updateRoomCounts();
-            showAlert(Alert.AlertType.INFORMATION, "Thành công", "Phòng đã được trả.");
-        } else {
-            showAlert(Alert.AlertType.ERROR, "Phòng trống", "Phòng này hiện đang trống.");
+        try {
+            Booking booking = findBookingByRoom();
+            if (booking != null) {
+                //bookingList.remove(booking);
+                booking.rentable().setStatus(RentableStatus.Available);
+                bookingListView.refresh();
+                updateRoomCounts();
+                showAlert(Alert.AlertType.INFORMATION, "Thành công", "Phòng đã được trả.");
+            } else {
+                showAlert(Alert.AlertType.ERROR, "Phòng trống", "Phòng này hiện đang trống.");
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
