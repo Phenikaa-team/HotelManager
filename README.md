@@ -23,9 +23,9 @@
 
 ## Application interface
 
-| **LOGIN** |   <img src="https://i.imgur.com/dSoPTVt.png">    |     
-|-----------| :----------------------------------------------: |
-|  **UI**   |  <img src="https://i.imgur.com/83sQnk5.png">     |   
+| **LOGIN** |  <img src="https://i.imgur.com/ixoHbP5.png">  |     
+|-----------|:---------------------------------------------:|
+|  **UI**   | <img src="https://i.imgur.com/Oi8tu5B.png"> |   
 
 ---
 

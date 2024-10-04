@@ -1,5 +1,6 @@
-package group.phenikaa.hotelmanager;
+package group.phenikaa.hotelmanager.impl.controller;
 
+import group.phenikaa.hotelmanager.HotelApplication;
 import group.phenikaa.hotelmanager.api.info.Booking;
 import group.phenikaa.hotelmanager.api.info.api.AbstractRentable;
 import group.phenikaa.hotelmanager.api.info.impl.customer.Customer;
@@ -15,7 +16,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 

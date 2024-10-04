@@ -54,7 +54,7 @@ dependencies {
     implementation("com.google.guava:guava:${guavaVersion}") {
         exclude(group: 'com.google')
     }
-
+    implementation 'mysql:mysql-connector-java:8.0.34'
     implementation('com.google.code.gson:gson:2.10.1')
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")

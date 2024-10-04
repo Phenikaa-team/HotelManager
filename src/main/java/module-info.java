@@ -11,10 +11,13 @@ module group.phenikaa.hotelmanager {
     requires com.google.gson;
     requires com.google.common;
     requires java.desktop;
+    requires java.sql;
 
     opens group.phenikaa.hotelmanager to javafx.fxml;
     exports group.phenikaa.hotelmanager;
     opens group.phenikaa.hotelmanager.api.info.api to com.google.gson;
     opens group.phenikaa.hotelmanager.api.info to com.google.gson;
     opens group.phenikaa.hotelmanager.api.info.impl.customer to com.google.gson;
+    exports group.phenikaa.hotelmanager.impl.controller;
+    opens group.phenikaa.hotelmanager.impl.controller to javafx.fxml;
 }

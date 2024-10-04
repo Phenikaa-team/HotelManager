@@ -1,5 +1,6 @@
-package group.phenikaa.hotelmanager;
+package group.phenikaa.hotelmanager.impl.controller;
 
+import group.phenikaa.hotelmanager.HotelApplication;
 import group.phenikaa.hotelmanager.api.info.impl.customer.Session;
 import group.phenikaa.hotelmanager.api.info.impl.customer.User;
 import javafx.beans.value.ChangeListener;
