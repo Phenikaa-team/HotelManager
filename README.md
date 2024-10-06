@@ -18,7 +18,7 @@
 
 ## Team member
  >- **Trần Bá Minh Đức:** Comprehensive software development.
- >- **Trần Mạnh Hoàng:** UML construction.
+ >- **Trần Mạnh Hoàng:** UML construction and manage DataBase.
 
 ---
 
