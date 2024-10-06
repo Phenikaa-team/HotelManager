@@ -48,7 +48,7 @@
 ---
 
 ## Our page
-[Click me](https://phenikaa-team.github.io/Group19/)
+[Click me](https://phenikaa-team.github.io/HotelManager/)
 
 ## How to use
  > Use Hotel Manager is easy, you just need to install a `Java21 JDK.`  
