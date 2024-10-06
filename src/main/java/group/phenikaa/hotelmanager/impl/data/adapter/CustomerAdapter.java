@@ -11,11 +11,18 @@ import java.io.IOException;
 public class CustomerAdapter extends TypeAdapter<Customer> {
     @Override
     public void write(JsonWriter out, Customer value) throws IOException {
+        out.beginObject();
 
+
+        out.endObject();
     }
 
     @Override
     public Customer read(JsonReader in) throws IOException {
+        in.beginObject();
+
+
+        in.endObject();
         return null;
     }
 }

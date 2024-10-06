@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+//TODO: :angry:
 public class DatabaseConnection {
     private static final String URL = "jdbc:mysql://...";
     private static final String USER_NAME = "avnadmin";

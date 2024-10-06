@@ -12,6 +12,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+//TODO: upload everything to database
 public class BookingData implements IDataStorage<Booking> {
     private static final Gson gson = new GsonBuilder().registerTypeAdapter(Booking.class, new BookingAdapter())
             .setPrettyPrinting().create();

@@ -3,19 +3,23 @@ package group.phenikaa.hotelmanager.api.info.impl.customer;
 import group.phenikaa.hotelmanager.api.utility.enums.Country;
 import group.phenikaa.hotelmanager.api.utility.enums.IDProof;
 import group.phenikaa.hotelmanager.api.utility.enums.RentableType;
+import group.phenikaa.hotelmanager.api.utility.idgen.UniqueIndexer;
+import group.phenikaa.hotelmanager.api.utility.interfaces.IUniqueIDProvider;
 
 import static group.phenikaa.hotelmanager.api.utility.Utility.price;
 
 // TODO: the amount of setter getter is crazy
-public class Customer {
-    protected String name;
-    protected Enum<IDProof> idProof;
-    protected int idNumber;
-    protected int quantity;
-    protected int night;
-    protected Enum<Country> country;
-    protected long money;
-    protected boolean kid;
+// I want to use lombok or kotlin here :sob:
+public class Customer implements IUniqueIDProvider {
+    private String name;
+    private Enum<IDProof> idProof;
+    private int idNumber;
+    private int quantity;
+    private int night;
+    private Enum<Country> country;
+    private long money;
+    private boolean kid;
+    protected int uniqueID = UniqueIndexer.getInstance().generateID();
 
     public Customer(String name, Enum<IDProof> idProof, int idNumber, int quantity, int night, Enum<Country> country, long money, boolean kid) {
         this.name = name;
@@ -104,6 +108,11 @@ public class Customer {
         }
 
         return Math.round(totalCost);
+    }
+
+    @Override
+    public int getUniqueID() {
+        return uniqueID;
     }
 }
 

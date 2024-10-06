@@ -22,7 +22,7 @@ public class BookingAdapter extends TypeAdapter<Booking> {
         var rentable = booking.rentable();
         var rentableType = RentableType.valueOf(rentable.getClass().getSimpleName().replaceAll("s$", ""));
         var rentableStatus = rentable.getStatus().name();
-        var rentableID = rentable.getID();
+        var rentableID = rentable.getId();
         var rentablePrice = rentable.getPrice();
         Customer customer = booking.customer();
 

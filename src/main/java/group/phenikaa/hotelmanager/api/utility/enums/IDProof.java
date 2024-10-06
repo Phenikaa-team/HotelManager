@@ -2,6 +2,7 @@ package group.phenikaa.hotelmanager.api.utility.enums;
 
 import group.phenikaa.hotelmanager.api.utility.interfaces.IStringProvider;
 
+// fr
 public enum IDProof implements IStringProvider {
     Driving_License("A government-issued license allowing the holder to drive."),
     Citizen_Identification_Card("A card issued by the government to identify a citizen."),

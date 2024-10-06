@@ -2,6 +2,7 @@ package group.phenikaa.hotelmanager.api.utility.enums;
 
 import group.phenikaa.hotelmanager.api.utility.interfaces.IStringProvider;
 
+// Nah no way
 public enum Country implements IStringProvider {
     USA("United States of America"),
     AFGHANISTAN("Afghanistan"),

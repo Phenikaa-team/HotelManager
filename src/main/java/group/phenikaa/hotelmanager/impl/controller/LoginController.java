@@ -19,6 +19,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import static group.phenikaa.hotelmanager.HotelApplication.USER;
 import static group.phenikaa.hotelmanager.api.utility.Utility.showAlert;
 
 public class LoginController implements Initializable {
@@ -57,7 +58,7 @@ public class LoginController implements Initializable {
     @FXML
     void getEnterScene() {
         try {
-            List<User> users = loginData.load();
+            List<User> users = loginData.load(USER);
 
             for (User info : users) {
                 if (info.getUsername().equals(username.getText()) && info.getPassword().equals(password.getText())) {
@@ -79,7 +80,7 @@ public class LoginController implements Initializable {
     @FXML
     void registerAccount() {
         try {
-            List<User> users = loginData.load();
+            List<User> users = loginData.load(USER);
 
             for (User info : users) {
                 if (info.getUsername().equals(username.getText())) {
@@ -88,7 +89,8 @@ public class LoginController implements Initializable {
             }
 
             User newCustomer = new User(username.getText(), password.getText());
-            loginData.save(newCustomer);
+            users.add(newCustomer);
+            loginData.save(users, USER);
 
             showAlert(Alert.AlertType.INFORMATION, "Registration Successful", "Account created successfully.");
         } catch (SQLException e) {

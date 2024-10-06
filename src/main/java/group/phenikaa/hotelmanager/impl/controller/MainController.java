@@ -114,8 +114,8 @@ public class MainController implements Initializable {
 
     private void populateRoomDetails(Booking booking) {
         selectedBooking = booking;
-        room_number_field.setText(booking.rentable().getID());
-        hotel_category.setValue(booking.rentable().getName());
+        room_number_field.setText(booking.rentable().getId());
+        hotel_category.setValue(booking.rentable().getType());
         hotel_status.setValue(booking.rentable().getStatus());
     }
 
@@ -132,11 +132,11 @@ public class MainController implements Initializable {
                     var hbox = new HBox(20);
 
                     // Room Number
-                    var roomNumberLabel = new Label(booking.rentable().getID());
+                    var roomNumberLabel = new Label(booking.rentable().getId());
                     roomNumberLabel.setPrefWidth(85);
 
                     // Type
-                    var typeLabel = new Label(booking.rentable().getName().name());
+                    var typeLabel = new Label(booking.rentable().getType().name());
                     typeLabel.setPrefWidth(80);
 
                     // Status
@@ -229,8 +229,8 @@ public class MainController implements Initializable {
                 edit_btn.setText("Done");
             } else {
                 if (validateRoomDetails()) {
-                    selectedBooking.rentable().setID(room_number_field.getText());
-                    selectedBooking.rentable().setName(hotel_category.getValue());
+                    selectedBooking.rentable().setId(room_number_field.getText());
+                    selectedBooking.rentable().setType(hotel_category.getValue());
                     selectedBooking.rentable().setStatus(hotel_status.getValue());
 
                     bookingListView.refresh();
@@ -336,7 +336,7 @@ public class MainController implements Initializable {
     private Booking findBookingByRoom() {
         String roomID = room_number_field.getText();
         for (Booking booking : bookingList) {
-            if (booking.rentable().getID().equals(roomID)) {
+            if (booking.rentable().getId().equals(roomID)) {
                 return booking;
             }
         }

@@ -17,6 +17,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+//TODO: upload everything to database
 public class LoginData implements IDataStorage<User> {
     private static final Gson gson = new GsonBuilder().registerTypeAdapter(User.class, new UserAdapter())
             .setPrettyPrinting().create();
@@ -49,33 +50,34 @@ public class LoginData implements IDataStorage<User> {
         }
     }
 
-    public List<User> load() throws SQLException {
-        List<User> users = new ArrayList<>();
-        String query = "SELECT username, password FROM users";
-
-        try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(query);
-             ResultSet resultSet = preparedStatement.executeQuery()) {
-
-            while (resultSet.next()) {
-                String username = resultSet.getString("username");
-                String password = resultSet.getString("password");
-                users.add(new User(username, password));
-            }
-        }
-
-        return users;
-    }
-
-    public void save(User newUser) throws SQLException {
-        String query = "INSERT INTO users (username, password) VALUES (?, ?)";
-
-        try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-
-            preparedStatement.setString(1, newUser.getUsername());
-            preparedStatement.setString(2, newUser.getPassword());
-            preparedStatement.executeUpdate();
-        }
-    }
+    // Example here
+//    public List<User> load() throws SQLException {
+//        List<User> users = new ArrayList<>();
+//        String query = "SELECT username, password FROM users";
+//
+//        try (Connection connection = DatabaseConnection.getConnection();
+//             PreparedStatement preparedStatement = connection.prepareStatement(query);
+//             ResultSet resultSet = preparedStatement.executeQuery()) {
+//
+//            while (resultSet.next()) {
+//                String username = resultSet.getString("username");
+//                String password = resultSet.getString("password");
+//                users.add(new User(username, password));
+//            }
+//        }
+//
+//        return users;
+//    }
+//
+//    public void save(User newUser) throws SQLException {
+//        String query = "INSERT INTO users (username, password) VALUES (?, ?)";
+//
+//        try (Connection connection = DatabaseConnection.getConnection();
+//             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+//
+//            preparedStatement.setString(1, newUser.getUsername());
+//            preparedStatement.setString(2, newUser.getPassword());
+//            preparedStatement.executeUpdate();
+//        }
+//    }
 }
