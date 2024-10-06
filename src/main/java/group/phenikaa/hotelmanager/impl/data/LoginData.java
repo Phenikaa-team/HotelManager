@@ -2,82 +2,45 @@ package group.phenikaa.hotelmanager.impl.data;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import group.phenikaa.hotelmanager.api.info.impl.customer.User;
-import group.phenikaa.hotelmanager.api.utility.interfaces.IDataStorage;
 import group.phenikaa.hotelmanager.asm.DatabaseConnection;
-import group.phenikaa.hotelmanager.impl.data.adapter.UserAdapter;
 
-import java.io.*;
-import java.lang.reflect.Type;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
-//TODO: upload everything to database
-public class LoginData implements IDataStorage<User> {
-    private static final Gson gson = new GsonBuilder().registerTypeAdapter(User.class, new UserAdapter())
-            .setPrettyPrinting().create();
+public class LoginData {
 
-    @Override
-    public void save(List<User> list, String fileName) {
-        try (Writer writer = new FileWriter(fileName)) {
-            gson.toJson(list, writer);
+    // Login method that throws SQLException
+    public User login(String username, String password) throws SQLException {
+        User user = null;
+        String query = "SELECT * FROM customer WHERE username = ? AND password = ?";
+
+        try (Connection connection = DatabaseConnection.connect();
+             PreparedStatement pstmt = connection.prepareStatement(query)) {
+
+            pstmt.setString(1, username);
+            pstmt.setString(2, password);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                user = new User(rs.getString("username"), rs.getString("password"));
+            }
         }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
+        return user; // Return the found user or null
     }
 
-    @Override
-    public List<User> load(String fileName) {
-        File file = new File(fileName);
-        if (!file.exists()) {
-            System.out.println("File not found: " + fileName);
-            return new ArrayList<>();
-        }
+    // Registration method that throws SQLException
+    public void register(User newCustomer) throws SQLException {
+        String query = "INSERT INTO customer (username, password) VALUES (?, ?)";
 
-        try (Reader reader = new FileReader(file)) {
-            Type bookingListType = TypeToken.getParameterized(List.class, User.class).getType();
-            return gson.fromJson(reader, bookingListType);
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
+        try (Connection connection = DatabaseConnection.connect();
+             PreparedStatement pstmt = connection.prepareStatement(query)) {
+
+            pstmt.setString(1, newCustomer.getUsername());
+            pstmt.setString(2, newCustomer.getPassword());
+            pstmt.executeUpdate();
         }
     }
-
-    // Example here
-//    public List<User> load() throws SQLException {
-//        List<User> users = new ArrayList<>();
-//        String query = "SELECT username, password FROM users";
-//
-//        try (Connection connection = DatabaseConnection.getConnection();
-//             PreparedStatement preparedStatement = connection.prepareStatement(query);
-//             ResultSet resultSet = preparedStatement.executeQuery()) {
-//
-//            while (resultSet.next()) {
-//                String username = resultSet.getString("username");
-//                String password = resultSet.getString("password");
-//                users.add(new User(username, password));
-//            }
-//        }
-//
-//        return users;
-//    }
-//
-//    public void save(User newUser) throws SQLException {
-//        String query = "INSERT INTO users (username, password) VALUES (?, ?)";
-//
-//        try (Connection connection = DatabaseConnection.getConnection();
-//             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-//
-//            preparedStatement.setString(1, newUser.getUsername());
-//            preparedStatement.setString(2, newUser.getPassword());
-//            preparedStatement.executeUpdate();
-//        }
-//    }
 }

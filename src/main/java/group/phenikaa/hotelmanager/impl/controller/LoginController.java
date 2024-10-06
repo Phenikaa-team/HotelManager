@@ -13,13 +13,10 @@ import javafx.stage.Stage;
 import javafx.scene.control.Button;
 import group.phenikaa.hotelmanager.impl.data.LoginData;
 
-import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.ResourceBundle;
 
-import static group.phenikaa.hotelmanager.HotelApplication.USER;
 import static group.phenikaa.hotelmanager.api.utility.Utility.showAlert;
 
 public class LoginController implements Initializable {
@@ -58,18 +55,14 @@ public class LoginController implements Initializable {
     @FXML
     void getEnterScene() {
         try {
-            List<User> users = loginData.load(USER);
+            User loggedInUser = loginData.login(username.getText(), password.getText());
 
-            for (User info : users) {
-                if (info.getUsername().equals(username.getText()) && info.getPassword().equals(password.getText())) {
-                    User loggedInUser = new User(username.getText(), password.getText());
-                    Session.setCurrentUser(loggedInUser);
-                    HotelApplication.switchToMenuScene();
-                    return;
-                }
+            if (loggedInUser != null) {
+                Session.setCurrentUser(loggedInUser);
+                HotelApplication.switchToMenuScene();
+            } else {
+                throw new Exception("Invalid username or password.");
             }
-
-            throw new Exception("Invalid username or password.");
         } catch (SQLException e) {
             showAlert(Alert.AlertType.ERROR, "Login Error", "An error occurred while accessing the database.");
         } catch (Exception e) {
@@ -80,17 +73,8 @@ public class LoginController implements Initializable {
     @FXML
     void registerAccount() {
         try {
-            List<User> users = loginData.load(USER);
-
-            for (User info : users) {
-                if (info.getUsername().equals(username.getText())) {
-                    throw new Exception("Username already taken.");
-                }
-            }
-
             User newCustomer = new User(username.getText(), password.getText());
-            users.add(newCustomer);
-            loginData.save(users, USER);
+            loginData.register(newCustomer);  // This now handles SQL exceptions
 
             showAlert(Alert.AlertType.INFORMATION, "Registration Successful", "Account created successfully.");
         } catch (SQLException e) {
