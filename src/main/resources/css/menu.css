@@ -31,13 +31,15 @@
 #submitted_money,
 #citizen_box,
 #id_box,
-#tenants_box,
+#renter_quantity,
 #total_night_box,
 #price_text_field,
 #hotel_category,
 #hotel_status,
 #room_number_field,
-#bookingListView {
+#bookingListView,
+#user_book_list,
+#filter_box {
     -fx-background-color: #fdfdfd;
     -fx-background-radius: 8px;
     -fx-border-radius: 8px;

@@ -11,6 +11,11 @@
     -fx-font-weight: bold;
 }
 
+#show_hide {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
 .combo-box {
     -fx-background-color: #fdfdfd;
     -fx-background-radius: 8px;
@@ -37,7 +42,8 @@
 }
 
 #username,
-#password {
+#password,
+#passwordVisible {
     -fx-background-color: #fdfdfd;
     -fx-background-radius: 8px;
     -fx-border-radius: 8px;

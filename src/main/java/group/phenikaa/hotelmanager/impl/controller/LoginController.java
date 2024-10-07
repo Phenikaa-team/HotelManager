@@ -8,7 +8,10 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import javafx.scene.control.Button;
 import group.phenikaa.hotelmanager.impl.data.LoginData;
@@ -25,7 +28,12 @@ public class LoginController implements Initializable {
     @FXML private Button enter_btn;
     @FXML private Button register_btn;
     @FXML private TextField username;
-    @FXML private TextField password;
+    @FXML private PasswordField password;
+    @FXML private TextField passwordVisible;
+    @FXML private Button show_hide;
+    @FXML private ImageView eye_icon;
+
+    private boolean isPasswordVisible = false;
 
     private LoginData loginData;
 
@@ -36,8 +44,11 @@ public class LoginController implements Initializable {
         enter_btn.setDisable(true);
         register_btn.setDisable(true);
 
+        passwordVisible.setManaged(false);
+        passwordVisible.setVisible(false);
+
         ChangeListener<String> textFieldChangeListener = (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
-            boolean isBothFieldsFilled = !username.getText().isEmpty() && !password.getText().isEmpty();
+            boolean isBothFieldsFilled = !username.getText().isEmpty() && (!password.getText().isEmpty() || !passwordVisible.getText().isEmpty());
             enter_btn.setDisable(!isBothFieldsFilled);
             register_btn.setDisable(!isBothFieldsFilled);
 
@@ -50,6 +61,19 @@ public class LoginController implements Initializable {
 
         username.textProperty().addListener(textFieldChangeListener);
         password.textProperty().addListener(textFieldChangeListener);
+        passwordVisible.textProperty().addListener(textFieldChangeListener);
+
+        password.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!isPasswordVisible) {
+                passwordVisible.setText(newValue);
+            }
+        });
+
+        passwordVisible.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (isPasswordVisible) {
+                password.setText(newValue);
+            }
+        });
     }
 
     @FXML
@@ -61,12 +85,12 @@ public class LoginController implements Initializable {
                 Session.setCurrentUser(loggedInUser);
                 HotelApplication.switchToMenuScene();
             } else {
-                throw new Exception("Invalid username or password.");
+                throw new Exception("Tên người dùng hoặc mật khẩu không hợp lệ.");
             }
         } catch (SQLException e) {
-            showAlert(Alert.AlertType.ERROR, "Login Error", "An error occurred while accessing the database.");
+            showAlert(Alert.AlertType.ERROR, "Lỗi đăng nhập", "Đã xảy ra lỗi khi truy cập cơ sở dữ liệu.");
         } catch (Exception e) {
-            showAlert(Alert.AlertType.ERROR, "Login Failed", e.getMessage());
+            showAlert(Alert.AlertType.ERROR, "Đăng nhập không thành công", e.getMessage());
         }
     }
 
@@ -76,11 +100,34 @@ public class LoginController implements Initializable {
             User newCustomer = new User(username.getText(), password.getText());
             loginData.register(newCustomer);  // This now handles SQL exceptions
 
-            showAlert(Alert.AlertType.INFORMATION, "Registration Successful", "Account created successfully.");
+            showAlert(Alert.AlertType.INFORMATION, "Đăng ký thành công", "Tài khoản được tạo thành công.");
         } catch (SQLException e) {
-            showAlert(Alert.AlertType.ERROR, "Registration Error", "An error occurred while saving to the database.");
+            showAlert(Alert.AlertType.ERROR, "Lỗi đăng ký", "Đã xảy ra lỗi khi lưu vào cơ sở dữ liệu.");
         } catch (Exception e) {
-            showAlert(Alert.AlertType.ERROR, "Registration Failed", e.getMessage());
+            showAlert(Alert.AlertType.ERROR, "Đăng ký không thành công", e.getMessage());
+        }
+    }
+
+    @FXML
+    void togglePasswordVisibility() {
+        isPasswordVisible = !isPasswordVisible;
+
+        if (isPasswordVisible) {
+            password.setVisible(false);
+            password.setManaged(false);
+            passwordVisible.setVisible(true);
+            passwordVisible.setManaged(true);
+
+            // Đổi icon sang "hide.png"
+            eye_icon.setImage(new Image(getClass().getResourceAsStream("/assets/textures/hide.png")));
+        } else {
+            password.setVisible(true);
+            password.setManaged(true);
+            passwordVisible.setVisible(false);
+            passwordVisible.setManaged(false);
+
+            // Đổi icon lại sang "show.png"
+            eye_icon.setImage(new Image(getClass().getResourceAsStream("/assets/textures/show.png")));
         }
     }
 

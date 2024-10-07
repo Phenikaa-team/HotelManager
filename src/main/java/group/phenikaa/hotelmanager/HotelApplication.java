@@ -1,5 +1,6 @@
 package group.phenikaa.hotelmanager;
 
+import com.google.common.eventbus.EventBus;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -12,6 +13,7 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class HotelApplication extends Application {
+    public static EventBus EVENT_BUS = new EventBus();
     private static Stage primaryStage;
     private static double xOffset = 0;
     private static double yOffset = 0;

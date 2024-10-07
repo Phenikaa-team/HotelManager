@@ -2,18 +2,21 @@ package group.phenikaa.hotelmanager.api.info.api;
 
 import group.phenikaa.hotelmanager.api.utility.enums.RentableStatus;
 import group.phenikaa.hotelmanager.api.utility.enums.RentableType;
+import group.phenikaa.hotelmanager.api.utility.interfaces.IUniqueKeyProvider;
+import group.phenikaa.hotelmanager.api.utility.key.UniqueIndexer;
 
-public abstract class AbstractRentable {
+public abstract class AbstractRentable implements IUniqueKeyProvider {
     private RentableType type;
     private RentableStatus rentableStatus;
-    private String id;
+    private String number;
     private long price;
+    private int key = UniqueIndexer.getInstance().generateKey();
 
-    protected AbstractRentable(RentableType type, RentableStatus rentableStatus, long price, String id) {
+    protected AbstractRentable(RentableType type, RentableStatus rentableStatus, long price, String number) {
         this.type = type;
         this.rentableStatus = rentableStatus;
         this.price = price;
-        this.id = id;
+        this.number = number;
     }
 
     public RentableType getType() {
@@ -28,8 +31,8 @@ public abstract class AbstractRentable {
         return rentableStatus;
     }
 
-    public String getId() {
-        return id;
+    public String getNumber() {
+        return number;
     }
 
     public void setType(RentableType type) {
@@ -40,11 +43,16 @@ public abstract class AbstractRentable {
         this.price = price;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setNumber(String number) {
+        this.number = number;
     }
 
     public void setStatus(RentableStatus isAvailable) {
         this.rentableStatus = isAvailable;
+    }
+
+    @Override
+    public int getUniqueKey() {
+        return key;
     }
 }
