@@ -41,6 +41,7 @@ jobs:
         run: echo "My Link key is ${{secrets.SUP3R_5EC73T_KE1}}"
         env: 
           BUILD: "is it running?"
+          SUP3R_5EC73T_KE1: ${{secrets.SUP3R_5EC73T_KE1}}
       
   dependency-submission:
     runs-on: ubuntu-latest
