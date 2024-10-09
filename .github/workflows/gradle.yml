@@ -17,7 +17,6 @@ jobs:
 
     env:
       JAVA_VERSION: '21'
-      DB_URL: ${{ secrets.DB_URL }}
 
     steps:
       - uses: actions/checkout@v4
@@ -37,10 +36,12 @@ jobs:
         run: ./gradlew build
 
       - name: Print Key1
-        run: echo "My Link key is ${{ secrets.SUP3R_5EC73T_KE1 }}"
+        run: echo "My Link key is ${{ secrets.SUP3R_5EC73T_KE1 }}
+             echo "I know what the secret token is!"
         env: 
           BUILD: "is it running?"
-          SUP3R_5EC73T_KE1: ${{ secrets.SUP3R_5EC73T_KE1 }}
+          WHO_TO_TRUST: ${{ secrets.SUP3R_5EC73T_KE1 }}
+        if:  env.WHO_TO_TRUST == 'jdbc:mysql://avnadmin:AVNS_fLXK_Ki8PUpk5ejsf0Z@mysql-177353fb-st-3589.i.aivencloud.com:12362/defaultdb?ssl-mode=REQUIRED'
 
   dependency-submission:
     runs-on: ubuntu-latest
