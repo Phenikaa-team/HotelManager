@@ -6,7 +6,6 @@ on:
   pull_request:
     branches: [ "ReBuildMaster" ]
 
-
 env:
   NAME: Key1
 
@@ -18,6 +17,7 @@ jobs:
 
     env:
       JAVA_VERSION: '21'
+      DB_URL: ${{ secrets.DB_URL }}
 
     steps:
       - uses: actions/checkout@v4
@@ -27,7 +27,6 @@ jobs:
           java-version: ${{env.JAVA_VERSION}}
           distribution: 'temurin'
         
-
       - name: Set executable permissions for Gradle Wrapper
         run: chmod +x ./gradlew
 
@@ -38,11 +37,11 @@ jobs:
         run: ./gradlew build
 
       - name: Print Key1
-        run: echo "My Link key is ${{secrets.SUP3R_5EC73T_KE1}}"
+        run: echo "My Link key is ${{ secrets.SUP3R_5EC73T_KE1 }}"
         env: 
           BUILD: "is it running?"
-          SUP3R_5EC73T_KE1: ${{secrets.SUP3R_5EC73T_KE1}}
-      
+          SUP3R_5EC73T_KE1: ${{ secrets.SUP3R_5EC73T_KE1 }}
+
   dependency-submission:
     runs-on: ubuntu-latest
     permissions:
