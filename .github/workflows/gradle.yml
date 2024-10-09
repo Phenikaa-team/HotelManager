@@ -17,7 +17,7 @@ jobs:
 
     env:
       JAVA_VERSION: '21'
-      DB_URL: ${{ secrets.DB_URL }}
+      SUP3R_5EC73T_KE1: ${{ secrets.SUP3R_5EC73T_KE1 }}
 
     steps:
       - uses: actions/checkout@v4
