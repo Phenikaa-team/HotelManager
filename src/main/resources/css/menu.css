@@ -38,7 +38,6 @@
 #hotel_status,
 #room_number_field,
 #bookingListView,
-#user_book_list,
 #filter_box {
     -fx-background-color: #fdfdfd;
     -fx-background-radius: 8px;
@@ -46,6 +45,27 @@
     -fx-border-color: rgba(222, 222, 222, 0.75);
     -fx-prompt-text-fill: rgba(222, 222, 222, 0.75);
     -fx-wrap-text: rgba(222, 222, 222, 0.75);
+}
+
+#user_book_list {
+    -fx-background-color: #fdfdfd;
+    -fx-background-radius: 0px 0px 8px 8px;
+    -fx-border-radius: 0px 0px 8px 8px;
+    -fx-border-color: rgba(222, 222, 222, 0.75);
+    -fx-prompt-text-fill: rgba(222, 222, 222, 0.75);
+    -fx-wrap-text: rgba(222, 222, 222, 0.75);
+}
+
+#category {
+    -fx-background-color: #fdfdfd;
+    -fx-background-radius: 8px 8px 0px 0px;
+    -fx-border-radius: 8px 8px 0px 0px;
+    -fx-border-color: rgba(222, 222, 222, 0.75);
+    -fx-text-fill: rgba(222, 222, 222, 0.75);
+}
+
+#filter_box {
+    -fx-font-size: 10px;
 }
 
 #checkout_btn,

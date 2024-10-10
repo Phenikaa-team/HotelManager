@@ -23,16 +23,16 @@
             <Font name="System Bold" size="23.0" />
          </font>
          <fill>
-            <LinearGradient endX="1.0" endY="1.0">
+            <LinearGradient endX="1.0">
                <stops>
                   <Stop>
                      <color>
-                        <Color red="0.24074074625968933" green="0.6583333611488342" blue="1.0" />
+                        <Color red="0.4941176474094391" green="0.9058823585510254" blue="0.9215686321258545" />
                      </color>
                   </Stop>
                   <Stop offset="1.0">
                      <color>
-                        <Color red="0.08730000257492065" green="0.3583829998970032" blue="0.9700000286102295" />
+                        <Color red="0.17479999363422394" green="0.5356733202934265" blue="0.7599999904632568" />
                      </color>
                   </Stop>
                </stops>

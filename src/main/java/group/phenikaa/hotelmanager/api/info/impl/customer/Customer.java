@@ -4,13 +4,13 @@ import group.phenikaa.hotelmanager.api.utility.enums.Country;
 import group.phenikaa.hotelmanager.api.utility.enums.IDProof;
 import group.phenikaa.hotelmanager.api.utility.enums.RentableType;
 import group.phenikaa.hotelmanager.api.utility.key.UniqueIndexer;
-import group.phenikaa.hotelmanager.api.utility.interfaces.IUniqueKeyProvider;
 
 import static group.phenikaa.hotelmanager.api.utility.Utility.price;
 
 // TODO: the amount of setter getter is crazy
 // I want to use lombok or kotlin here :sob:
-public class Customer implements IUniqueKeyProvider {
+
+public class Customer {
     private String name;
     private Enum<IDProof> idProof;
     private int idNumber;
@@ -19,7 +19,7 @@ public class Customer implements IUniqueKeyProvider {
     private Enum<Country> country;
     private long money;
     private boolean kid;
-    protected int uniqueKey = UniqueIndexer.getInstance().generateKey();
+    protected long reservationKey = UniqueIndexer.getInstance().generateKey();
 
     public Customer(String name, Enum<IDProof> idProof, int idNumber, int quantity, int night, Enum<Country> country, long money, boolean kid) {
         this.name = name;
@@ -34,10 +34,6 @@ public class Customer implements IUniqueKeyProvider {
 
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public Enum<IDProof> getIdProof() {
@@ -66,6 +62,10 @@ public class Customer implements IUniqueKeyProvider {
 
     public long getMoney() {
         return money;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public void setIdProof(Enum<IDProof> idProof) {
@@ -101,7 +101,7 @@ public class Customer implements IUniqueKeyProvider {
         double totalCost = price(type) * night;
 
         for (int i = 1; i < quantity; i++) {
-            totalCost *= 1.15; // Increase by 15% for each rental
+            totalCost *= 1.1; // Increase by 10% for each rental
         }
         if (kid) {
             totalCost *= 1.05; // Increase by 5% when u have a kid
@@ -111,8 +111,10 @@ public class Customer implements IUniqueKeyProvider {
     }
 
     @Override
-    public int getUniqueKey() {
-        return uniqueKey;
+    public int hashCode() {
+        int hash = 7;
+        hash = 23 * hash + Long.hashCode(reservationKey ^ (reservationKey >>> 32));
+        return hash;
     }
 }
 

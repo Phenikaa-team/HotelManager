@@ -2,35 +2,16 @@ package group.phenikaa.hotelmanager.api.info;
 
 import group.phenikaa.hotelmanager.api.info.api.AbstractRentable;
 import group.phenikaa.hotelmanager.api.info.impl.customer.Customer;
-
-import java.util.HashMap;
+import group.phenikaa.hotelmanager.api.utility.key.UniqueIndexer;
 
 public class Booking {
     private final AbstractRentable rentable;
     private final Customer customer;
-    private int synchronizedKey;
+    private final long syncKey = UniqueIndexer.getInstance().generateKey();
 
     public Booking(AbstractRentable rentable, Customer customer) {
         this.rentable = rentable;
         this.customer = customer;
-        this.synchronizedKey = generateSynchronizedKey();
-    }
-
-    private int generateSynchronizedKey() {
-        int customerKey = 0;
-        if (customer != null) {
-            customerKey = customer.getUniqueKey();
-        }
-        int rentableKey = rentable.getUniqueKey();
-        return encryptKeys(customerKey, rentableKey);
-    }
-
-    private int encryptKeys(int key1, int key2) {
-        return key1 + key2;
-    }
-
-    public boolean validateBooking(int syncKey) {
-        return synchronizedKey == syncKey;
     }
 
     public AbstractRentable getRentable() {
@@ -41,11 +22,22 @@ public class Booking {
         return customer;
     }
 
-    public int getSynchronizedKey() {
-        return synchronizedKey;
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 23 * hash + Long.hashCode(syncKey ^ (syncKey >>> 32));
+        return hash;
     }
 
-    public void setSynchronizedKey(int synchronizedKey) {
-        this.synchronizedKey = synchronizedKey;
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        Booking other = (Booking) obj;
+        return syncKey == other.syncKey;
     }
 }

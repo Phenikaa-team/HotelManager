@@ -257,7 +257,18 @@
                   <VBox alignment="CENTER" layoutX="-5.0" prefHeight="395.0" prefWidth="260.0">
                      <children>
                         <ChoiceBox fx:id="filter_box" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="20.0" prefWidth="65.0" translateX="92.0" translateY="-1.0" />
-                        <ListView fx:id="user_book_list" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="372.0" prefWidth="255.0" />
+                        <HBox fx:id="category" alignment="CENTER_LEFT" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="24.0" prefWidth="255.0" spacing="26.0">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="No" translateX="7.0" wrappingWidth="24.807798385620117" />
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Type" translateX="-5.0" />
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Price" translateX="20.0" />
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Rentable" translateX="40.0" />
+                           </children>
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
+                        </HBox>
+                        <ListView fx:id="user_book_list" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="350.0" prefWidth="255.0" />
                      </children>
                   </VBox>
                </children>

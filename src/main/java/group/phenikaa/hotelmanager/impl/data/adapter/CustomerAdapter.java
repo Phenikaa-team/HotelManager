@@ -7,8 +7,6 @@ import group.phenikaa.hotelmanager.api.info.impl.customer.Customer;
 import group.phenikaa.hotelmanager.api.utility.enums.Country;
 import group.phenikaa.hotelmanager.api.utility.enums.IDProof;
 
-import java.io.IOException;
-
 //TODO: Done this
 public class CustomerAdapter extends TypeAdapter<Customer> {
     @Override
@@ -25,7 +23,7 @@ public class CustomerAdapter extends TypeAdapter<Customer> {
                 out.name("CustomerKid").value(value.getKid());
                 out.name("CustomerNights").value(value.getNight());
                 out.name("SubmittedMoney").value(value.getMoney());
-                out.name("CustomerKey").value(value.getUniqueKey());
+                out.name("CustomerKey").value(value.hashCode());
             }
             out.endObject();
         }
@@ -57,7 +55,7 @@ public class CustomerAdapter extends TypeAdapter<Customer> {
                     case "CustomerKid" -> kid = in.nextBoolean();
                     case "CustomerNights" -> nights = in.nextInt();
                     case "SubmittedMoney" -> submittedMoney = in.nextLong();
-                    case "CustomerKey" -> in.nextInt();
+                    case "CustomerKey" -> in.nextLong();
                     default -> in.skipValue();
                 }
             }

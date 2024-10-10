@@ -20,7 +20,7 @@ public class BookingAdapter extends TypeAdapter<Booking> {
         try {
             var rentable = booking.getRentable();
             var customer = booking.getCustomer();
-            var syncKey = booking.getSynchronizedKey();
+            var syncKey = booking.hashCode();
 
             out.beginObject();
 
@@ -35,17 +35,16 @@ public class BookingAdapter extends TypeAdapter<Booking> {
             if (customer != null) {
                 out.beginObject();
                 out.name("CustomerName").value(customer.getName());
-                out.name("CustomerIDProof").value(customer.getIdProof().name());
-                out.name("CustomerIDNumber").value(customer.getIdNumber());
+                out.name("CustomerID").value(customer.getIdNumber());
                 out.name("CustomerCountry").value(customer.getCountry().name());
-                out.name("CustomerQuantity").value(customer.getQuantity());
+                out.name("CustomerIDProof").value(customer.getIdProof().name());
+                out.name("CustomerTenants").value(customer.getQuantity());
+                out.name("CustomerKid").value(customer.getKid());
                 out.name("CustomerNights").value(customer.getNight());
-                out.name("CustomerSubmittedMoney").value(customer.getMoney());
-                out.name("CustomerHasKids").value(customer.getKid());
+                out.name("SubmittedMoney").value(customer.getMoney());
                 out.endObject();
             }
             out.endArray();
-
             // Synchronized key
             out.name("SynchronizedKey").value(syncKey);
 
@@ -66,15 +65,14 @@ public class BookingAdapter extends TypeAdapter<Booking> {
             RentableType rentableType = RentableType.Single;
             String rentId = "00x0";
             long price = 0L;
-            String customerName = null;
-            IDProof idProof = null;
-            int idNumber = 0;
-            Country country = null;
-            int quantity = 1;
-            int nights = 1;
-            long submittedMoney = 0L;
-            boolean hasKids = false;
             int syncKey = 0;
+
+            String name = null;
+            int idNumber = 0, tenants = 0, nights = 0;
+            boolean kid = false;
+            Country country = null;
+            IDProof idProof = null;
+            long submittedMoney = 0;
 
             while (in.hasNext()) {
                 String fieldName = in.nextName();
@@ -91,14 +89,14 @@ public class BookingAdapter extends TypeAdapter<Booking> {
                             in.beginObject();
                             while (in.hasNext()) {
                                 switch (in.nextName()) {
-                                    case "CustomerName" -> customerName = in.nextString();
-                                    case "CustomerIDProof" -> idProof = IDProof.valueOf(in.nextString());
-                                    case "CustomerIDNumber" -> idNumber = in.nextInt();
+                                    case "CustomerName" -> name = in.nextString();
+                                    case "CustomerID" -> idNumber = in.nextInt();
                                     case "CustomerCountry" -> country = Country.valueOf(in.nextString());
-                                    case "CustomerQuantity" -> quantity = in.nextInt();
+                                    case "CustomerIDProof" -> idProof = IDProof.valueOf(in.nextString());
+                                    case "CustomerTenants" -> tenants = in.nextInt();
+                                    case "CustomerKid" -> kid = in.nextBoolean();
                                     case "CustomerNights" -> nights = in.nextInt();
-                                    case "CustomerSubmittedMoney" -> submittedMoney = in.nextLong();
-                                    case "CustomerHasKids" -> hasKids = in.nextBoolean();
+                                    case "SubmittedMoney" -> submittedMoney = in.nextLong();
                                     default -> in.skipValue();
                                 }
                             }
@@ -106,7 +104,6 @@ public class BookingAdapter extends TypeAdapter<Booking> {
                         }
                         in.endArray();
                     }
-
                     // Synchronized key
                     case "SynchronizedKey" -> syncKey = in.nextInt();
                     default -> in.skipValue();
@@ -119,19 +116,10 @@ public class BookingAdapter extends TypeAdapter<Booking> {
 
             // Create customer if data is available
             Customer customer = null;
-            if (customerName != null) {
-                customer = new Customer(customerName, idProof, idNumber, quantity, nights, country, submittedMoney, hasKids);
+            if (name != null && idProof != null && country != null) {
+                customer = new Customer(name, idProof, idNumber, tenants, nights, country, submittedMoney, kid);
             }
-
-            // Create booking
-            Booking booking = new Booking(rentable, customer);
-
-            // Check for synchronized key
-            if (syncKey != 0 && syncKey != booking.getSynchronizedKey()) {
-                throw new IllegalArgumentException("Synchronized key mismatch.");
-            }
-
-            return booking;
+            return new Booking(rentable, customer);
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -146,7 +134,6 @@ public class BookingAdapter extends TypeAdapter<Booking> {
             case Single -> new Single(status, price, id);
             case Deluxe -> new Deluxe(status, price, id);
             case Family -> new Family(status, price, id);
-            default -> throw new IllegalArgumentException("Unknown rentable type: " + type);
         };
     }
 }

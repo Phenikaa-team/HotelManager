@@ -2,7 +2,6 @@ package group.phenikaa.hotelmanager.impl.controller;
 
 import group.phenikaa.hotelmanager.HotelApplication;
 import group.phenikaa.hotelmanager.api.info.Booking;
-import group.phenikaa.hotelmanager.api.info.api.AbstractRentable;
 import group.phenikaa.hotelmanager.api.info.impl.customer.Customer;
 import group.phenikaa.hotelmanager.api.info.impl.customer.Session;
 import group.phenikaa.hotelmanager.api.info.impl.customer.User;
@@ -166,17 +165,21 @@ public class MainController implements Initializable {
 
                     // Room Number
                     var roomNumberLabel = new Label(booking.getRentable().getNumber());
-                    roomNumberLabel.setPrefWidth(55);
+                    roomNumberLabel.setPrefWidth(20);
 
                     // Type
                     var typeLabel = new Label(booking.getRentable().getType().name());
-                    typeLabel.setPrefWidth(60);
+                    typeLabel.setPrefWidth(45);
 
                     // Price
                     var priceLabel = new Label(booking.getRentable().getPrice() + " VND");
-                    priceLabel.setPrefWidth(95);
+                    priceLabel.setPrefWidth(75);
 
-                    hbox.getChildren().addAll(roomNumberLabel, typeLabel, priceLabel);
+                    // Can rent
+                    var canRent = new Label(booking.getRentable().getStatus() == RentableStatus.Available ? "Yes" : "No");
+                    canRent.setPrefWidth(25);
+
+                    hbox.getChildren().addAll(roomNumberLabel, typeLabel, priceLabel, canRent);
                     setGraphic(hbox);
                 }
             }
@@ -188,7 +191,9 @@ public class MainController implements Initializable {
                 if (newVal == null) {
                     return true;
                 }
-                return booking.getRentable().getStatus() == newVal;
+                if (booking != null) {
+                    return booking.getRentable().getStatus() == newVal;
+                } else return false;
             });
         });
     }
@@ -238,6 +243,11 @@ public class MainController implements Initializable {
     }
 
     @FXML
+    void getEnterScene() throws IOException {
+        HotelApplication.switchToLoginScene();
+    }
+
+    @FXML
     void onExit() {
         saveRentable();
         System.exit(0);
@@ -282,7 +292,8 @@ public class MainController implements Initializable {
                 return;
             }
 
-            if (findBookingByRoom() != null) {
+            String roomID = room_number_field.getText();
+            if (findRoom(roomID) != null) {
                 showAlert(Alert.AlertType.ERROR, "Phòng đã tồn tại", "Phòng với số này đã tồn tại.");
                 return;
             }
@@ -333,7 +344,8 @@ public class MainController implements Initializable {
 
     @FXML
     private void removeRoom() {
-        Booking booking = findBookingByRoom();
+        Booking chosen = bookingListView.getSelectionModel().getSelectedItem();
+        Booking booking = findRoom(chosen.getRentable().getNumber());
         if (booking != null) {
             bookingList.remove(booking);
             updateRoomCounts();
@@ -346,18 +358,31 @@ public class MainController implements Initializable {
     @FXML
     private void checkIn() {
         try {
+            Booking booking = user_book_list.getSelectionModel().getSelectedItem();
+
+            if (booking != null) {
+                System.out.println("A");
+            } else {
+                System.out.println("B");
+            }
+
+            if (booking == null || booking.getRentable().getStatus() != RentableStatus.Available) {
+                showAlert(Alert.AlertType.ERROR, "Phòng không có sẵn", "Phòng này không có sẵn để check-in.");
+                return;
+            }
+
             String name = name_field.getText();
             if (name.isEmpty()) {
                 showAlert(Alert.AlertType.ERROR, "Thiếu thông tin khách hàng", "Vui lòng nhập đủ thông tin khách hàng.");
                 return;
             }
 
-            // Fetch ID and validate
             int idNumber = Integer.parseInt(id_field.getText());
             List<Customer> customers = loadCustomer();
             Optional<Customer> existingCustomer = customers.stream().filter(cust -> cust.getIdNumber() == idNumber).findFirst();
+
             if (existingCustomer.isPresent()) {
-                showAlert(Alert.AlertType.ERROR, "Khách hàng đã tồn tại", "Khách hàng với ID này đã tồn tại.");
+                showAlert(Alert.AlertType.ERROR, "Khách hàng đã có phòng", "Khách hàng này đã có phòng.");
                 return;
             }
 
@@ -372,35 +397,26 @@ public class MainController implements Initializable {
             customers.add(newCustomer);
             customer.save(customers, USER);
 
-            // Assign the customer to the selected room
-            Booking booking = findBookingByRoom();
-            if (booking != null) {
-                AbstractRentable rentable = booking.getRentable();
-                rentable.setStatus(RentableStatus.Occupied);
-                booking.setSynchronizedKey(newCustomer.getIdNumber());
+            booking.getRentable().setStatus(RentableStatus.Occupied);
+            bookingList.remove(booking);
+            bookingList.add(new Booking(booking.getRentable(), newCustomer));
 
-                bookingList.remove(booking);  // Remove old booking
-                bookingList.add(new Booking(rentable, newCustomer));  // Add updated booking
+            updateRoomCounts();
+            bookingListView.refresh();
+            showAlert(Alert.AlertType.INFORMATION, "Thành công", "Khách hàng đã được check-in thành công.");
 
-                updateRoomCounts();
-                showAlert(Alert.AlertType.INFORMATION, "Thành công", "Khách hàng đã được đặt phòng.");
-            }
         } catch (NumberFormatException e) {
             showAlert(Alert.AlertType.ERROR, "Thông tin không hợp lệ", "Vui lòng kiểm tra ID hoặc tiền đã nhập.");
         }
     }
 
     @FXML
-    void getEnterScene() throws IOException {
-        HotelApplication.switchToLoginScene();
-    }
-
-    @FXML
     private void checkOut() {
         try {
-            Booking booking = findBookingByRoom();
+            Booking booking = user_book_list.getSelectionModel().getSelectedItem();
+
             if (booking != null) {
-                int key = booking.getSynchronizedKey();
+                long key = booking.hashCode();
                 if (key != 0) {
                     List<Customer> customers = loadCustomer();
 
@@ -436,14 +452,15 @@ public class MainController implements Initializable {
     }
 
     private void updateRoomCounts() {
+        long availableRooms = bookingList.stream()
+            .filter(booking -> booking != null && booking.getRentable().getStatus() == RentableStatus.Available)
+            .count();
         total_rooms.setText(String.valueOf(bookingList.size()));
-        int availableRooms = (int)bookingList.stream().filter(booking -> booking.getRentable().getStatus() == RentableStatus.Available).count();
         valid_rooms.setText(String.valueOf(availableRooms));
         setupUserBookList();
     }
 
-    private Booking findBookingByRoom() {
-        String roomID = room_number_field.getText();
+    private Booking findRoom(String roomID) {
         for (Booking booking : bookingList) {
             if (booking.getRentable().getNumber().equals(roomID)) {
                 return booking;
