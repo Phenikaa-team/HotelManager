@@ -1,5 +1,13 @@
 package group.phenikaa.hotelmanager.impl.controller;
 
+import group.phenikaa.hotelmanager.asm.DatabaseConnection;
+import group.phenikaa.hotelmanager.asm.DatabaseCustomer;
+import group.phenikaa.hotelmanager.asm.DatabaseRentable;
+
+import group.phenikaa.hotelmanager.api.info.impl.rentable.ConcreteRentable;
+
+import group.phenikaa.hotelmanager.impl.data.CustomerData;
+
 import group.phenikaa.hotelmanager.HotelApplication;
 import group.phenikaa.hotelmanager.api.info.Booking;
 import group.phenikaa.hotelmanager.api.info.impl.customer.Customer;
@@ -19,6 +27,12 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import java.io.IOException;
 import java.net.URL;
@@ -119,7 +133,7 @@ public class MainController implements Initializable {
             }
             panels = Arrays.asList(room_details_panel, dash_board_panel, room_panel);
 
-            List<Booking> list = loadRentable();
+            List<Booking> list = DatabaseRentable.loadRentable();
             bookingList = FXCollections.observableArrayList(list);
             if (bookingListView != null) {
                 setupListView();
@@ -249,7 +263,7 @@ public class MainController implements Initializable {
 
     @FXML
     void onExit() {
-        saveRentable();
+        /*saveRentable();*/
         System.exit(0);
     }
 
@@ -299,15 +313,22 @@ public class MainController implements Initializable {
             }
 
             var newRoom = BookingAdapter.getRentable(roomType, roomStatus, price(roomType), roomNumber);
-            bookingList.add(new Booking(newRoom, null));
-            updateRoomCounts();
+            Booking booking = new Booking(newRoom, null); // Tạo booking mới
 
+            // Lưu booking vào danh sách
+            bookingList.add(booking);
+
+            // Lưu thông tin phòng vào cơ sở dữ liệu
+            DatabaseRentable.saveRentable(newRoom); // Gọi hàm lưu vào DB
+
+            updateRoomCounts();
             showAlert(Alert.AlertType.INFORMATION, "Thành công", "Phòng mới đã được thêm.");
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+
 
     @FXML
     private void editRoom() {
@@ -322,9 +343,13 @@ public class MainController implements Initializable {
                 edit_btn.setText("Done");
             } else {
                 if (validateRoomDetails()) {
+                    // Cập nhật thông tin phòng
                     selectedBooking.getRentable().setNumber(room_number_field.getText());
                     selectedBooking.getRentable().setType(hotel_category.getValue());
                     selectedBooking.getRentable().setStatus(hotel_status.getValue());
+
+                    // Cập nhật thông tin lên cơ sở dữ liệu
+                    DatabaseRentable.updateRentable(selectedBooking.getRentable());
 
                     bookingListView.refresh();
                     updateRoomCounts();
@@ -333,27 +358,35 @@ public class MainController implements Initializable {
                 } else {
                     showAlert(Alert.AlertType.ERROR, "Chi tiết không hợp lệ", "Vui lòng cung cấp chi tiết phòng hợp lệ.");
                 }
-                //enableRoomFields(false);
                 edit_btn.setText("Edit");
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
 
     @FXML
     private void removeRoom() {
         Booking chosen = bookingListView.getSelectionModel().getSelectedItem();
         Booking booking = findRoom(chosen.getRentable().getNumber());
         if (booking != null) {
+            // Lưu số phòng để xóa từ cơ sở dữ liệu
+            String roomNumber = booking.getRentable().getNumber();
+
+            // Xóa phòng khỏi danh sách
             bookingList.remove(booking);
+
+            // Xóa thông tin phòng từ cơ sở dữ liệu
+            DatabaseRentable.removeRentable(roomNumber);
+
             updateRoomCounts();
             showAlert(Alert.AlertType.INFORMATION, "Thành công", "Phòng đã bị xóa.");
         } else {
             showAlert(Alert.AlertType.ERROR, "Lỗi", "Thao tác không thành công.");
         }
     }
+
 
     @FXML
     private void checkIn() {
@@ -378,10 +411,8 @@ public class MainController implements Initializable {
             }
 
             int idNumber = Integer.parseInt(id_field.getText());
-            List<Customer> customers = loadCustomer();
-            Optional<Customer> existingCustomer = customers.stream().filter(cust -> cust.getIdNumber() == idNumber).findFirst();
-
-            if (existingCustomer.isPresent()) {
+            // Kiểm tra xem khách hàng đã có phòng chưa
+            if (customerExistsInDatabase(idNumber)) {
                 showAlert(Alert.AlertType.ERROR, "Khách hàng đã có phòng", "Khách hàng này đã có phòng.");
                 return;
             }
@@ -393,11 +424,27 @@ public class MainController implements Initializable {
             Country country = citizen_box.getValue();
             boolean hasKids = kid_btn.isSelected();
 
-            Customer newCustomer = new Customer(name, idValue, idNumber, quantity, nights, country, money, hasKids);
-            customers.add(newCustomer);
-            customer.save(customers, USER);
+            // Tính toán tổng chi phí dựa trên số đêm, số lượng, và điều kiện
+            long totalPrice = calculateTotalCost(booking.getRentable().getType(), nights, quantity, hasKids);
 
+            // Kiểm tra xem khách hàng có đủ tiền không
+            if (money < totalPrice) {
+                showAlert(Alert.AlertType.ERROR, "Không đủ tiền", "Khách hàng không đủ tiền để check-in.");
+                return;
+            }
+
+            // Tạo đối tượng Customer mới
+            Customer newCustomer = new Customer(name, idValue, idNumber, quantity, nights, country, money, hasKids);
+            saveCustomerToDatabase(newCustomer); // Lưu thông tin vào cơ sở dữ liệu
+
+            DatabaseRentable.updateRentableCustomer(booking.getRentable(), newCustomer.getIdNumber());
+
+            // Cập nhật trạng thái phòng và danh sách đặt phòng
             booking.getRentable().setStatus(RentableStatus.Occupied);
+
+            // Cập nhật trạng thái trong cơ sở dữ liệu
+            DatabaseRentable.updateRentable(booking.getRentable());
+
             bookingList.remove(booking);
             bookingList.add(new Booking(booking.getRentable(), newCustomer));
 
@@ -410,36 +457,98 @@ public class MainController implements Initializable {
         }
     }
 
+
+
+
+    // Method to check if a customer exists in the database
+    private boolean customerExistsInDatabase(int idNumber) {
+        String query = "SELECT COUNT(*) FROM customers WHERE idNumber = ?";
+        try (Connection connection = DatabaseCustomer.connect(); // Use your DatabaseCustomer class
+             PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setInt(1, idNumber);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0; // Return true if count is greater than 0
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    // Method to save a customer to the database
+    private void saveCustomerToDatabase(Customer customer) {
+        String query = "INSERT INTO customers (name, idProof, idNumber, quantity, night, country, money, hasKids) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        try (Connection connection = DatabaseCustomer.connect(); // Use your DatabaseCustomer class
+             PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setString(1, customer.getName());
+            pstmt.setString(2, customer.getIdProof().toString()); // Assuming you have a toString method for IDProof
+            pstmt.setInt(3, customer.getIdNumber());
+            pstmt.setInt(4, customer.getQuantity());
+            pstmt.setInt(5, customer.getNight());
+            pstmt.setString(6, customer.getCountry().toString()); // Assuming you have a toString method for Country
+            pstmt.setLong(7, customer.getMoney());
+            pstmt.setBoolean(8, customer.getKid());
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            showAlert(Alert.AlertType.ERROR, "Lỗi cơ sở dữ liệu", "Có lỗi xảy ra khi lưu thông tin khách hàng vào cơ sở dữ liệu.");
+            e.printStackTrace();
+        }
+    }
+
+
+
+
     @FXML
     private void checkOut() {
         try {
             Booking booking = user_book_list.getSelectionModel().getSelectedItem();
 
             if (booking != null) {
-                long key = booking.hashCode();
-                if (key != 0) {
-                    List<Customer> customers = loadCustomer();
+                int idNumber = booking.getCustomer().getIdNumber();  // Lấy idNumber từ đối tượng Booking
 
-                    boolean customerExists = customers.removeIf(customer -> customer.getIdNumber() == key);
-                    if (customerExists) {
-                        customer.save(customers, USER);
-                    } else {
-                        showAlert(Alert.AlertType.ERROR, "Lỗi", "Khách hàng không tồn tại trong hệ thống.");
-                        return;
+                // Tải toàn bộ danh sách khách hàng từ cơ sở dữ liệu
+                List<Customer> customers = DatabaseCustomer.loadCustomer();
+
+                // Tìm khách hàng với idNumber phù hợp
+                boolean customerFound = false;
+                for (Customer customer : customers) {
+                    if (customer.getIdNumber() == idNumber) {
+                        customerFound = true;
+                        break;
                     }
                 }
 
-                booking.getRentable().setStatus(RentableStatus.Available);
-                bookingListView.refresh();
-                updateRoomCounts();
-                showAlert(Alert.AlertType.INFORMATION, "Thành công", "Phòng đã được trả.");
+                if (customerFound) {
+                    // Cập nhật trạng thái phòng và danh sách đặt phòng
+                    booking.getRentable().setStatus(RentableStatus.Available);
+
+                    // Cập nhật trạng thái phòng trong cơ sở dữ liệu
+                    DatabaseRentable.updateRentable(booking.getRentable());
+
+                    // Xóa idNumber của phòng trong cơ sở dữ liệu (đặt lại thành null)
+                    DatabaseRentable.updateRentableCustomer(booking.getRentable(), null);
+
+                    // Xóa thông tin khách hàng khỏi cơ sở dữ liệu
+                    DatabaseCustomer.deleteCustomer(idNumber);
+
+                    bookingListView.refresh();
+                    updateRoomCounts();
+                    showAlert(Alert.AlertType.INFORMATION, "Thành công", "Phòng đã được trả và thông tin khách hàng đã được xóa.");
+                } else {
+                    showAlert(Alert.AlertType.ERROR, "Lỗi", "Khách hàng không tồn tại trong hệ thống.");
+                }
             } else {
                 showAlert(Alert.AlertType.ERROR, "Phòng trống", "Phòng này hiện đang trống.");
             }
         } catch (Exception e) {
             e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Lỗi", "Đã xảy ra lỗi trong quá trình trả phòng.");
         }
     }
+
+
+
 
     private void enableRoomFields(boolean enable) {
         room_number_field.setDisable(!enable);
@@ -469,6 +578,23 @@ public class MainController implements Initializable {
         return null;
     }
 
+    // Total cost based on the number of nights, 15% increment for each subsequent rental and 5% when u have a kid
+    public long calculateTotalCost(RentableType type, int nights, int quantity, boolean hasKids) {
+        double totalCost = price(type) * nights; // Giá phòng nhân với số đêm
+
+        // Tăng giá cho mỗi lần thuê thêm
+        for (int i = 1; i < quantity; i++) {
+            totalCost *= 1.1; // Tăng 10% cho mỗi lần thuê
+        }
+
+        // Tăng giá nếu có trẻ em
+        if (hasKids) {
+            totalCost *= 1.05; // Tăng 5% khi có trẻ em
+        }
+
+        return Math.round(totalCost); // Làm tròn giá trị
+    }
+/*
     private List<Booking> loadRentable() {
         var rooms = data.load(DATA);
         if (rooms == null) {
@@ -480,12 +606,12 @@ public class MainController implements Initializable {
     private void saveRentable() {
         data.save(bookingList, DATA);
     }
-
-    private List<Customer> loadCustomer() {
+*/
+/*    private List<Customer> loadCustomer() {
         var customers = customer.load(USER);
         if (customers == null) {
             return new ArrayList<>();
         }
         return customers;
-    }
+    }*/
 }

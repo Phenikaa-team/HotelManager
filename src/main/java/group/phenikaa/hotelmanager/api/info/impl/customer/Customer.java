@@ -97,18 +97,6 @@ public class Customer {
     }
 
     // Total cost based on the number of nights, 15% increment for each subsequent rental and 5% when u have a kid
-    public long calculateTotalCost(RentableType type) {
-        double totalCost = price(type) * night;
-
-        for (int i = 1; i < quantity; i++) {
-            totalCost *= 1.1; // Increase by 10% for each rental
-        }
-        if (kid) {
-            totalCost *= 1.05; // Increase by 5% when u have a kid
-        }
-
-        return Math.round(totalCost);
-    }
 
     @Override
     public int hashCode() {
