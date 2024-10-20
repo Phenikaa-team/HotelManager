@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static group.phenikaa.hotelmanager.api.utility.Utility.getRentable;
+import static group.phenikaa.hotelmanager.api.utility.Utility.price;
 
 public class RentableDatabase extends DataBaseConnection {
 
@@ -187,12 +188,10 @@ public class RentableDatabase extends DataBaseConnection {
              ResultSet rs = pstmt.executeQuery()) {
 
             while (rs.next()) {
-                // Lấy thông tin từ bảng rentables
                 String number = rs.getString("number");
-                RentableType type = RentableType.valueOf(rs.getString("type")); // Có thể xử lý ngoại lệ
-                RentableStatus status = RentableStatus.valueOf(rs.getString("status")); // Có thể xử lý ngoại lệ
+                RentableType type = RentableType.valueOf(rs.getString("type"));
+                RentableStatus status = RentableStatus.valueOf(rs.getString("status"));
 
-                // Lấy thông tin từ bảng customers
                 String name = rs.getString("name");
                 String idProof = rs.getString("idProof");
                 int idNumber = rs.getInt("idNumber");
@@ -202,11 +201,9 @@ public class RentableDatabase extends DataBaseConnection {
                 long money = rs.getLong("money");
                 boolean hasKids = rs.getBoolean("hasKids");
 
-                // Tạo Rentable và Customer từ dữ liệu
-                AbstractRentable rentable = getRentable(type, status, 0, number); // Giả sử giá là 0 hoặc bạn có thể điều chỉnh
+                AbstractRentable rentable = getRentable(type, status, price(type), number);
                 Customer customer = new Customer(name, IDProof.valueOf(idProof), idNumber, quantity, night, Country.valueOf(country), money, hasKids);
 
-                // Tạo Booking và thêm vào danh sách
                 Booking booking = new Booking(rentable, customer);
                 bookings.add(booking);
             }

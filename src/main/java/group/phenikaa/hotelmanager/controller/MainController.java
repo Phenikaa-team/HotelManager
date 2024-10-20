@@ -9,6 +9,7 @@ import group.phenikaa.hotelmanager.api.info.impl.customer.Customer;
 import group.phenikaa.hotelmanager.api.info.impl.customer.Session;
 import group.phenikaa.hotelmanager.api.info.impl.customer.User;
 import group.phenikaa.hotelmanager.api.utility.enums.*;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -220,17 +221,12 @@ public class MainController implements Initializable {
         });
     }
 
-    // TODO: Thêm BookingDataBase để nó lưu được thông tin của cả phòng lần người dùng đã thuê nó
     private void setupCustomerListView() {
         List<Booking> bookingsWithCustomers = RentableDatabase.loadRentableWithCustomers();
+        ObservableList<Booking> availableRoomsList = FXCollections.observableArrayList(bookingsWithCustomers);
+        FilteredList<Booking> filteredList = new FilteredList<>(availableRoomsList, booking -> true);
 
-        ObservableList<Booking> observableBookings = FXCollections.observableArrayList(
-                bookingsWithCustomers.stream()
-                        .filter(booking -> booking.getCustomer() != null)
-                        .toList()
-        );
-
-        customer_list_view.setItems(observableBookings);
+        customer_list_view.setItems(filteredList);
         customer_list_view.setCellFactory(param -> new ListCell<>() {
             @Override
             protected void updateItem(Booking booking, boolean empty) {
@@ -266,7 +262,6 @@ public class MainController implements Initializable {
             }
         });
     }
-
 
     private void setupUserBookList() {
         ObservableList<Booking> availableRoomsList = FXCollections.observableArrayList(bookingList);
@@ -355,15 +350,18 @@ public class MainController implements Initializable {
 
     @FXML
     private void searchCustomer() {
-        String searchID = search_bar.getText().trim();
+        String searchID = search_bar.getText();
         if (!searchID.isEmpty()) {
-            for (Booking booking : bookingList) {
-                if (String.valueOf(booking.getCustomer().getIdNumber()).equals(searchID)) {
-                    customer_list_view.getSelectionModel().select(booking);
-                    return;
+            customer_list_view.getItems().forEach(it -> {
+                if (String.valueOf(it.getCustomer().getIdNumber()).contains(searchID)) {
+                    customer_list_view.getSelectionModel().select(it);
+                    customer_list_view.scrollTo(it);
+                } else {
+                    showAlert(Alert.AlertType.INFORMATION, "Not Found", "No customer found with the given ID.");
                 }
-            }
-            showAlert(Alert.AlertType.INFORMATION, "Not Found", "No customer found with the given ID.");
+            });
+        } else {
+            showAlert(Alert.AlertType.ERROR, "Error", "ID field cannot be empty.");
         }
     }
 
@@ -432,15 +430,10 @@ public class MainController implements Initializable {
 
             bookingList.add(booking);
             RentableDatabase.saveRentable(newRoom);
-
-            updateRoomCounts();
-            setupCustomerListView();
-            setupUserBookList();
-            setupComboBoxItems();
-            updateRoomCounts();
-            setUpComboboxInfo();
+            refresh();
             showAlert(Alert.AlertType.INFORMATION, "Success", "A new room has been added.");
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -477,7 +470,8 @@ public class MainController implements Initializable {
                 }
                 edit_btn.setText("Edit");
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -549,30 +543,24 @@ public class MainController implements Initializable {
             var newBooking = new Booking(booking.getRentable(), newCustomer); // Update booking info from null customer to new customer
             bookingList.add(newBooking);
 
-            updateRoomCounts();
-            bookingListView.refresh();
-            setupCustomerListView();
-            setupUserBookList();
-            setupComboBoxItems();
-            updateRoomCounts();
-            setUpComboboxInfo();
             showAlert(Alert.AlertType.INFORMATION, "Success", "The customer has been successfully checked-in.");
-
-        } catch (NumberFormatException e) {
+            refresh();
+        }
+        catch (NumberFormatException e) {
             showAlert(Alert.AlertType.ERROR, "Invalid information", "Please check the ID or entered funds.");
         }
     }
 
     private boolean customerExistsInDatabase(int idNumber) {
         String query = "SELECT COUNT(*) FROM customers WHERE idNumber = ?";
-        try (Connection connection = CustomerDatabase.connect() ;
-             PreparedStatement pstmt = connection.prepareStatement(query)) {
+        try (Connection connection = CustomerDatabase.connect() ; PreparedStatement pstmt = connection.prepareStatement(query)) {
             pstmt.setInt(1, idNumber);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
                 return rs.getInt(1) > 0;
             }
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
             e.printStackTrace();
         }
         return false;
@@ -580,8 +568,7 @@ public class MainController implements Initializable {
 
     private void saveCustomerToDatabase(Customer customer) {
         String query = "INSERT INTO customers (name, idProof, idNumber, quantity, night, country, money, hasKids) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        try (Connection connection = CustomerDatabase.connect() ;
-             PreparedStatement pstmt = connection.prepareStatement(query)) {
+        try (Connection connection = CustomerDatabase.connect() ; PreparedStatement pstmt = connection.prepareStatement(query)) {
             pstmt.setString(1, customer.getName());
             pstmt.setString(2, customer.getIdProof().toString());
             pstmt.setInt(3, customer.getIdNumber());
@@ -591,7 +578,8 @@ public class MainController implements Initializable {
             pstmt.setLong(7, customer.getMoney());
             pstmt.setBoolean(8, customer.getKid());
             pstmt.executeUpdate();
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
             showAlert(Alert.AlertType.ERROR, "Database error", "An error occurred while saving customer information to the database.");
             e.printStackTrace();
         }
@@ -602,33 +590,18 @@ public class MainController implements Initializable {
         Booking selectedBooking = customer_list_view.getSelectionModel().getSelectedItem();
 
         if (selectedBooking != null) {
-            // Lấy thông tin khách hàng
-            Customer customer = selectedBooking.getCustomer();
-
-            // Cập nhật trạng thái phòng
             selectedBooking.getRentable().setStatus(RentableStatus.Available);
             RentableDatabase.updateRentable(selectedBooking.getRentable());
 
-            // Xóa booking khỏi danh sách nhưng giữ khách hàng
             bookingList.remove(selectedBooking);
+
             RentableDatabase.updateRentableCustomer(selectedBooking.getRentable(), null);
-
-            // Không xóa khách hàng khỏi database, chỉ thực hiện cập nhật cần thiết khác
-
-            // Cập nhật giao diện
-            bookingListView.refresh();
-            setupCustomerListView();
-            setupUserBookList();
-            setupComboBoxItems();
-            updateRoomCounts();
-            setUpComboboxInfo();
-            updateRoomCounts();
             showAlert(Alert.AlertType.INFORMATION, "Success", "Checkout completed successfully.");
         } else {
             showAlert(Alert.AlertType.ERROR, "No selection", "Please select a customer to check out.");
         }
+        refresh();
     }
-
 
     @FXML
     private void removeBooking() {
@@ -637,29 +610,28 @@ public class MainController implements Initializable {
             String roomNumber = selectedBooking.getRentable().getNumber();
             int customerId = selectedBooking.getCustomer().getIdNumber();
 
-            // Xóa thông tin phòng từ cơ sở dữ liệu
             RentableDatabase.removeRentable(roomNumber);
-
-            // Xóa thông tin khách hàng từ cơ sở dữ liệu
             CustomerDatabase.deleteCustomer(customerId);
-
-            // Xóa booking khỏi danh sách
             bookingList.remove(selectedBooking);
 
-            // Cập nhật giao diện
-            bookingListView.refresh();
-            setupCustomerListView();
-            setupUserBookList();
-            setupComboBoxItems();
-            updateRoomCounts();
-            setUpComboboxInfo();
-            updateRoomCounts();
             showAlert(Alert.AlertType.INFORMATION, "Success", "Booking and customer have been removed.");
         } else {
             showAlert(Alert.AlertType.ERROR, "No selection", "Please select a booking to remove.");
         }
+        refresh();
     }
 
+    private void refresh() {
+        customer_list_view.refresh();
+        user_book_list.refresh();
+        bookingListView.refresh();
+        setupCustomerListView();
+        setupUserBookList();
+        setupComboBoxItems();
+        updateRoomCounts();
+        setUpComboboxInfo();
+        updateRoomCounts();
+    }
 
     private boolean validateRoomDetails() {
         return !room_number_field.getText().isEmpty() && hotel_category.getValue() != null && hotel_status.getValue() != null;
@@ -667,7 +639,7 @@ public class MainController implements Initializable {
 
     private void updateRoomCounts() {
         int totalRoomsCount = bookingList.size();
-        int validRoomsCount = (int) bookingList.stream().filter(booking -> booking.getRentable().getStatus() == RentableStatus.Available).count();
+        int validRoomsCount = (int)bookingList.stream().filter(booking -> booking.getRentable().getStatus() == RentableStatus.Available).count();
         total_rooms.setText(String.valueOf(totalRoomsCount));
         valid_rooms.setText(String.valueOf(validRoomsCount));
     }
