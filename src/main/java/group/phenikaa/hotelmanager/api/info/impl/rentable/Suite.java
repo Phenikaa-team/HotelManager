@@ -5,7 +5,7 @@ import group.phenikaa.hotelmanager.api.utility.enums.RentableStatus;
 import group.phenikaa.hotelmanager.api.utility.enums.RentableType;
 
 //TODO: extra options
-public class Suite extends AbstractRentable {
+public class Suite extends ConcreteRentable {
 
     public Suite(RentableStatus isAvailable, long price, String id) {
         super(RentableType.Suite, isAvailable, price, id);

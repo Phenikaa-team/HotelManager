@@ -18,6 +18,6 @@ module group.phenikaa.hotelmanager {
     opens group.phenikaa.hotelmanager.api.info.api to com.google.gson;
     opens group.phenikaa.hotelmanager.api.info to com.google.gson;
     opens group.phenikaa.hotelmanager.api.info.impl.customer to com.google.gson;
-    exports group.phenikaa.hotelmanager.impl.controller;
-    opens group.phenikaa.hotelmanager.impl.controller to javafx.fxml;
+    exports group.phenikaa.hotelmanager.controller;
+    opens group.phenikaa.hotelmanager.controller to javafx.fxml;
 }

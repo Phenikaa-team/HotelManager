@@ -17,8 +17,6 @@ public class HotelApplication extends Application {
     private static Stage primaryStage;
     private static double xOffset = 0;
     private static double yOffset = 0;
-    public static String DATA = "data.json";
-    public static String USER = "user.json";
 
     @Override
     public void start(Stage stage) throws IOException {

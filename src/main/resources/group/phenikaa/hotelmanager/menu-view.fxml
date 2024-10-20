@@ -18,9 +18,9 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="510.0" prefWidth="890.0" styleClass="root" stylesheets="@../../../css/menu.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="group.phenikaa.hotelmanager.impl.controller.MainController">
+<AnchorPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="510.0" prefWidth="890.0" styleClass="root" stylesheets="@../../../css/menu.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="group.phenikaa.hotelmanager.controller.MainController">
    <children>
-      <HBox fx:id="top_panel" alignment="CENTER_RIGHT" layoutX="177.0" layoutY="-1.0" prefHeight="52.0" prefWidth="713.0" stylesheets="@../../../css/menu.css">
+      <HBox fx:id="top_panel" alignment="CENTER_RIGHT" layoutX="177.0" layoutY="-1.0" maxWidth="1.7976931348623157E308" prefHeight="52.0" prefWidth="712.0" stylesheets="@../../../css/menu.css">
          <children>
             <ImageView fitHeight="42.0" fitWidth="37.0" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -88,6 +88,21 @@
                   </ImageView>
                </graphic>
             </Button>
+            <Button fx:id="manage_room" alignment="BASELINE_LEFT" mnemonicParsing="false" onAction="#onCustomerDetails" prefHeight="35.0" prefWidth="160.0" stylesheets="@../../../css/menu.css" text="Customer Details" translateX="12.0" translateY="15.0">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+               <graphic>
+                  <ImageView fitHeight="24.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../assets/textures/task-info-icon.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
             <Button fx:id="room_details_btn" alignment="BASELINE_LEFT" defaultButton="true" mnemonicParsing="false" onAction="#onBasic" onMouseClicked="#onBasic" prefHeight="35.0" prefWidth="160.0" stylesheets="@../../../css/menu.css" text="Rooms Details" translateX="12.0" translateY="15.0">
                <VBox.margin>
                   <Insets />
@@ -128,7 +143,7 @@
             </Button>
          </children>
       </HBox>
-      <AnchorPane fx:id="dash_board_panel" layoutX="190.0" layoutY="55.0" prefHeight="445.0" prefWidth="690.0" visible="false">
+      <AnchorPane fx:id="dash_board_panel" layoutX="190.0" layoutY="55.0" prefHeight="445.0" prefWidth="690.0">
          <children>
             <AnchorPane fx:id="general_panel1" layoutX="7.0" layoutY="30.0" prefHeight="335.0" prefWidth="660.0" stylesheets="@../../../css/login.css">
                <children>
@@ -184,7 +199,7 @@
             </Text>
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="room_panel" layoutX="190.0" layoutY="55.0" prefHeight="445.0" prefWidth="690.0">
+      <AnchorPane fx:id="room_panel" layoutX="190.0" layoutY="55.0" prefHeight="445.0" prefWidth="690.0" visible="false">
          <children>
             <AnchorPane fx:id="general_panel12" layoutX="7.0" layoutY="27.0" prefHeight="327.0" prefWidth="553.0" stylesheets="@../../../css/login.css">
                <children>
@@ -278,12 +293,76 @@
                   <Font size="18.0" />
                </font>
             </Text>
-            <HBox alignment="CENTER" layoutX="482.0" layoutY="391.0" prefHeight="52.0" prefWidth="203.0" spacing="12.0">
+            <HBox alignment="CENTER" layoutX="573.0" layoutY="375.0" prefHeight="52.0" prefWidth="111.0" spacing="12.0">
                <children>
-                  <Button fx:id="checkout_btn" contentDisplay="CENTER" mnemonicParsing="false" onAction="#checkOut" prefHeight="39.0" prefWidth="87.0" text="CheckOut" />
                   <Button fx:id="book_btn" contentDisplay="CENTER" mnemonicParsing="false" onAction="#checkIn" prefHeight="39.0" prefWidth="87.0" text="Book" />
                </children>
             </HBox>
+         </children>
+      </AnchorPane>
+      <AnchorPane fx:id="customer_details" layoutX="200.0" layoutY="65.0" prefHeight="445.0" prefWidth="690.0" visible="false">
+         <children>
+            <AnchorPane fx:id="general_panel2" layoutX="-5.0" layoutY="29.0" prefHeight="410.0" prefWidth="690.0" stylesheets="@../../../css/login.css">
+               <children>
+                  <HBox alignment="CENTER" layoutX="480.0" layoutY="12.0" prefHeight="52.0" prefWidth="184.0" spacing="15.0">
+                     <children>
+                        <Button fx:id="checkout_btn" mnemonicParsing="false" onAction="#checkOut" prefHeight="34.0" prefWidth="74.0" text="CheckOut">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                           <font>
+                              <Font size="10.0" />
+                           </font>
+                        </Button>
+                        <Button fx:id="remove_btn2" mnemonicParsing="false" onAction="#removeBooking" prefHeight="34.0" prefWidth="74.0" text="Remove">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                           <font>
+                              <Font size="10.0" />
+                           </font>
+                        </Button>
+                     </children>
+                  </HBox>
+                  <VBox alignment="CENTER" layoutY="55.0" prefHeight="342.0" prefWidth="678.0">
+                     <children>
+                        <HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="34.0" prefWidth="648.0" spacing="140.0">
+                           <padding>
+                              <Insets top="10.0" />
+                           </padding>
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
+                           <children>
+                              <Text style="-fx-font-weight: bold;" text="Room Number" translateX="9.0" />
+                              <Text style="-fx-font-weight: bold;" text="Type" translateX="-100.0" />
+                              <Text style="-fx-font-weight: bold;" text="Renter name" translateX="-80.0" />
+                              <Text style="-fx-font-weight: bold;" text="Renter ID" translateX="-80.0" />
+                           </children>
+                        </HBox>
+                        <ListView fx:id="customer_list_view" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="294.0" prefWidth="660.0">
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
+                        </ListView>
+                     </children>
+                  </VBox>
+                  <TextField fx:id="search_bar" layoutX="14.0" layoutY="14.0" prefHeight="22.0" prefWidth="194.0" promptText="Type renter ID here..." />
+                  <Button fx:id="search_btn" layoutX="215.0" layoutY="16.0" mnemonicParsing="false" onAction="#searchCustomer" prefHeight="21.0" prefWidth="58.0" text="Search">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                     <font>
+                        <Font size="10.0" />
+                     </font>
+                  </Button>
+               </children>
+            </AnchorPane>
+            <Text fill="#383838" layoutX="7.0" layoutY="21.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Customer Details" wrappingWidth="150.39999999999986">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Text>
          </children>
       </AnchorPane>
       <AnchorPane fx:id="room_details_panel" layoutX="190.0" layoutY="55.0" prefHeight="445.0" prefWidth="690.0" visible="false">

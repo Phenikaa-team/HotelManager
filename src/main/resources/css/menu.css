@@ -25,35 +25,32 @@
     -fx-background-radius: 12px;
 }
 
-#name_field,
-#id_field,
-#last_name_field,
-#submitted_money,
-#citizen_box,
-#id_box,
-#renter_quantity,
-#total_night_box,
-#price_text_field,
-#hotel_category,
-#hotel_status,
-#room_number_field,
-#bookingListView,
-#filter_box {
+.combo-box:editable .arrow-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+}
+
+.combo-box:editable .arrow {
+    -fx-background-color: rgb(88, 88, 88);
+}
+
+.text-field,
+#name_field, #id_field, #last_name_field, #submitted_money,
+#citizen_box, #id_box, #renter_quantity, #total_night_box,
+#price_text_field, #hotel_category, #hotel_status, #kid_btn,
+#room_number_field, #bookingListView, #filter_box, #user_book_list,
+#customer_list_view, #search_btn, #remove_btn2 {
     -fx-background-color: #fdfdfd;
     -fx-background-radius: 8px;
     -fx-border-radius: 8px;
     -fx-border-color: rgba(222, 222, 222, 0.75);
     -fx-prompt-text-fill: rgba(222, 222, 222, 0.75);
-    -fx-wrap-text: rgba(222, 222, 222, 0.75);
 }
 
 #user_book_list {
-    -fx-background-color: #fdfdfd;
     -fx-background-radius: 0px 0px 8px 8px;
     -fx-border-radius: 0px 0px 8px 8px;
-    -fx-border-color: rgba(222, 222, 222, 0.75);
-    -fx-prompt-text-fill: rgba(222, 222, 222, 0.75);
-    -fx-wrap-text: rgba(222, 222, 222, 0.75);
 }
 
 #category {
@@ -83,7 +80,7 @@
 #edit_btn,
 #add_btn {
     -fx-font-size: 14;
-    -fx-font-weight: semibold;
+    -fx-font-family: "Roboto SemiBold";
 }
 
 #checkout_btn:hover,
@@ -97,7 +94,8 @@
 
 #dashboard_btn,
 #rooms_btn,
-#room_details_btn {
+#room_details_btn,
+#manage_room {
     -fx-background-color: transparent;
     -fx-border-radius: 15px;
     -fx-border-color: transparent;
@@ -107,7 +105,8 @@
 #info_btn:hover,
 #dashboard_btn:hover,
 #rooms_btn:hover,
-#room_details_btn:hover {
+#room_details_btn:hover,
+#manage_room:hover {
     -fx-background-color: rgba(119, 230, 255, 0.18);
     -fx-scale-x: 1.05;
     -fx-scale-y: 1.05;
@@ -116,7 +115,8 @@
 #info_btn:focused,
 #dashboard_btn:focused,
 #rooms_btn:focused,
-#room_details_btn:focused {
+#room_details_btn:focused,
+#manage_room:focused {
     -fx-background-color: rgba(119, 230, 255, 0.75);
 }
 

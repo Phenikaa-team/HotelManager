@@ -1,9 +1,9 @@
-package group.phenikaa.hotelmanager.asm;
+package group.phenikaa.hotelmanager.asm.database;
 
 import group.phenikaa.hotelmanager.api.info.impl.customer.User;
+import group.phenikaa.hotelmanager.asm.DataBaseConnection;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,32 +11,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class DatabaseConnection {
-    private static final String DB_URL = "jdbc:mysql://avnadmin:AVNS_fLXK_Ki8PUpk5ejsf0Z@mysql-177353fb-st-3589.i.aivencloud.com:12362/defaultdb?ssl-mode=REQUIRED";
+public class LoginDatabase extends DataBaseConnection {
 
-    public static Connection connect() {
-        Connection connection = null;
-        try {
-            connection = DriverManager.getConnection(DB_URL);
-            System.out.println("Connected to the MySQL database successfully!");
-        } catch (SQLException e) {
-            System.out.println("Connection to MySQL database failed.");
-            e.printStackTrace();
-        }
-        return connection;
-    }
-
-    private static void register(Scanner scanner) {
-        System.out.print("Enter a username: ");
-        String username = scanner.nextLine();
-        System.out.print("Enter a password: ");
-        String password = scanner.nextLine();
-
-        try (Connection connection = DriverManager.getConnection(DB_URL);
+    public static void register(User newCustomer) throws SQLException {
+        try (Connection connection = connect();
              PreparedStatement pstmt = connection.prepareStatement("INSERT INTO customer (username, password) VALUES (?, ?)")) {
 
-            pstmt.setString(1, username);
-            pstmt.setString(2, password);
+            pstmt.setString(1, newCustomer.username());
+            pstmt.setString(2, newCustomer.password());
             pstmt.executeUpdate();
             System.out.println("Registration successful!");
         } catch (SQLException e) {
@@ -44,13 +26,9 @@ public class DatabaseConnection {
         }
     }
 
-    private static void login(Scanner scanner) {
-        System.out.print("Enter your username: ");
-        String username = scanner.nextLine();
-        System.out.print("Enter your password: ");
-        String password = scanner.nextLine();
-
-        try (Connection connection = DriverManager.getConnection(DB_URL);
+    public static User login(String username, String password) {
+        User user = null;
+        try (Connection connection = connect();
              PreparedStatement pstmt = connection.prepareStatement("SELECT * FROM customer WHERE username = ? AND password = ?")) {
 
             pstmt.setString(1, username);
@@ -59,17 +37,19 @@ public class DatabaseConnection {
 
             if (rs.next()) {
                 System.out.println("Login successful! Welcome, " + username);
+                user = new User(rs.getString("username"), rs.getString("password"));
             } else {
                 System.out.println("Invalid username or password. Please try again.");
             }
         } catch (SQLException e) {
             System.out.println("An error occurred during login: " + e.getMessage());
         }
+        return user;
     }
 
     private static List<User> userList() {
         List<User> list = new ArrayList<>();
-        try (Connection connection = DriverManager.getConnection(DB_URL);
+        try (Connection connection = connect();
              PreparedStatement pstmt = connection.prepareStatement("SELECT * FROM customer")) {
 
             ResultSet rs = pstmt.executeQuery();
@@ -84,7 +64,7 @@ public class DatabaseConnection {
         return list;
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         Scanner scanner = new Scanner(System.in);
         while (true) {
             System.out.println("Welcome to the Hotel Manager System");
@@ -97,8 +77,23 @@ public class DatabaseConnection {
             scanner.nextLine();
 
             switch (choice) {
-                case 1 -> register(scanner);
-                case 2 -> login(scanner);
+                case 1 -> {
+                    System.out.print("Enter a username: ");
+                    String username = scanner.nextLine();
+                    System.out.print("Enter a password: ");
+                    String password = scanner.nextLine();
+
+                    var newCustomer = new User(username, password);
+                    register(newCustomer);
+                }
+                case 2 -> {
+                    System.out.print("Enter your username: ");
+                    String username = scanner.nextLine();
+                    System.out.print("Enter your password: ");
+                    String password = scanner.nextLine();
+
+                    login(username, password);
+                }
                 case 3 -> {
                     List<User> userList = userList();
                     if (userList.isEmpty()) {

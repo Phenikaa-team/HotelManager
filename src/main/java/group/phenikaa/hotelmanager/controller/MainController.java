@@ -1,12 +1,7 @@
-package group.phenikaa.hotelmanager.impl.controller;
+package group.phenikaa.hotelmanager.controller;
 
-import group.phenikaa.hotelmanager.asm.DatabaseConnection;
-import group.phenikaa.hotelmanager.asm.DatabaseCustomer;
-import group.phenikaa.hotelmanager.asm.DatabaseRentable;
-
-import group.phenikaa.hotelmanager.api.info.impl.rentable.ConcreteRentable;
-
-import group.phenikaa.hotelmanager.impl.data.CustomerData;
+import group.phenikaa.hotelmanager.asm.database.CustomerDatabase;
+import group.phenikaa.hotelmanager.asm.database.RentableDatabase;
 
 import group.phenikaa.hotelmanager.HotelApplication;
 import group.phenikaa.hotelmanager.api.info.Booking;
@@ -14,9 +9,6 @@ import group.phenikaa.hotelmanager.api.info.impl.customer.Customer;
 import group.phenikaa.hotelmanager.api.info.impl.customer.Session;
 import group.phenikaa.hotelmanager.api.info.impl.customer.User;
 import group.phenikaa.hotelmanager.api.utility.enums.*;
-import group.phenikaa.hotelmanager.impl.data.CustomerData;
-import group.phenikaa.hotelmanager.impl.data.adapter.BookingAdapter;
-import group.phenikaa.hotelmanager.impl.data.BookingData;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -29,7 +21,6 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -37,15 +28,11 @@ import java.sql.SQLException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+import java.util.function.Function;
 
-import static group.phenikaa.hotelmanager.HotelApplication.DATA;
-import static group.phenikaa.hotelmanager.HotelApplication.USER;
 import static group.phenikaa.hotelmanager.api.utility.Utility.*;
 
 public class MainController implements Initializable {
-    private final BookingData data = new BookingData();
-    private final CustomerData customer = new CustomerData();
-
     private Booking selectedBooking = null;
 
     // ListView for bookings
@@ -53,6 +40,8 @@ public class MainController implements Initializable {
     private ListView<Booking> bookingListView;
     @FXML
     private ListView<Booking> user_book_list;
+    @FXML
+    private ListView<Booking> customer_list_view;
 
     // ObservableList for bookings
     private ObservableList<Booking> bookingList;
@@ -74,6 +63,8 @@ public class MainController implements Initializable {
     private AnchorPane dash_board_panel;
     @FXML
     private AnchorPane room_panel;
+    @FXML
+    private AnchorPane customer_details;
 
     //Dashboard
     @FXML
@@ -92,6 +83,16 @@ public class MainController implements Initializable {
     private Button add_btn;
     @FXML
     private Button edit_btn;
+
+    //Room(Customer)
+    @FXML
+    private TextField search_bar;
+    @FXML
+    private Button search_btn;
+    @FXML
+    private Button checkout_btn;
+    @FXML
+    private Button remove_btn2;
 
     //Room(booking)
     @FXML
@@ -131,13 +132,16 @@ public class MainController implements Initializable {
             if (user != null) {
                 user_name.setText(user.username());
             }
-            panels = Arrays.asList(room_details_panel, dash_board_panel, room_panel);
+            panels = Arrays.asList(room_details_panel, dash_board_panel, room_panel, customer_details);
 
-            List<Booking> list = DatabaseRentable.loadRentable();
+            List<Booking> list = RentableDatabase.loadRentable();
             bookingList = FXCollections.observableArrayList(list);
+
             if (bookingListView != null) {
                 setupListView();
             }
+
+            setupCustomerListView();
             setupUserBookList();
 
             bookingListView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
@@ -146,20 +150,118 @@ public class MainController implements Initializable {
                     edit_btn.setText("Edit");
                 }
             });
-            citizen_box.setItems(FXCollections.observableArrayList(Country.values()));
-            id_box.setItems(FXCollections.observableArrayList(IDProof.values()));
-            renter_quantity.setItems(FXCollections.observableArrayList(convertIntegerListToString(rangeList(1, 12))));
-            total_night_box.setItems(FXCollections.observableArrayList(convertIntegerListToString(rangeList(1, 62))));
-            hotel_category.setItems(FXCollections.observableArrayList(RentableType.values()));
-            hotel_status.setItems(FXCollections.observableArrayList(RentableStatus.values()));
-            filter_box.setItems(FXCollections.observableArrayList(RentableStatus.values()));
-            filter_box.setAccessibleText("Filter");
+
+            setupComboBoxItems();
             updateRoomCounts();
-            edit_btn.setText("Edit");
+            setUpComboboxInfo();
         }
         catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void setupComboBoxItems() {
+        citizen_box.setItems(FXCollections.observableArrayList(Country.values()));
+        id_box.setItems(FXCollections.observableArrayList(IDProof.values()));
+        renter_quantity.setItems(FXCollections.observableArrayList(convertIntegerListToString(rangeList(1, 12))));
+        total_night_box.setItems(FXCollections.observableArrayList(convertIntegerListToString(rangeList(1, 62))));
+        hotel_category.setItems(FXCollections.observableArrayList(RentableType.values()));
+        hotel_status.setItems(FXCollections.observableArrayList(RentableStatus.values()));
+        filter_box.setItems(FXCollections.observableArrayList(RentableStatus.values()));
+        filter_box.setAccessibleText("Filter");
+    }
+
+    private void setUpComboboxInfo() {
+        setComboBoxCellFactory(id_box, IDProof::name, IDProof::url);
+        setComboBoxButtonCell(id_box, IDProof::name);
+
+        setComboBoxCellFactory(hotel_category, RentableType::name, RentableType::url);
+        setComboBoxButtonCell(hotel_category, RentableType::name);
+
+        setComboBoxCellFactory(hotel_status, RentableStatus::name, RentableStatus::url);
+        setComboBoxButtonCell(hotel_status, RentableStatus::name);
+    }
+
+    private <T> void setComboBoxCellFactory(ComboBox<T> comboBox, Function<T, String> nameExtractor, Function<T, String> urlExtractor) {
+        comboBox.setCellFactory(param -> new ListCell<>() {
+            @Override
+            protected void updateItem(T item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    setTooltip(null);
+                } else {
+                    setText(nameExtractor.apply(item));
+                    Tooltip tooltip = new Tooltip(urlExtractor.apply(item));
+                    setTooltip(tooltip);
+                }
+            }
+        });
+    }
+
+    private void populateRoomDetails(Booking booking) {
+        selectedBooking = booking;
+        room_number_field.setText(booking.getRentable().getNumber());
+        hotel_category.setValue(booking.getRentable().getType());
+        hotel_status.setValue(booking.getRentable().getStatus());
+    }
+
+    private <T> void setComboBoxButtonCell(ComboBox<T> comboBox, Function<T, String> nameExtractor) {
+        comboBox.setButtonCell(new ListCell<>() {
+            @Override
+            protected void updateItem(T item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(nameExtractor.apply(item));
+                }
+            }
+        });
+    }
+
+    // TODO: Thêm BookingDataBase để nó lưu được thông tin của cả phòng lần người dùng đã thuê nó
+    private void setupCustomerListView() {
+        ObservableList<Booking> bookingsWithCustomers = FXCollections.observableArrayList(
+                bookingList.stream()
+                        .filter(booking -> booking.getCustomer() != null)
+                        .toList()
+        );
+        customer_list_view.setItems(bookingsWithCustomers);
+        customer_list_view.setCellFactory(param -> new ListCell<>() {
+            @Override
+            protected void updateItem(Booking booking, boolean empty) {
+                super.updateItem(booking, empty);
+                if (empty || booking == null || booking.getCustomer() == null) {
+                    setText(null);
+                    setGraphic(null);
+                } else {
+                    var hbox = new HBox(20);
+
+                    // Room Number
+                    var roomNumberLabel = new Label(booking.getRentable().getNumber());
+                    roomNumberLabel.setPrefWidth(80);
+
+                    // Type
+                    var typeLabel = new Label(booking.getRentable().getType().name());
+                    typeLabel.setPrefWidth(80);
+
+                    // Renter Name
+                    Customer customer = booking.getCustomer();
+                    String renterName = customer.getName();
+                    var renterNameLabel = new Label(renterName);
+                    renterNameLabel.setPrefWidth(100);
+
+                    // Renter ID
+                    String renterID = String.valueOf(customer.getIdNumber());
+                    var renterIDLabel = new Label(renterID);
+                    renterIDLabel.setPrefWidth(80);
+
+                    hbox.getChildren().addAll(roomNumberLabel, typeLabel, renterNameLabel, renterIDLabel);
+                    setGraphic(hbox);
+                }
+            }
+        });
     }
 
     private void setupUserBookList() {
@@ -199,7 +301,6 @@ public class MainController implements Initializable {
             }
         });
 
-        // Example: Apply filter based on room status
         filter_box.valueProperty().addListener((obs, oldVal, newVal) -> {
             filteredList.setPredicate(booking -> {
                 if (newVal == null) {
@@ -210,14 +311,6 @@ public class MainController implements Initializable {
                 } else return false;
             });
         });
-    }
-
-
-    private void populateRoomDetails(Booking booking) {
-        selectedBooking = booking;
-        room_number_field.setText(booking.getRentable().getNumber());
-        hotel_category.setValue(booking.getRentable().getType());
-        hotel_status.setValue(booking.getRentable().getStatus());
     }
 
     private void setupListView() {
@@ -257,13 +350,26 @@ public class MainController implements Initializable {
     }
 
     @FXML
+    private void searchCustomer() {
+        String searchID = search_bar.getText().trim();
+        if (!searchID.isEmpty()) {
+            for (Booking booking : bookingList) {
+                if (String.valueOf(booking.getCustomer().getIdNumber()).equals(searchID)) {
+                    customer_list_view.getSelectionModel().select(booking);
+                    return;
+                }
+            }
+            showAlert(Alert.AlertType.INFORMATION, "Not Found", "No customer found with the given ID.");
+        }
+    }
+
+    @FXML
     void getEnterScene() throws IOException {
         HotelApplication.switchToLoginScene();
     }
 
     @FXML
     void onExit() {
-        /*saveRentable();*/
         System.exit(0);
     }
 
@@ -281,6 +387,11 @@ public class MainController implements Initializable {
     @FXML
     void onDashBoard() {
         showOnlyPanel(dash_board_panel);
+    }
+
+    @FXML
+    void onCustomerDetails() {
+        showOnlyPanel(customer_details);
     }
 
     @FXML
@@ -302,61 +413,53 @@ public class MainController implements Initializable {
             var roomStatus = hotel_status.getValue();
 
             if (roomNumber.isEmpty() || roomStatus == null || roomType == null) {
-                showAlert(Alert.AlertType.ERROR, "Thiếu thông tin", "Vui lòng điền đầy đủ thông tin phòng.");
+                showAlert(Alert.AlertType.ERROR, "Missing information", "Please fill in the room information.");
                 return;
             }
 
             String roomID = room_number_field.getText();
             if (findRoom(roomID) != null) {
-                showAlert(Alert.AlertType.ERROR, "Phòng đã tồn tại", "Phòng với số này đã tồn tại.");
+                showAlert(Alert.AlertType.ERROR, "The room already exists", "The room with this number already exists.");
                 return;
             }
 
-            var newRoom = BookingAdapter.getRentable(roomType, roomStatus, price(roomType), roomNumber);
-            Booking booking = new Booking(newRoom, null); // Tạo booking mới
+            var newRoom = getRentable(roomType, roomStatus, price(roomType), roomNumber);
+            Booking booking = new Booking(newRoom, null);
 
-            // Lưu booking vào danh sách
             bookingList.add(booking);
-
-            // Lưu thông tin phòng vào cơ sở dữ liệu
-            DatabaseRentable.saveRentable(newRoom); // Gọi hàm lưu vào DB
+            RentableDatabase.saveRentable(newRoom);
 
             updateRoomCounts();
-            showAlert(Alert.AlertType.INFORMATION, "Thành công", "Phòng mới đã được thêm.");
+            showAlert(Alert.AlertType.INFORMATION, "Success", "A new room has been added.");
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-
-
     @FXML
     private void editRoom() {
         try {
             if (selectedBooking == null) {
-                showAlert(Alert.AlertType.ERROR, "Không chọn phòng", "Vui lòng chọn phòng để chỉnh sửa.");
+                showAlert(Alert.AlertType.ERROR, "Do not select a room", "Please select a room to edit.");
                 return;
             }
 
             if (edit_btn.getText().equals("Edit")) {
-                enableRoomFields(true);
                 edit_btn.setText("Done");
             } else {
                 if (validateRoomDetails()) {
-                    // Cập nhật thông tin phòng
                     selectedBooking.getRentable().setNumber(room_number_field.getText());
                     selectedBooking.getRentable().setType(hotel_category.getValue());
                     selectedBooking.getRentable().setStatus(hotel_status.getValue());
 
-                    // Cập nhật thông tin lên cơ sở dữ liệu
-                    DatabaseRentable.updateRentable(selectedBooking.getRentable());
+                    RentableDatabase.updateRentable(selectedBooking.getRentable());
 
                     bookingListView.refresh();
                     updateRoomCounts();
 
-                    showAlert(Alert.AlertType.INFORMATION, "Thành công", "Chi tiết phòng được cập nhật thành công.");
+                    showAlert(Alert.AlertType.INFORMATION, "Success", "Room details updated successfully.");
                 } else {
-                    showAlert(Alert.AlertType.ERROR, "Chi tiết không hợp lệ", "Vui lòng cung cấp chi tiết phòng hợp lệ.");
+                    showAlert(Alert.AlertType.ERROR, "Invalid details", "Please provide valid room details.");
                 }
                 edit_btn.setText("Edit");
             }
@@ -365,55 +468,41 @@ public class MainController implements Initializable {
         }
     }
 
-
     @FXML
     private void removeRoom() {
         Booking chosen = bookingListView.getSelectionModel().getSelectedItem();
         Booking booking = findRoom(chosen.getRentable().getNumber());
         if (booking != null) {
-            // Lưu số phòng để xóa từ cơ sở dữ liệu
             String roomNumber = booking.getRentable().getNumber();
-
-            // Xóa phòng khỏi danh sách
             bookingList.remove(booking);
-
-            // Xóa thông tin phòng từ cơ sở dữ liệu
-            DatabaseRentable.removeRentable(roomNumber);
+            RentableDatabase.removeRentable(roomNumber);
 
             updateRoomCounts();
-            showAlert(Alert.AlertType.INFORMATION, "Thành công", "Phòng đã bị xóa.");
+            showAlert(Alert.AlertType.INFORMATION, "Success", "The room has been deleted.");
         } else {
-            showAlert(Alert.AlertType.ERROR, "Lỗi", "Thao tác không thành công.");
+            showAlert(Alert.AlertType.ERROR, "Error", "Operation failed.");
         }
     }
-
 
     @FXML
     private void checkIn() {
         try {
             Booking booking = user_book_list.getSelectionModel().getSelectedItem();
 
-            if (booking != null) {
-                System.out.println("A");
-            } else {
-                System.out.println("B");
-            }
-
             if (booking == null || booking.getRentable().getStatus() != RentableStatus.Available) {
-                showAlert(Alert.AlertType.ERROR, "Phòng không có sẵn", "Phòng này không có sẵn để check-in.");
+                showAlert(Alert.AlertType.ERROR, "The room is not available", "This room is not available for check-in.");
                 return;
             }
 
             String name = name_field.getText();
             if (name.isEmpty()) {
-                showAlert(Alert.AlertType.ERROR, "Thiếu thông tin khách hàng", "Vui lòng nhập đủ thông tin khách hàng.");
+                showAlert(Alert.AlertType.ERROR, "Missing customer information", "Please enter enough customer information.");
                 return;
             }
 
             int idNumber = Integer.parseInt(id_field.getText());
-            // Kiểm tra xem khách hàng đã có phòng chưa
             if (customerExistsInDatabase(idNumber)) {
-                showAlert(Alert.AlertType.ERROR, "Khách hàng đã có phòng", "Khách hàng này đã có phòng.");
+                showAlert(Alert.AlertType.ERROR, "The customer has a room", "This customer has a room.");
                 return;
             }
 
@@ -424,51 +513,40 @@ public class MainController implements Initializable {
             Country country = citizen_box.getValue();
             boolean hasKids = kid_btn.isSelected();
 
-            // Tính toán tổng chi phí dựa trên số đêm, số lượng, và điều kiện
             long totalPrice = calculateTotalCost(booking.getRentable().getType(), nights, quantity, hasKids);
 
-            // Kiểm tra xem khách hàng có đủ tiền không
             if (money < totalPrice) {
-                showAlert(Alert.AlertType.ERROR, "Không đủ tiền", "Khách hàng không đủ tiền để check-in.");
+                showAlert(Alert.AlertType.ERROR, "Not enough money", "Customers don't have enough money to check-in.");
                 return;
             }
 
-            // Tạo đối tượng Customer mới
             Customer newCustomer = new Customer(name, idValue, idNumber, quantity, nights, country, money, hasKids);
-            saveCustomerToDatabase(newCustomer); // Lưu thông tin vào cơ sở dữ liệu
-
-            DatabaseRentable.updateRentableCustomer(booking.getRentable(), newCustomer.getIdNumber());
-
-            // Cập nhật trạng thái phòng và danh sách đặt phòng
+            saveCustomerToDatabase(newCustomer);
+            RentableDatabase.updateRentableCustomer(booking.getRentable(), newCustomer.getIdNumber());
             booking.getRentable().setStatus(RentableStatus.Occupied);
-
-            // Cập nhật trạng thái trong cơ sở dữ liệu
-            DatabaseRentable.updateRentable(booking.getRentable());
+            RentableDatabase.updateRentable(booking.getRentable());
 
             bookingList.remove(booking);
-            bookingList.add(new Booking(booking.getRentable(), newCustomer));
+            var newBooking = new Booking(booking.getRentable(), newCustomer); // Update booking info from null customer to new customer
+            bookingList.add(newBooking);
 
             updateRoomCounts();
             bookingListView.refresh();
-            showAlert(Alert.AlertType.INFORMATION, "Thành công", "Khách hàng đã được check-in thành công.");
+            showAlert(Alert.AlertType.INFORMATION, "Success", "The customer has been successfully checked-in.");
 
         } catch (NumberFormatException e) {
-            showAlert(Alert.AlertType.ERROR, "Thông tin không hợp lệ", "Vui lòng kiểm tra ID hoặc tiền đã nhập.");
+            showAlert(Alert.AlertType.ERROR, "Invalid information", "Please check the ID or entered funds.");
         }
     }
 
-
-
-
-    // Method to check if a customer exists in the database
     private boolean customerExistsInDatabase(int idNumber) {
         String query = "SELECT COUNT(*) FROM customers WHERE idNumber = ?";
-        try (Connection connection = DatabaseCustomer.connect(); // Use your DatabaseCustomer class
+        try (Connection connection = CustomerDatabase.connect() ;
              PreparedStatement pstmt = connection.prepareStatement(query)) {
             pstmt.setInt(1, idNumber);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-                return rs.getInt(1) > 0; // Return true if count is greater than 0
+                return rs.getInt(1) > 0;
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -476,84 +554,54 @@ public class MainController implements Initializable {
         return false;
     }
 
-    // Method to save a customer to the database
     private void saveCustomerToDatabase(Customer customer) {
         String query = "INSERT INTO customers (name, idProof, idNumber, quantity, night, country, money, hasKids) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        try (Connection connection = DatabaseCustomer.connect(); // Use your DatabaseCustomer class
+        try (Connection connection = CustomerDatabase.connect() ;
              PreparedStatement pstmt = connection.prepareStatement(query)) {
             pstmt.setString(1, customer.getName());
-            pstmt.setString(2, customer.getIdProof().toString()); // Assuming you have a toString method for IDProof
+            pstmt.setString(2, customer.getIdProof().toString());
             pstmt.setInt(3, customer.getIdNumber());
             pstmt.setInt(4, customer.getQuantity());
             pstmt.setInt(5, customer.getNight());
-            pstmt.setString(6, customer.getCountry().toString()); // Assuming you have a toString method for Country
+            pstmt.setString(6, customer.getCountry().toString());
             pstmt.setLong(7, customer.getMoney());
             pstmt.setBoolean(8, customer.getKid());
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            showAlert(Alert.AlertType.ERROR, "Lỗi cơ sở dữ liệu", "Có lỗi xảy ra khi lưu thông tin khách hàng vào cơ sở dữ liệu.");
+            showAlert(Alert.AlertType.ERROR, "Database error", "An error occurred while saving customer information to the database.");
             e.printStackTrace();
         }
     }
-
-
-
 
     @FXML
     private void checkOut() {
-        try {
-            Booking booking = user_book_list.getSelectionModel().getSelectedItem();
+        Booking selectedBooking = customer_list_view.getSelectionModel().getSelectedItem();
 
-            if (booking != null) {
-                int idNumber = booking.getCustomer().getIdNumber();  // Lấy idNumber từ đối tượng Booking
+        if (selectedBooking != null) {
+            int idNumber = selectedBooking.getCustomer().getIdNumber();
+            bookingList.remove(selectedBooking);
+            RentableDatabase.updateRentableCustomer(selectedBooking.getRentable(), null);
+            selectedBooking.getRentable().setStatus(RentableStatus.Available);
+            RentableDatabase.updateRentable(selectedBooking.getRentable());
+            CustomerDatabase.deleteCustomer(idNumber);
 
-                // Tải toàn bộ danh sách khách hàng từ cơ sở dữ liệu
-                List<Customer> customers = DatabaseCustomer.loadCustomer();
-
-                // Tìm khách hàng với idNumber phù hợp
-                boolean customerFound = false;
-                for (Customer customer : customers) {
-                    if (customer.getIdNumber() == idNumber) {
-                        customerFound = true;
-                        break;
-                    }
-                }
-
-                if (customerFound) {
-                    // Cập nhật trạng thái phòng và danh sách đặt phòng
-                    booking.getRentable().setStatus(RentableStatus.Available);
-
-                    // Cập nhật trạng thái phòng trong cơ sở dữ liệu
-                    DatabaseRentable.updateRentable(booking.getRentable());
-
-                    // Xóa idNumber của phòng trong cơ sở dữ liệu (đặt lại thành null)
-                    DatabaseRentable.updateRentableCustomer(booking.getRentable(), null);
-
-                    // Xóa thông tin khách hàng khỏi cơ sở dữ liệu
-                    DatabaseCustomer.deleteCustomer(idNumber);
-
-                    bookingListView.refresh();
-                    updateRoomCounts();
-                    showAlert(Alert.AlertType.INFORMATION, "Thành công", "Phòng đã được trả và thông tin khách hàng đã được xóa.");
-                } else {
-                    showAlert(Alert.AlertType.ERROR, "Lỗi", "Khách hàng không tồn tại trong hệ thống.");
-                }
-            } else {
-                showAlert(Alert.AlertType.ERROR, "Phòng trống", "Phòng này hiện đang trống.");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Lỗi", "Đã xảy ra lỗi trong quá trình trả phòng.");
+            updateRoomCounts();
+            showAlert(Alert.AlertType.INFORMATION, "Success", "Checkout completed successfully.");
+        } else {
+            showAlert(Alert.AlertType.ERROR, "No selection", "Please select a customer to check out.");
         }
     }
 
-
-
-
-    private void enableRoomFields(boolean enable) {
-        room_number_field.setDisable(!enable);
-        hotel_category.setDisable(!enable);
-        hotel_status.setDisable(!enable);
+    @FXML
+    private void removeBooking() {
+        Booking selectedBooking = customer_list_view.getSelectionModel().getSelectedItem();
+        if (selectedBooking != null) {
+            RentableDatabase.removeRentable(selectedBooking.getRentable().getNumber());
+            updateRoomCounts();
+            showAlert(Alert.AlertType.INFORMATION, "Success", "Booking has been removed.");
+        } else {
+            showAlert(Alert.AlertType.ERROR, "No selection", "Please select a booking to remove.");
+        }
     }
 
     private boolean validateRoomDetails() {
@@ -561,12 +609,10 @@ public class MainController implements Initializable {
     }
 
     private void updateRoomCounts() {
-        long availableRooms = bookingList.stream()
-            .filter(booking -> booking != null && booking.getRentable().getStatus() == RentableStatus.Available)
-            .count();
-        total_rooms.setText(String.valueOf(bookingList.size()));
-        valid_rooms.setText(String.valueOf(availableRooms));
-        setupUserBookList();
+        int totalRoomsCount = bookingList.size();
+        int validRoomsCount = (int) bookingList.stream().filter(booking -> booking.getRentable().getStatus() == RentableStatus.Available).count();
+        total_rooms.setText(String.valueOf(totalRoomsCount));
+        valid_rooms.setText(String.valueOf(validRoomsCount));
     }
 
     private Booking findRoom(String roomID) {
@@ -577,41 +623,4 @@ public class MainController implements Initializable {
         }
         return null;
     }
-
-    // Total cost based on the number of nights, 15% increment for each subsequent rental and 5% when u have a kid
-    public long calculateTotalCost(RentableType type, int nights, int quantity, boolean hasKids) {
-        double totalCost = price(type) * nights; // Giá phòng nhân với số đêm
-
-        // Tăng giá cho mỗi lần thuê thêm
-        for (int i = 1; i < quantity; i++) {
-            totalCost *= 1.1; // Tăng 10% cho mỗi lần thuê
-        }
-
-        // Tăng giá nếu có trẻ em
-        if (hasKids) {
-            totalCost *= 1.05; // Tăng 5% khi có trẻ em
-        }
-
-        return Math.round(totalCost); // Làm tròn giá trị
-    }
-/*
-    private List<Booking> loadRentable() {
-        var rooms = data.load(DATA);
-        if (rooms == null) {
-            return new ArrayList<>();
-        }
-        return rooms;
-    }
-
-    private void saveRentable() {
-        data.save(bookingList, DATA);
-    }
-*/
-/*    private List<Customer> loadCustomer() {
-        var customers = customer.load(USER);
-        if (customers == null) {
-            return new ArrayList<>();
-        }
-        return customers;
-    }*/
 }

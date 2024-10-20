@@ -52,6 +52,10 @@ dependencies {
         exclude(group: 'org.openjfx')
     }
 
+    implementation "org.openjfx:javafx-controls:21"
+    implementation "org.openjfx:javafx-fxml:21"
+    implementation "org.openjfx:javafx-graphics:21"
+
     implementation 'mysql:mysql-connector-java:8.0.33'
 
     implementation("com.google.guava:guava:${guavaVersion}") {

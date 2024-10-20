@@ -1,8 +1,9 @@
-package group.phenikaa.hotelmanager.impl.controller;
+package group.phenikaa.hotelmanager.controller;
 
 import group.phenikaa.hotelmanager.HotelApplication;
 import group.phenikaa.hotelmanager.api.info.impl.customer.Session;
 import group.phenikaa.hotelmanager.api.info.impl.customer.User;
+import group.phenikaa.hotelmanager.asm.database.LoginDatabase;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -14,7 +15,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import javafx.scene.control.Button;
-import group.phenikaa.hotelmanager.impl.data.LoginData;
 
 import java.net.URL;
 import java.sql.SQLException;
@@ -35,12 +35,9 @@ public class LoginController implements Initializable {
 
     private boolean isPasswordVisible = false;
 
-    private LoginData loginData;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        loginData = new LoginData();
-
         enter_btn.setDisable(true);
         register_btn.setDisable(true);
 
@@ -79,18 +76,18 @@ public class LoginController implements Initializable {
     @FXML
     void getEnterScene() {
         try {
-            User loggedInUser = loginData.login(username.getText(), password.getText());
+            User loggedInUser = LoginDatabase.login(username.getText(), password.getText());
 
             if (loggedInUser != null) {
                 Session.setCurrentUser(loggedInUser);
                 HotelApplication.switchToMenuScene();
             } else {
-                throw new Exception("Tên người dùng hoặc mật khẩu không hợp lệ.");
+                throw new Exception("Invalid username or password.");
             }
         } catch (SQLException e) {
-            showAlert(Alert.AlertType.ERROR, "Lỗi đăng nhập", "Đã xảy ra lỗi khi truy cập cơ sở dữ liệu.");
+            showAlert(Alert.AlertType.ERROR, "Login error", "An error occurred while accessing the database.");
         } catch (Exception e) {
-            showAlert(Alert.AlertType.ERROR, "Đăng nhập không thành công", e.getMessage());
+            showAlert(Alert.AlertType.ERROR, "Login failed", e.getMessage());
         }
     }
 
@@ -98,13 +95,13 @@ public class LoginController implements Initializable {
     void registerAccount() {
         try {
             User newCustomer = new User(username.getText(), password.getText());
-            loginData.register(newCustomer);  // This now handles SQL exceptions
+            LoginDatabase.register(newCustomer);  // This now handles SQL exceptions
 
-            showAlert(Alert.AlertType.INFORMATION, "Đăng ký thành công", "Tài khoản được tạo thành công.");
+            showAlert(Alert.AlertType.INFORMATION, "Registration Successful", "Account Created Successfully.");
         } catch (SQLException e) {
-            showAlert(Alert.AlertType.ERROR, "Lỗi đăng ký", "Đã xảy ra lỗi khi lưu vào cơ sở dữ liệu.");
+            showAlert(Alert.AlertType.ERROR, "Registration error", "An error occurred while saving to the database.");
         } catch (Exception e) {
-            showAlert(Alert.AlertType.ERROR, "Đăng ký không thành công", e.getMessage());
+            showAlert(Alert.AlertType.ERROR, "Registration failed", e.getMessage());
         }
     }
 
@@ -118,7 +115,6 @@ public class LoginController implements Initializable {
             passwordVisible.setVisible(true);
             passwordVisible.setManaged(true);
 
-            // Đổi icon sang "hide.png"
             eye_icon.setImage(new Image(getClass().getResourceAsStream("/assets/textures/hide.png")));
         } else {
             password.setVisible(true);
@@ -126,7 +122,6 @@ public class LoginController implements Initializable {
             passwordVisible.setVisible(false);
             passwordVisible.setManaged(false);
 
-            // Đổi icon lại sang "show.png"
             eye_icon.setImage(new Image(getClass().getResourceAsStream("/assets/textures/show.png")));
         }
     }
