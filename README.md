@@ -22,13 +22,12 @@
 
 ---
 
-## Application interface
+## Main function
 
-| **LOGIN** |  <img src="https://i.imgur.com/ixoHbP5.png">  |     
-|-----------|:---------------------------------------------:|
-|  **UI**   | <img src="https://i.imgur.com/Oi8tu5B.png"> |   
-
----
+ >- Add, edit, remove room
+ >- Book, check out, remove room
+ >- Save login, register data
+ >- Save rentable information and customer information
 
 ## Project's UML
 
@@ -47,9 +46,21 @@
 
 ---
 
-## Our page
-[Click me](https://phenikaa-team.github.io/HotelManager/)
+## Application interface
 
+| **LOGIN** |  <img src="https://i.imgur.com/ixoHbP5.png">  |     
+|-----------|:---------------------------------------------:|
+|  **UI**   | <img src="https://i.imgur.com/Oi8tu5B.png"> |   
+
+---
+
+## Our GitHub page
+- [Click me to redirect](https://phenikaa-team.github.io/HotelManager/)
+---
+## Demo project
+- [Click me to redirect](https://)
+
+---
 ## How to use
  > Use Hotel Manager is easy, you just need to install a `Java21 JDK.`  
  > To run source, clone HotelManager’s repository and run the following command:
