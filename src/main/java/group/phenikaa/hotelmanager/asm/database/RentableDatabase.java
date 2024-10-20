@@ -8,6 +8,8 @@ import group.phenikaa.hotelmanager.api.utility.enums.RentableType;
 import group.phenikaa.hotelmanager.api.utility.enums.RentableStatus;
 
 import group.phenikaa.hotelmanager.asm.DataBaseConnection;
+import group.phenikaa.hotelmanager.asm.database.CustomerDatabase;
+
 import group.phenikaa.hotelmanager.api.info.Booking;
 
 import group.phenikaa.hotelmanager.api.info.impl.rentable.ConcreteRentable;
@@ -174,4 +176,47 @@ public class RentableDatabase extends DataBaseConnection {
             e.printStackTrace();
         }
     }
+    public static List<Booking> loadRentableWithCustomers() {
+        List<Booking> bookings = new ArrayList<>();
+        String query = "SELECT r.number, r.type, r.status, c.name, c.idproof, c.idnumber, c.quantity, c.night, c.country, c.money, c.hasKids " +
+                "FROM rentables r " +
+                "JOIN customers c ON r.idnumber = c.idNumber;";
+
+        try (Connection connection = connect();
+             PreparedStatement pstmt = connection.prepareStatement(query);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                // Lấy thông tin từ bảng rentables
+                String number = rs.getString("number");
+                RentableType type = RentableType.valueOf(rs.getString("type")); // Có thể xử lý ngoại lệ
+                RentableStatus status = RentableStatus.valueOf(rs.getString("status")); // Có thể xử lý ngoại lệ
+
+                // Lấy thông tin từ bảng customers
+                String name = rs.getString("name");
+                String idProof = rs.getString("idProof");
+                int idNumber = rs.getInt("idNumber");
+                int quantity = rs.getInt("quantity");
+                int night = rs.getInt("night");
+                String country = rs.getString("country");
+                long money = rs.getLong("money");
+                boolean hasKids = rs.getBoolean("hasKids");
+
+                // Tạo Rentable và Customer từ dữ liệu
+                AbstractRentable rentable = getRentable(type, status, 0, number); // Giả sử giá là 0 hoặc bạn có thể điều chỉnh
+                Customer customer = new Customer(name, IDProof.valueOf(idProof), idNumber, quantity, night, Country.valueOf(country), money, hasKids);
+
+                // Tạo Booking và thêm vào danh sách
+                Booking booking = new Booking(rentable, customer);
+                bookings.add(booking);
+            }
+        } catch (SQLException e) {
+            System.out.println("An error occurred while loading rentable data: " + e.getMessage());
+            e.printStackTrace();
+        } catch (IllegalArgumentException e) {
+            System.out.println("Error parsing enum values: " + e.getMessage());
+        }
+        return bookings;
+    }
+
 }

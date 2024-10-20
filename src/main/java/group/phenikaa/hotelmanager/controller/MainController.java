@@ -222,12 +222,15 @@ public class MainController implements Initializable {
 
     // TODO: Thêm BookingDataBase để nó lưu được thông tin của cả phòng lần người dùng đã thuê nó
     private void setupCustomerListView() {
-        ObservableList<Booking> bookingsWithCustomers = FXCollections.observableArrayList(
-                bookingList.stream()
+        List<Booking> bookingsWithCustomers = RentableDatabase.loadRentableWithCustomers();
+
+        ObservableList<Booking> observableBookings = FXCollections.observableArrayList(
+                bookingsWithCustomers.stream()
                         .filter(booking -> booking.getCustomer() != null)
                         .toList()
         );
-        customer_list_view.setItems(bookingsWithCustomers);
+
+        customer_list_view.setItems(observableBookings);
         customer_list_view.setCellFactory(param -> new ListCell<>() {
             @Override
             protected void updateItem(Booking booking, boolean empty) {
@@ -244,13 +247,13 @@ public class MainController implements Initializable {
 
                     // Type
                     var typeLabel = new Label(booking.getRentable().getType().name());
-                    typeLabel.setPrefWidth(80);
+                    typeLabel.setPrefWidth(180);
 
                     // Renter Name
                     Customer customer = booking.getCustomer();
                     String renterName = customer.getName();
                     var renterNameLabel = new Label(renterName);
-                    renterNameLabel.setPrefWidth(100);
+                    renterNameLabel.setPrefWidth(200);
 
                     // Renter ID
                     String renterID = String.valueOf(customer.getIdNumber());
@@ -263,6 +266,7 @@ public class MainController implements Initializable {
             }
         });
     }
+
 
     private void setupUserBookList() {
         ObservableList<Booking> availableRoomsList = FXCollections.observableArrayList(bookingList);
@@ -430,6 +434,11 @@ public class MainController implements Initializable {
             RentableDatabase.saveRentable(newRoom);
 
             updateRoomCounts();
+            setupCustomerListView();
+            setupUserBookList();
+            setupComboBoxItems();
+            updateRoomCounts();
+            setUpComboboxInfo();
             showAlert(Alert.AlertType.INFORMATION, "Success", "A new room has been added.");
         } catch (Exception e) {
             e.printStackTrace();
@@ -455,6 +464,11 @@ public class MainController implements Initializable {
                     RentableDatabase.updateRentable(selectedBooking.getRentable());
 
                     bookingListView.refresh();
+                    setupCustomerListView();
+                    setupUserBookList();
+                    setupComboBoxItems();
+                    updateRoomCounts();
+                    setUpComboboxInfo();
                     updateRoomCounts();
 
                     showAlert(Alert.AlertType.INFORMATION, "Success", "Room details updated successfully.");
@@ -478,6 +492,11 @@ public class MainController implements Initializable {
             RentableDatabase.removeRentable(roomNumber);
 
             updateRoomCounts();
+            setupCustomerListView();
+            setupUserBookList();
+            setupComboBoxItems();
+            updateRoomCounts();
+            setUpComboboxInfo();
             showAlert(Alert.AlertType.INFORMATION, "Success", "The room has been deleted.");
         } else {
             showAlert(Alert.AlertType.ERROR, "Error", "Operation failed.");
@@ -532,6 +551,11 @@ public class MainController implements Initializable {
 
             updateRoomCounts();
             bookingListView.refresh();
+            setupCustomerListView();
+            setupUserBookList();
+            setupComboBoxItems();
+            updateRoomCounts();
+            setUpComboboxInfo();
             showAlert(Alert.AlertType.INFORMATION, "Success", "The customer has been successfully checked-in.");
 
         } catch (NumberFormatException e) {
@@ -578,13 +602,26 @@ public class MainController implements Initializable {
         Booking selectedBooking = customer_list_view.getSelectionModel().getSelectedItem();
 
         if (selectedBooking != null) {
-            int idNumber = selectedBooking.getCustomer().getIdNumber();
-            bookingList.remove(selectedBooking);
-            RentableDatabase.updateRentableCustomer(selectedBooking.getRentable(), null);
+            // Lấy thông tin khách hàng
+            Customer customer = selectedBooking.getCustomer();
+
+            // Cập nhật trạng thái phòng
             selectedBooking.getRentable().setStatus(RentableStatus.Available);
             RentableDatabase.updateRentable(selectedBooking.getRentable());
-            CustomerDatabase.deleteCustomer(idNumber);
 
+            // Xóa booking khỏi danh sách nhưng giữ khách hàng
+            bookingList.remove(selectedBooking);
+            RentableDatabase.updateRentableCustomer(selectedBooking.getRentable(), null);
+
+            // Không xóa khách hàng khỏi database, chỉ thực hiện cập nhật cần thiết khác
+
+            // Cập nhật giao diện
+            bookingListView.refresh();
+            setupCustomerListView();
+            setupUserBookList();
+            setupComboBoxItems();
+            updateRoomCounts();
+            setUpComboboxInfo();
             updateRoomCounts();
             showAlert(Alert.AlertType.INFORMATION, "Success", "Checkout completed successfully.");
         } else {
@@ -592,17 +629,37 @@ public class MainController implements Initializable {
         }
     }
 
+
     @FXML
     private void removeBooking() {
         Booking selectedBooking = customer_list_view.getSelectionModel().getSelectedItem();
         if (selectedBooking != null) {
-            RentableDatabase.removeRentable(selectedBooking.getRentable().getNumber());
+            String roomNumber = selectedBooking.getRentable().getNumber();
+            int customerId = selectedBooking.getCustomer().getIdNumber();
+
+            // Xóa thông tin phòng từ cơ sở dữ liệu
+            RentableDatabase.removeRentable(roomNumber);
+
+            // Xóa thông tin khách hàng từ cơ sở dữ liệu
+            CustomerDatabase.deleteCustomer(customerId);
+
+            // Xóa booking khỏi danh sách
+            bookingList.remove(selectedBooking);
+
+            // Cập nhật giao diện
+            bookingListView.refresh();
+            setupCustomerListView();
+            setupUserBookList();
+            setupComboBoxItems();
             updateRoomCounts();
-            showAlert(Alert.AlertType.INFORMATION, "Success", "Booking has been removed.");
+            setUpComboboxInfo();
+            updateRoomCounts();
+            showAlert(Alert.AlertType.INFORMATION, "Success", "Booking and customer have been removed.");
         } else {
             showAlert(Alert.AlertType.ERROR, "No selection", "Please select a booking to remove.");
         }
     }
+
 
     private boolean validateRoomDetails() {
         return !room_number_field.getText().isEmpty() && hotel_category.getValue() != null && hotel_status.getValue() != null;
