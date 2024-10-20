@@ -56,7 +56,9 @@
 
 ## Our GitHub page
 - [Click me to redirect](https://phenikaa-team.github.io/HotelManager/)
+
 ---
+
 ## Demo project
 - [Click me to redirect](https://)
 
