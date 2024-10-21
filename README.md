@@ -48,7 +48,7 @@
 <img src="https://github.com/user-attachments/assets/31c28885-c7fc-46c8-9051-4b748b0a38ce">
 </details>
 <details>
-<summary>1.3 UML Activity Diagram(CheckoutFunction)</summary>
+<summary>1.5 UML Activity Diagram(CheckoutFunction)</summary>
 <img src="https://github.com/user-attachments/assets/ccb082de-429b-4c48-9169-f4c107f4484c">
 </details>
 
