@@ -143,7 +143,7 @@
             </Button>
          </children>
       </HBox>
-      <AnchorPane fx:id="dash_board_panel" layoutX="190.0" layoutY="55.0" prefHeight="445.0" prefWidth="690.0">
+      <AnchorPane fx:id="dash_board_panel" layoutX="190.0" layoutY="55.0" prefHeight="445.0" prefWidth="690.0" visible="false">
          <children>
             <AnchorPane fx:id="general_panel1" layoutX="7.0" layoutY="30.0" prefHeight="335.0" prefWidth="660.0" stylesheets="@../../../css/login.css">
                <children>
@@ -300,11 +300,11 @@
             </HBox>
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="customer_details" layoutX="200.0" layoutY="65.0" prefHeight="445.0" prefWidth="690.0" visible="false">
+      <AnchorPane fx:id="customer_details" layoutX="200.0" layoutY="65.0" prefHeight="445.0" prefWidth="690.0">
          <children>
             <AnchorPane fx:id="general_panel2" layoutX="-5.0" layoutY="29.0" prefHeight="410.0" prefWidth="690.0" stylesheets="@../../../css/login.css">
                <children>
-                  <HBox alignment="CENTER" layoutX="480.0" layoutY="12.0" prefHeight="52.0" prefWidth="184.0" spacing="15.0">
+                  <HBox alignment="CENTER" layoutX="480.0" prefHeight="64.0" prefWidth="184.0" spacing="15.0">
                      <children>
                         <Button fx:id="checkout_btn" mnemonicParsing="false" onAction="#checkOut" prefHeight="34.0" prefWidth="74.0" text="CheckOut">
                            <cursor>
@@ -326,7 +326,7 @@
                   </HBox>
                   <VBox alignment="CENTER" layoutY="55.0" prefHeight="342.0" prefWidth="678.0">
                      <children>
-                        <HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="34.0" prefWidth="648.0" spacing="140.0">
+                        <HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="34.0" prefWidth="648.0" spacing="90.0">
                            <padding>
                               <Insets top="10.0" />
                            </padding>
@@ -334,10 +334,13 @@
                               <Insets />
                            </VBox.margin>
                            <children>
-                              <Text style="-fx-font-weight: bold;" text="Room Number" translateX="9.0" />
-                              <Text style="-fx-font-weight: bold;" text="Type" translateX="-100.0" />
-                              <Text style="-fx-font-weight: bold;" text="Renter name" translateX="-80.0" />
-                              <Text style="-fx-font-weight: bold;" text="Renter ID" translateX="-80.0" />
+                              <Text style="-fx-font-weight: bold;" text="Room No" translateX="5.0" />
+                              <Text style="-fx-font-weight: bold;" text="Type" translateX="-40.0" />
+                              <Text style="-fx-font-weight: bold;" text="Renter name" translateX="-84.0" />
+                              <Text style="-fx-font-weight: bold;" text="Renter ID" translateX="-115.0" />
+                              <Text style="-fx-font-weight: bold;" text="Quantity" translateX="-175.0" />
+                              <Text style="-fx-font-weight: bold;" text="Total Night" translateX="-235.0" />
+                              <Text style="-fx-font-weight: bold;" text="Money" translateX="-290.0" />
                            </children>
                         </HBox>
                         <ListView fx:id="customer_list_view" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="294.0" prefWidth="660.0">

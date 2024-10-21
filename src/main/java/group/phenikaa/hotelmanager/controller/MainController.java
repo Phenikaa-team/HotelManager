@@ -9,7 +9,6 @@ import group.phenikaa.hotelmanager.api.info.impl.customer.Customer;
 import group.phenikaa.hotelmanager.api.info.impl.customer.Session;
 import group.phenikaa.hotelmanager.api.info.impl.customer.User;
 import group.phenikaa.hotelmanager.api.utility.enums.*;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -29,6 +28,7 @@ import java.sql.SQLException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
 import static group.phenikaa.hotelmanager.api.utility.Utility.*;
@@ -239,24 +239,40 @@ public class MainController implements Initializable {
 
                     // Room Number
                     var roomNumberLabel = new Label(booking.getRentable().getNumber());
-                    roomNumberLabel.setPrefWidth(80);
+                    roomNumberLabel.setTranslateX(20);
+                    roomNumberLabel.setPrefWidth(75);
 
                     // Type
                     var typeLabel = new Label(booking.getRentable().getType().name());
-                    typeLabel.setPrefWidth(180);
+                    typeLabel.setPrefWidth(55);
 
                     // Renter Name
                     Customer customer = booking.getCustomer();
                     String renterName = customer.getName();
                     var renterNameLabel = new Label(renterName);
-                    renterNameLabel.setPrefWidth(200);
+                    renterNameLabel.setPrefWidth(130);
 
                     // Renter ID
                     String renterID = String.valueOf(customer.getIdNumber());
                     var renterIDLabel = new Label(renterID);
-                    renterIDLabel.setPrefWidth(80);
+                    renterIDLabel.setPrefWidth(70);
 
-                    hbox.getChildren().addAll(roomNumberLabel, typeLabel, renterNameLabel, renterIDLabel);
+                    // Renter quantity
+                    String quantity = String.valueOf(customer.getQuantity());
+                    var quantityLabel = new Label(quantity);
+                    quantityLabel.setPrefWidth(70);
+
+                    // Renter night
+                    String night = String.valueOf(customer.getNight());
+                    var nightLabel = new Label(night);
+                    nightLabel.setPrefWidth(40);
+
+                    // Renter money
+                    String money = String.valueOf(customer.getMoney());
+                    var moneyLabel = new Label(money);
+                    moneyLabel.setPrefWidth(70);
+
+                    hbox.getChildren().addAll(roomNumberLabel, typeLabel, renterNameLabel, renterIDLabel, quantityLabel, nightLabel, moneyLabel);
                     setGraphic(hbox);
                 }
             }
@@ -351,19 +367,25 @@ public class MainController implements Initializable {
     @FXML
     private void searchCustomer() {
         String searchID = search_bar.getText();
+
         if (!searchID.isEmpty()) {
-            customer_list_view.getItems().forEach(it -> {
-                if (String.valueOf(it.getCustomer().getIdNumber()).contains(searchID)) {
-                    customer_list_view.getSelectionModel().select(it);
-                    customer_list_view.scrollTo(it);
-                } else {
-                    showAlert(Alert.AlertType.INFORMATION, "Not Found", "No customer found with the given ID.");
+            boolean found = false;
+            for (Booking booking : customer_list_view.getItems()) {
+                if (String.valueOf(booking.getCustomer().getIdNumber()).contains(searchID)) {
+                    customer_list_view.getSelectionModel().select(booking);
+                    customer_list_view.scrollTo(booking);
+                    found = true;
+                    break;
                 }
-            });
+            }
+            if (!found) {
+                showAlert(Alert.AlertType.INFORMATION, "Not Found", "No customer found with the given ID.");
+            }
         } else {
             showAlert(Alert.AlertType.ERROR, "Error", "ID field cannot be empty.");
         }
     }
+
 
     @FXML
     void getEnterScene() throws IOException {
@@ -431,6 +453,7 @@ public class MainController implements Initializable {
             bookingList.add(booking);
             RentableDatabase.saveRentable(newRoom);
             refresh();
+            reset();
             showAlert(Alert.AlertType.INFORMATION, "Success", "A new room has been added.");
         }
         catch (Exception e) {
@@ -456,14 +479,8 @@ public class MainController implements Initializable {
 
                     RentableDatabase.updateRentable(selectedBooking.getRentable());
 
-                    bookingListView.refresh();
-                    setupCustomerListView();
-                    setupUserBookList();
-                    setupComboBoxItems();
-                    updateRoomCounts();
-                    setUpComboboxInfo();
-                    updateRoomCounts();
-
+                    refresh();
+                    reset();
                     showAlert(Alert.AlertType.INFORMATION, "Success", "Room details updated successfully.");
                 } else {
                     showAlert(Alert.AlertType.ERROR, "Invalid details", "Please provide valid room details.");
@@ -476,6 +493,12 @@ public class MainController implements Initializable {
         }
     }
 
+    private void reset() {
+        room_number_field.setText(null);
+        hotel_category.setValue(null);
+        hotel_status.setValue(null);
+    }
+
     @FXML
     private void removeRoom() {
         Booking chosen = bookingListView.getSelectionModel().getSelectedItem();
@@ -485,12 +508,7 @@ public class MainController implements Initializable {
             bookingList.remove(booking);
             RentableDatabase.removeRentable(roomNumber);
 
-            updateRoomCounts();
-            setupCustomerListView();
-            setupUserBookList();
-            setupComboBoxItems();
-            updateRoomCounts();
-            setUpComboboxInfo();
+            refresh();
             showAlert(Alert.AlertType.INFORMATION, "Success", "The room has been deleted.");
         } else {
             showAlert(Alert.AlertType.ERROR, "Error", "Operation failed.");
@@ -628,8 +646,8 @@ public class MainController implements Initializable {
         setupCustomerListView();
         setupUserBookList();
         setupComboBoxItems();
-        updateRoomCounts();
         setUpComboboxInfo();
+        setupListView();
         updateRoomCounts();
     }
 
