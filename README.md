@@ -29,28 +29,24 @@
  >- Save login, register data
  >- Save rentable information and customer information
 
+---
+
 ## Project's UML
 
-<details>
-<summary>1.1 UML Class Diagram</summary>
+### 1.1 UML Class Diagram
 <img src="https://github.com/user-attachments/assets/5f96cafd-2dac-436e-b7bf-89d09cc0426e">
-</details>
-<details>
-<summary>1.2 UML Activity Diagram(LoginFunction)</summary>
+
+### 1.2 UML Activity Diagram(LoginFunction)
 <img src="https://github.com/user-attachments/assets/d19962b2-3934-49dd-b0bd-325d5a59ce6d">
-</details>
-<details>
-<summary>1.3 UML Activity Diagram(RoomsManagement)</summary>
+
+### 1.3 UML Activity Diagram(RoomsManagement)
 <img src="https://github.com/user-attachments/assets/fea7434b-9e43-4bbf-a36d-a6e1c2b6c6e7">
-</details>
-<details>
-<summary>1.4 UML Activity Diagram(BookingFunction)</summary>
+
+### 1.4 UML Activity Diagram(BookingFunction)
 <img src="https://github.com/user-attachments/assets/31c28885-c7fc-46c8-9051-4b748b0a38ce">
-</details>
-<details>
-<summary>1.5 UML Activity Diagram(CheckoutFunction)</summary>
+
+### 1.5 UML Activity Diagram(CheckoutFunction)
 <img src="https://github.com/user-attachments/assets/ccb082de-429b-4c48-9169-f4c107f4484c">
-</details>
 
 ---
 
@@ -68,7 +64,7 @@
 ---
 
 ## Demo project
-- [Click me to redirect](https://)
+- [Click me to redirect](https://youtu.be/SkmbKMDDzvc?si=ec46D7Sq46C7Mnvi)
 
 ---
 ## How to use
