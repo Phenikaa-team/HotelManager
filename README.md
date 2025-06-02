@@ -83,8 +83,8 @@ git clone https://github.com/Phenikaa-team/HotelManager.git
 ---
 
 ## Top contributors:
-<a href="https://github.com/Phenikaa-team/ChatAsyncProcessor/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=Phenikaa-team/ChatAsyncProcessor" alt="Contributors" />
+<a href="https://github.com/Phenikaa-team/HotelManager/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=Phenikaa-team/HotelManager" alt="Contributors" />
 </a>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
