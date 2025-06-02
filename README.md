@@ -1,3 +1,5 @@
+<a id="readme-top"></a>
+
 ### Group_19_OOP_NO1
 <h1 align="center">Hotel Manager Aplication</h1>
 
@@ -78,4 +80,12 @@ git clone https://github.com/Phenikaa-team/HotelManager.git
 ```bash
 ./gradlew run
 ```
+---
+
+## Top contributors:
+<a href="https://github.com/Phenikaa-team/ChatAsyncProcessor/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=Phenikaa-team/ChatAsyncProcessor" alt="Contributors" />
+</a>
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
